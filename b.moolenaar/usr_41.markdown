@@ -65,7 +65,7 @@ condition is true.  The condition used here is the expression `i < 5`.  This
 is true when the variable `i` is smaller than five.
 
 | Note:  
-  If you happen to write a while loop that keeps on running, you can
+| If you happen to write a while loop that keeps on running, you can
   interrupt it by pressing CTRL-C (CTRL-Break on MS-Windows).
 
 The `:echo` command prints its arguments.  In this case the string `count is`
