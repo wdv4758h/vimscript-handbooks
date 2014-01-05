@@ -9,6 +9,7 @@ d.conway
 :	Dr. Damian Conway   
 	_Scripting the Vim editor_   
 	6 May 2009 - 3 March 2010   
+
 s.losh
 :	Steve Losh   
 	_Learn Vimscript the hard way_   
