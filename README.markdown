@@ -3,6 +3,11 @@ Vimscript handbooks
 
 in _Pandoc_-markdown format.
 
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+Content of the repository
+-------------------------
+
 At the moment there are three handbooks, one for every folder:
 
 d.conway
@@ -22,7 +27,7 @@ b.moolenaar
 
 
 How to use it
-=============
+-------------
 
 To compile the documents in TeX or directly PDF use the bash scripts
 that came into the same directories.
