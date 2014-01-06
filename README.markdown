@@ -1,5 +1,5 @@
-Vimscript manuals
-=================
+Vimscript handbooks
+===================
 
 in _Pandoc_-markdown format.
 

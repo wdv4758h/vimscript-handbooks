@@ -4,40 +4,28 @@
 #
 # Convert from markdown to LaTeX using pandoc
 
-DOC=usr_41
+DOC="usr_41"
 
 #--standalone
-#:	Produce output with an appropriate header and footer (e.g. a
+#:  Produce output with an appropriate header and footer (e.g. a
 #   standalone  HTML,  LaTeX,  or  RTF  file, not a fragment).
 #
 #--smart
-#:	Produce  typographically  correct  output
+#:  Produce typographically correct output.
 #
-#--toc
-#:	Include an automatically generated table of contents (or, in the
-#	case  of  latex, context, and rst, an instruction to create one)
-#	in the output document.
+#--latex-engine=xelatex
+#:  Use the specified LaTeX engine when producing PDF output.
 #
 #--template=FILE
 #:  Use FILE as a custom template for the generated document.
 #
-#--number-sections
-#:	 Number section headings in LaTeX, ConTeXt, HTML, or EPUB output.
-#
-#--listings
-#:	Use listings package for LaTeX code blocks (non attivato)
-#
-#--latex-engine=xelatex
-#:	Use the specified LaTeX engine when producing PDF  output.
-#
-#-V openside:[openany, openright]
-#:  Option customized in ajt.latex.
-#
-#-V lowertoc
-#:  Print the indexes at the end of the document. Custom option.
+#-V KEY[:VALUE]
+#:  Set the template variable KEY to the value VAL when
+#   rendering the document in standalone mode.
 
-pandoc $DOC.markdown --standalone --smart --template=../ajt.latex \
+pandoc $DOC.markdown --standalone --smart \
+    --latex-engine=xelatex --template=../ajt.latex \
     -V papersize:a4paper -V openside:openany \
     -V documentclass:book -V tables -V urlcolor:black \
     -V linkcolor:black -V numbersections -V lowertoc \
-    -o $DOC.tex
+    --output=$DOC.tex
