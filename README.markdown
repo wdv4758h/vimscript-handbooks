@@ -37,10 +37,10 @@ Clone the repo on your hd with the following statement:
 you need [Git](http://git-scm.com/) to do that.
 
 To compile the documents in TeX or directly PDF use the bash scripts
-that came into the same directories.
+that came into the same directories. You need
+[_Pandoc_](http://johnmacfarlane.net/pandoc/) by John MacFarlane.
 
-You need [_Pandoc_](http://johnmacfarlane.net/pandoc/) by John
-MacFarlane. `ajt.latex` is a template for _Pandoc_ that optimizes
+`ajt.latex` is a template for _Pandoc_ that optimizes
 the compilation.
 
 
