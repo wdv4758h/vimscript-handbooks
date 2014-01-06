@@ -2,7 +2,9 @@
 
 # MAKEPDF
 #
-# Convert usr_41.markdown in usr_41.pdf using pandoc
+# Convert from markdown to pdf using pandoc
+
+DOC="usr_41"
 
 #--standalone
 #:	Produce output with an appropriate header and footer (e.g. a
@@ -34,8 +36,8 @@
 #-V lowertoc
 #:  Print the indexes at the end of the document. Custom option.
 
-pandoc usr_41.markdown --standalone --smart --template=../ajt.latex \
+pandoc $DOC.markdown --standalone --smart --template=../ajt.latex \
     -V papersize:a4paper -V openside:openany \
     -V documentclass:book -V tables -V urlcolor:black \
     -V linkcolor:black -V numbersections -V lowertoc \
-    -o usr_41.pdf
+    -o $DOC.pdf
