@@ -591,339 +591,410 @@ FUNCTIONS
 There are many functions.  We will mention them here, grouped by what they are
 used for.  You can find an alphabetical list here: `functions`.
 
-String manipulation:
+### String manipulation:
 
-    nr2char()		get a character by its ASCII value
-	char2nr()		get ASCII value of a character
-	str2nr()		convert a string to a Number
-	str2float()		convert a string to a Float
-	printf()		format a string according to % items
-	escape()		escape characters in a string with a '\'
-	shellescape()	escape a string for use with a shell command
-	fnameescape()	escape a file name for use with a Vim command
-	tr()			translate characters from one set to another
-	strtrans()		translate a string to make it printable
-	tolower()		turn a string to lowercase
-	toupper()		turn a string to uppercase
-	match()			position where a pattern matches in a string
-	matchend()		position where a pattern match ends in a string
-	matchstr()		match of a pattern in a string
-	matchlist()		like matchstr() and also return submatches
-	stridx()		first index of a short string in a long string
-	strridx()		last index of a short string in a long string
-	strlen()		length of a string
-	substitute()	substitute a pattern match with a string
-	submatch()		get a specific match in ":s" and substitute()
-	strpart()		get part of a string
-	expand()		expand special keywords
-	iconv()			convert text from one encoding to another
-	byteidx()		byte index of a character in a string
-	repeat()		repeat a string multiple times
-	eval()			evaluate a string expression
+--------------  -------------------------------------------------
+nr2char()		get a character by its ASCII value
+char2nr()		get ASCII value of a character
+str2nr()		convert a string to a Number
+str2float()		convert a string to a Float
+printf()		format a string according to % items
+escape()		escape characters in a string with a '\'
+shellescape()	escape a string for use with a shell command
+fnameescape()	escape a file name for use with a Vim command
+tr()			translate characters from one set to another
+strtrans()		translate a string to make it printable
+tolower()		turn a string to lowercase
+toupper()		turn a string to uppercase
+match()			position where a pattern matches in a string
+matchend()		position where a pattern match ends in a string
+matchstr()		match of a pattern in a string
+matchlist()		like matchstr() and also return submatches
+stridx()		first index of a short string in a long string
+strridx()		last index of a short string in a long string
+strlen()		length of a string
+substitute()	substitute a pattern match with a string
+submatch()		get a specific match in ":s" and substitute()
+strpart()		get part of a string
+expand()		expand special keywords
+iconv()			convert text from one encoding to another
+byteidx()		byte index of a character in a string
+repeat()		repeat a string multiple times
+eval()			evaluate a string expression
+--------------  -------------------------------------------------
 
-List manipulation:
 
-	get()			get an item without error for wrong index
-	len()			number of items in a List
-	empty()			check if List is empty
-	insert()		insert an item somewhere in a List
-	add()			append an item to a List
-	extend()		append a List to a List
-	remove()		remove one or more items from a List
-	copy()			make a shallow copy of a List
-	deepcopy()		make a full copy of a List
-	filter()		remove selected items from a List
-	map()			change each List item
-	sort()			sort a List
-	reverse()		reverse the order of a List
-	split()			split a String into a List
-	join()			join List items into a String
-	range()			return a List with a sequence of numbers
-	string()		String representation of a List
-	call()			call a function with List as arguments
-	index()			index of a value in a List
-	max()			maximum value in a List
-	min()			minimum value in a List
-	count()			count number of times a value appears in a List
-	repeat()		repeat a List multiple times
+### List manipulation:
 
-Dictionary manipulation:
+--------------  -------------------------------------------------
+get()			get an item without error for wrong index
+len()			number of items in a List
+empty()			check if List is empty
+insert()		insert an item somewhere in a List
+add()			append an item to a List
+extend()		append a List to a List
+remove()		remove one or more items from a List
+copy()			make a shallow copy of a List
+deepcopy()		make a full copy of a List
+filter()		remove selected items from a List
+map()			change each List item
+sort()			sort a List
+reverse()		reverse the order of a List
+split()			split a String into a List
+join()			join List items into a String
+range()			return a List with a sequence of numbers
+string()		String representation of a List
+call()			call a function with List as arguments
+index()			index of a value in a List
+max()			maximum value in a List
+min()			minimum value in a List
+count()			count number of times a value appears in a List
+repeat()		repeat a List multiple times
+--------------  -------------------------------------------------
 
-	get()			get an entry without an error for a wrong key
-	len()			number of entries in a Dictionary
-	has_key()		check whether a key appears in a Dictionary
-	empty()			check if Dictionary is empty
-	remove()		remove an entry from a Dictionary
-	extend()		add entries from one Dictionary to another
-	filter()		remove selected entries from a Dictionary
-	map()			change each Dictionary entry
-	keys()			get List of Dictionary keys
-	values()		get List of Dictionary values
-	items()			get List of Dictionary key-value pairs
-	copy()			make a shallow copy of a Dictionary
-	deepcopy()		make a full copy of a Dictionary
-	string()		String representation of a Dictionary
-	max()			maximum value in a Dictionary
-	min()			minimum value in a Dictionary
-	count()			count number of times a value appears
 
-Floating point computation:
+### Dictionary manipulation:
 
-	float2nr()		convert Float to Number
-	abs()			absolute value (also works for Number)
-	round()			round off
-	ceil()			round up
-	floor()			round down
-	trunc()			remove value after decimal point
-	log10()			logarithm to base 10
-	pow()			value of x to the exponent y
-	sqrt()			square root
-	sin()			sine
-	cos()			cosine
-	tan()			tangent
-	asin()			arc sine
-	acos()			arc cosine
-	atan()			arc tangent
-	atan2()			arc tangent
-	sinh()			hyperbolic sine
-	cosh()			hyperbolic cosine
-	tanh()			hyperbolic tangent
+--------------  -------------------------------------------------
+get()			get an entry without an error for a wrong key
+len()			number of entries in a Dictionary
+has_key()		check whether a key appears in a Dictionary
+empty()			check if Dictionary is empty
+remove()		remove an entry from a Dictionary
+extend()		add entries from one Dictionary to another
+filter()		remove selected entries from a Dictionary
+map()			change each Dictionary entry
+keys()			get List of Dictionary keys
+values()		get List of Dictionary values
+items()			get List of Dictionary key-value pairs
+copy()			make a shallow copy of a Dictionary
+deepcopy()		make a full copy of a Dictionary
+string()		String representation of a Dictionary
+max()			maximum value in a Dictionary
+min()			minimum value in a Dictionary
+count()			count number of times a value appears
+--------------  -------------------------------------------------
 
-Other computation:
 
-	and()			bitwise AND
-	invert()		bitwise invert
-	or()			bitwise OR
-	xor()			bitwise XOR
+### Floating point computation:
 
-Variables:
+--------------  -------------------------------------------------
+float2nr()		convert Float to Number
+abs()			absolute value (also works for Number)
+round()			round off
+ceil()			round up
+floor()			round down
+trunc()			remove value after decimal point
+log10()			logarithm to base 10
+pow()			value of x to the exponent y
+sqrt()			square root
+sin()			sine
+cos()			cosine
+tan()			tangent
+asin()			arc sine
+acos()			arc cosine
+atan()			arc tangent
+atan2()			arc tangent
+sinh()			hyperbolic sine
+cosh()			hyperbolic cosine
+tanh()			hyperbolic tangent
+--------------  -------------------------------------------------
 
-	type()			type of a variable
-	islocked()		check if a variable is locked
-	function()		get a Funcref for a function name
-	getbufvar()		get a variable value from a specific buffer
-	setbufvar()		set a variable in a specific buffer
-	getwinvar()		get a variable from specific window
-	gettabvar()		get a variable from specific tab page
-	gettabwinvar()	get a variable from specific window & tab page
-	setwinvar()		set a variable in a specific window
-	settabvar()		set a variable in a specific tab page
-	settabwinvar()	set a variable in a specific window & tab page
-	garbagecollect()	possibly free memory
 
-Cursor and mark position:
+### Other computation:
 
-	col()			column number of the cursor or a mark
-	virtcol()		screen column of the cursor or a mark
-	line()			line number of the cursor or mark
-	wincol()		window column number of the cursor
-	winline()		window line number of the cursor
-	cursor()		position the cursor at a line/column
-	getpos()		get position of cursor, mark, etc.
-	setpos()		set position of cursor, mark, etc.
-	byte2line()		get line number at a specific byte count
-	line2byte()		byte count at a specific line
-	diff_filler()	get the number of filler lines above a line
+--------------  -------------------------------------------------
+and()			bitwise AND
+invert()		bitwise invert
+or()			bitwise OR
+xor()			bitwise XOR
+--------------  -------------------------------------------------
 
-Working with text in the current buffer:
 
-	getline()		get a line or list of lines from the buffer
-	setline()		replace a line in the buffer
-	append()		append line or list of lines in the buffer
-	indent()		indent of a specific line
-	cindent()		indent according to C indenting
-	lispindent()	indent according to Lisp indenting
-	nextnonblank()	find next non-blank line
-	prevnonblank()	find previous non-blank line
-	search()		find a match for a pattern
-	searchpos()		find a match for a pattern
-	searchpair()	find the other end of a start/skip/end
-	searchpairpos()	find the other end of a start/skip/end
-	searchdecl()	search for the declaration of a name
+### Variables:
 
-System functions and manipulation of files:
+--------------  -------------------------------------------------
+type()			type of a variable
+islocked()		check if a variable is locked
+function()		get a Funcref for a function name
+getbufvar()		get a variable value from a specific buffer
+setbufvar()		set a variable in a specific buffer
+getwinvar()		get a variable from specific window
+gettabvar()		get a variable from specific tab page
+gettabwinvar()	get a variable from specific window & tab page
+setwinvar()		set a variable in a specific window
+settabvar()		set a variable in a specific tab page
+settabwinvar()	set a variable in a specific window & tab page
+garbagecollect()	possibly free memory
+--------------  -------------------------------------------------
 
-	glob()			expand wildcards
-	globpath()		expand wildcards in a number of directories
-	findfile()		find a file in a list of directories
-	finddir()		find a directory in a list of directories
-	resolve()		find out where a shortcut points to
-	fnamemodify()	modify a file name
-	pathshorten()	shorten directory names in a path
-	simplify()		simplify a path without changing its meaning
-	executable()	check if an executable program exists
-	filereadable()	check if a file can be read
-	filewritable()	check if a file can be written to
-	getfperm()		get the permissions of a file
-	getftype()		get the kind of a file
-	isdirectory()	check if a directory exists
-	getfsize()		get the size of a file
-	getcwd()		get the current working directory
-	haslocaldir()	check if current window used |:lcd|
-	tempname()		get the name of a temporary file
-	mkdir()			create a new directory
-	delete()		delete a file
-	rename()		rename a file
-	system()		get the result of a shell command
-	hostname()		name of the system
-	readfile()		read a file into a List of lines
-	writefile()		write a List of lines into a file
 
-Date and Time:
+### Cursor and mark position:
 
-	getftime()		get last modification time of a file
-	localtime()		get current time in seconds
-	strftime()		convert time to a string
-	reltime()		get the current or elapsed time accurately
-	reltimestr()	convert reltime() result to a string
+--------------  -------------------------------------------------
+col()			column number of the cursor or a mark
+virtcol()		screen column of the cursor or a mark
+line()			line number of the cursor or mark
+wincol()		window column number of the cursor
+winline()		window line number of the cursor
+cursor()		position the cursor at a line/column
+getpos()		get position of cursor, mark, etc.
+setpos()		set position of cursor, mark, etc.
+byte2line()		get line number at a specific byte count
+line2byte()		byte count at a specific line
+diff_filler()	get the number of filler lines above a line
+--------------  -------------------------------------------------
+
+
+### Working with text in the current buffer:
+
+--------------  -------------------------------------------------
+getline()		get a line or list of lines from the buffer
+setline()		replace a line in the buffer
+append()		append line or list of lines in the buffer
+indent()		indent of a specific line
+cindent()		indent according to C indenting
+lispindent()	indent according to Lisp indenting
+nextnonblank()	find next non-blank line
+prevnonblank()	find previous non-blank line
+search()		find a match for a pattern
+searchpos()		find a match for a pattern
+searchpair()	find the other end of a start/skip/end
+searchpairpos()	find the other end of a start/skip/end
+searchdecl()	search for the declaration of a name
+--------------  -------------------------------------------------
+
+
+### System functions and manipulation of files:
+
+--------------  -------------------------------------------------
+glob()			expand wildcards
+globpath()		expand wildcards in a number of directories
+findfile()		find a file in a list of directories
+finddir()		find a directory in a list of directories
+resolve()		find out where a shortcut points to
+fnamemodify()	modify a file name
+pathshorten()	shorten directory names in a path
+simplify()		simplify a path without changing its meaning
+executable()	check if an executable program exists
+filereadable()	check if a file can be read
+filewritable()	check if a file can be written to
+getfperm()		get the permissions of a file
+getftype()		get the kind of a file
+isdirectory()	check if a directory exists
+getfsize()		get the size of a file
+getcwd()		get the current working directory
+haslocaldir()	check if current window used |:lcd|
+tempname()		get the name of a temporary file
+mkdir()			create a new directory
+delete()		delete a file
+rename()		rename a file
+system()		get the result of a shell command
+hostname()		name of the system
+readfile()		read a file into a List of lines
+writefile()		write a List of lines into a file
+--------------  -------------------------------------------------
+
+
+### Date and Time:
+
+--------------  -------------------------------------------------
+getftime()		get last modification time of a file
+localtime()		get current time in seconds
+strftime()		convert time to a string
+reltime()		get the current or elapsed time accurately
+reltimestr()	convert reltime() result to a string
+--------------  -------------------------------------------------
+
 
 Buffers, windows and the argument list:
 
-	argc()			number of entries in the argument list
-	argidx()		current position in the argument list
-	argv()			get one entry from the argument list
-	bufexists()		check if a buffer exists
-	buflisted()		check if a buffer exists and is listed
-	bufloaded()		check if a buffer exists and is loaded
-	bufname()		get the name of a specific buffer
-	bufnr()			get the buffer number of a specific buffer
-	tabpagebuflist()	return List of buffers in a tab page
-	tabpagenr()		get the number of a tab page
-	tabpagewinnr()	like winnr() for a specified tab page
-	winnr()			get the window number for the current window
-	bufwinnr()		get the window number of a specific buffer
-	winbufnr()		get the buffer number of a specific window
-	getbufline()	get a list of lines from the specified buffer
+--------------  -------------------------------------------------
+argc()			number of entries in the argument list
+argidx()		current position in the argument list
+argv()			get one entry from the argument list
+bufexists()		check if a buffer exists
+buflisted()		check if a buffer exists and is listed
+bufloaded()		check if a buffer exists and is loaded
+bufname()		get the name of a specific buffer
+bufnr()			get the buffer number of a specific buffer
+tabpagebuflist()	return List of buffers in a tab page
+tabpagenr()		get the number of a tab page
+tabpagewinnr()	like winnr() for a specified tab page
+winnr()			get the window number for the current window
+bufwinnr()		get the window number of a specific buffer
+winbufnr()		get the buffer number of a specific window
+getbufline()	get a list of lines from the specified buffer
+--------------  -------------------------------------------------
 
-Command line:
 
-	getcmdline()	get the current command line
-	getcmdpos()		get position of the cursor in the command line
-	setcmdpos()		set position of the cursor in the command line
-	getcmdtype()	return the current command-line type
+### Command line:
 
-Quickfix and location lists:
+--------------  -------------------------------------------------
+getcmdline()	get the current command line
+getcmdpos()		get position of the cursor in the command line
+setcmdpos()		set position of the cursor in the command line
+getcmdtype()	return the current command-line type
+--------------  -------------------------------------------------
 
-	getqflist()		list of quickfix errors
-	setqflist()		modify a quickfix list
-	getloclist()	list of location list items
-	setloclist()	modify a location list
 
-Insert mode completion:
+### Quickfix and location lists:
 
-	complete()		set found matches
-	complete_add()	add to found matches
-	complete_check()	check if completion should be aborted
-	pumvisible()	check if the popup menu is displayed
+--------------  -------------------------------------------------
+getqflist()		list of quickfix errors
+setqflist()		modify a quickfix list
+getloclist()	list of location list items
+setloclist()	modify a location list
+--------------  -------------------------------------------------
 
-Folding:
 
-	foldclosed()	check for a closed fold at a specific line
-	foldclosedend()	like foldclosed() but return the last line
-	foldlevel()		check for the fold level at a specific line
-	foldtext()		generate the line displayed for a closed fold
-	foldtextresult()	get the text displayed for a closed fold
+### Insert mode completion:
 
-Syntax and highlighting:
+--------------  -------------------------------------------------
+complete()		set found matches
+complete_add()	add to found matches
+complete_check()	check if completion should be aborted
+pumvisible()	check if the popup menu is displayed
+--------------  -------------------------------------------------
 
-	clearmatches()	clear all matches defined by |matchadd()| and
-				    the |:match| commands
-	getmatches()	get all matches defined by |matchadd()| and
-				    the |:match| commands
-	hlexists()		check if a highlight group exists
-	hlID()			get ID of a highlight group
-	synID()			get syntax ID at a specific position
-	synIDattr()		get a specific attribute of a syntax ID
-	synIDtrans()	get translated syntax ID
-	synstack()		get list of syntax IDs at a specific position
-	synconcealed()	get info about concealing
-	diff_hlID()		get highlight ID for diff mode at a position
-	matchadd()		define a pattern to highlight (a "match")
-	matcharg()		get info about |:match| arguments
-	matchdelete()	delete a match defined by |matchadd()| or a
-				    |:match| command
-	setmatches()	restore a list of matches saved by
-				    |getmatches()|
 
-Spelling:
+### Folding:
 
-	spellbadword()	locate badly spelled word at or after cursor
-	spellsuggest()	return suggested spelling corrections
-	soundfold()		return the sound-a-like equivalent of a word
+--------------  -------------------------------------------------
+foldclosed()	check for a closed fold at a specific line
+foldclosedend()	like foldclosed() but return the last line
+foldlevel()		check for the fold level at a specific line
+foldtext()		generate the line displayed for a closed fold
+foldtextresult()	get the text displayed for a closed fold
+--------------  -------------------------------------------------
 
-History:
 
-	histadd()		add an item to a history
-	histdel()		delete an item from a history
-	histget()		get an item from a history
-	histnr()		get highest index of a history list
+### Syntax and highlighting:
 
-Interactive:
+--------------  -------------------------------------------------
+clearmatches()	clear all matches defined by |matchadd()| and
+                the |:match| commands
+getmatches()	get all matches defined by |matchadd()| and
+                the |:match| commands
+hlexists()		check if a highlight group exists
+hlID()			get ID of a highlight group
+synID()			get syntax ID at a specific position
+synIDattr()		get a specific attribute of a syntax ID
+synIDtrans()	get translated syntax ID
+synstack()		get list of syntax IDs at a specific position
+synconcealed()	get info about concealing
+diff_hlID()		get highlight ID for diff mode at a position
+matchadd()		define a pattern to highlight (a "match")
+matcharg()		get info about |:match| arguments
+matchdelete()	delete a match defined by |matchadd()| or a
+                |:match| command
+setmatches()	restore a list of matches saved by
+                |getmatches()|
+--------------  -------------------------------------------------
 
-	browse()		put up a file requester
-	browsedir()		put up a directory requester
-	confirm()		let the user make a choice
-	getchar()		get a character from the user
-	getcharmod()	get modifiers for the last typed character
-	feedkeys()		put characters in the typeahead queue
-	input()			get a line from the user
-	inputlist()		let the user pick an entry from a list
-	inputsecret()	get a line from the user without showing it
-	inputdialog()	get a line from the user in a dialog
-	inputsave()		save and clear typeahead
-	inputrestore()	restore typeahead
 
-GUI:
+### Spelling:
 
-	getfontname()	get name of current font being used
-	getwinposx()	X position of the GUI Vim window
-	getwinposy()	Y position of the GUI Vim window
+--------------  -------------------------------------------------
+spellbadword()	locate badly spelled word at or after cursor
+spellsuggest()	return suggested spelling corrections
+soundfold()		return the sound-a-like equivalent of a word
+--------------  -------------------------------------------------
 
-Vim server:
 
-	serverlist()	return the list of server names
-	remote_send()	send command characters to a Vim server
-	remote_expr()	evaluate an expression in a Vim server
-	server2client()	send a reply to a client of a Vim server
-	remote_peek()	check if there is a reply from a Vim server
-	remote_read()	read a reply from a Vim server
-	foreground()	move the Vim window to the foreground
-	remote_foreground()	move the Vim server window to the foreground
+### History:
 
-Window size and position:
+--------------  -------------------------------------------------
+histadd()		add an item to a history
+histdel()		delete an item from a history
+histget()		get an item from a history
+histnr()		get highest index of a history list
+--------------  -------------------------------------------------
 
-	winheight()		get height of a specific window
-	winwidth()		get width of a specific window
-	winrestcmd()	return command to restore window sizes
-	winsaveview()	get view of current window
-	winrestview()	restore saved view of current window
 
-Mappings:
+### Interactive:
 
-	hasmapto()		check if a mapping exists
-	mapcheck()		check if a matching mapping exists
-	maparg()		get rhs of a mapping
-	wildmenumode()	check if the wildmode is active
+--------------  -------------------------------------------------
+browse()		put up a file requester
+browsedir()		put up a directory requester
+confirm()		let the user make a choice
+getchar()		get a character from the user
+getcharmod()	get modifiers for the last typed character
+feedkeys()		put characters in the typeahead queue
+input()			get a line from the user
+inputlist()		let the user pick an entry from a list
+inputsecret()	get a line from the user without showing it
+inputdialog()	get a line from the user in a dialog
+inputsave()		save and clear typeahead
+inputrestore()	restore typeahead
+--------------  -------------------------------------------------
 
-Various:
 
-	mode()			get current editing mode
-	visualmode()	last visual mode used
-	exists()		check if a variable, function, etc. exists
-	has()			check if a feature is supported in Vim
-	changenr()		return number of most recent change
-	cscope_connection()	check if a cscope connection exists
-	did_filetype()	check if a FileType autocommand was used
-	eventhandler()	check if invoked by an event handler
-	getpid()		get process ID of Vim
-	libcall()		call a function in an external library
-	libcallnr()		idem, returning a number
-	getreg()		get contents of a register
-	getregtype()		get type of a register
-	setreg()		set contents and type of a register
-	taglist()		get list of matching tags
-	tagfiles()		get a list of tags files
-	mzeval()		evaluate |MzScheme| expression
+### GUI:
+
+--------------  -------------------------------------------------
+getfontname()	get name of current font being used
+getwinposx()	X position of the GUI Vim window
+getwinposy()	Y position of the GUI Vim window
+--------------  -------------------------------------------------
+
+
+### Vim server:
+
+--------------  -------------------------------------------------
+serverlist()	return the list of server names
+remote_send()	send command characters to a Vim server
+remote_expr()	evaluate an expression in a Vim server
+server2client()	send a reply to a client of a Vim server
+remote_peek()	check if there is a reply from a Vim server
+remote_read()	read a reply from a Vim server
+foreground()	move the Vim window to the foreground
+remote_foreground()	move the Vim server window to the foreground
+--------------  -------------------------------------------------
+
+
+### Window size and position:
+
+--------------  -------------------------------------------------
+winheight()		get height of a specific window
+winwidth()		get width of a specific window
+winrestcmd()	return command to restore window sizes
+winsaveview()	get view of current window
+winrestview()	restore saved view of current window
+--------------  -------------------------------------------------
+
+
+### Mappings:
+
+--------------  -------------------------------------------------
+hasmapto()		check if a mapping exists
+mapcheck()		check if a matching mapping exists
+maparg()		get rhs of a mapping
+wildmenumode()	check if the wildmode is active
+--------------  -------------------------------------------------
+
+
+### Various:
+
+--------------  -------------------------------------------------
+mode()			get current editing mode
+visualmode()	last visual mode used
+exists()		check if a variable, function, etc. exists
+has()			check if a feature is supported in Vim
+changenr()		return number of most recent change
+cscope_connection()	check if a cscope connection exists
+did_filetype()	check if a FileType autocommand was used
+eventhandler()	check if invoked by an event handler
+getpid()		get process ID of Vim
+libcall()		call a function in an external library
+libcallnr()		idem, returning a number
+getreg()		get contents of a register
+getregtype()		get type of a register
+setreg()		set contents and type of a register
+taglist()		get list of matching tags
+tagfiles()		get a list of tags files
+mzeval()		evaluate |MzScheme| expression
+--------------  -------------------------------------------------
 
 
 Defining a function
@@ -1929,10 +2000,10 @@ script. `:map-<script>`  The same is done in line 26 for `:noremenu`.
 `<SID>` AND `<Plug>`
 --------------------
 
-Both` `<SID> and `<Plug>` are used to avoid that mappings of typed keys interfere
+Both `<SID>` and `<Plug>` are used to avoid that mappings of typed keys interfere
 with mappings that are only to be used from other mappings.  Note the
-difference between using `<SID>` and `<Plug>:
-`
+difference between using `<SID>` and `<Plug>`:
+
 `<Plug>`
 :   is visible outside of the script.  It is used for mappings which the
 	user might want to map a key sequence to.  `<Plug>` is a special code
@@ -2139,7 +2210,7 @@ Summary of special things to use in a plugin:
     :noremap <script>	Use only mappings local to the script, not global
                         mappings.
 
-    exists(`:Cmd`)		Check if a user command already exists.
+    exists(":Cmd")		Check if a user command already exists.
 
 
 Writing a filetype plugin
@@ -2163,7 +2234,7 @@ chance to disable loading it.  Put this at the top of the plugin:
 
 	" Only do this when not done yet for this buffer
 	if exists("b:did_ftplugin")
-	  finish
+	    finish
 	endif
 	let b:did_ftplugin = 1
 
@@ -2220,7 +2291,7 @@ command.  This needs to be combined with the two-step mapping explained above.
 An example of how to define functionality in a filetype plugin:
 
 	if !hasmapto('<Plug>JavaImport')
-	  map <buffer> <unique> <LocalLeader>i <Plug>JavaImport
+	    map <buffer> <unique> <LocalLeader>i <Plug>JavaImport
 	endif
 	noremap <buffer> <unique> <Plug>JavaImport oimport ""<Left><Esc>
 
@@ -2336,7 +2407,7 @@ Summary of special things to use in a filetype plugin:
 
     :command -buffer	Define a user command local to the buffer.
 
-    exists(`*s:Func`)	Check if a function was already defined.
+    exists("*s:Func")	Check if a function was already defined.
 
 Also see `plugin-special`, the special things used for all plugins.
 
