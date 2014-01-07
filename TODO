@@ -19,8 +19,8 @@
     Simplify the "maketex - makepdf" system: one single bash script with
     parameters. For example:
 
-        write [pdf | tex]
+        $ write [pdf | tex]
 
 [ ] 2013.01.08 - 
-    In the wikia pages there are a lot of blind reference to "wikilink".
+    In the wikia pages there are a lot of blind references to "wikilink".
     Check them and write the correct link destination.
