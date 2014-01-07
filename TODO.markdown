@@ -21,3 +21,7 @@
     parameters. For example:
 
         write [pdf | tex]
+
+[ ] 2013.01.08 - 
+    In the wikia pakes there are a lot of blind reference to "wikilink".
+    Check them and write the correct link destination.
