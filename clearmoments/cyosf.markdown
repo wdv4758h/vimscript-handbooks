@@ -2,6 +2,9 @@
 % Clearmoments on vim.wikia.com
 % 2008
 
+Abstract
+--------
+
 This is a tutorial showing how to create your own syntax files in Vim.
 This provides syntax highlighting to show the different elements of
 files that you use. In this tutorial, all file names matching a
@@ -30,7 +33,7 @@ Here is an example entry in a star catalog file (`.stc`):
 
 The entry consists of a number, a string, and a `{...}` block, with some
 keywords within that block ("RA", "Dec", etc). Comments are prefixed
-with "\#" like in shell scripts or conf files. There can be multiple
+with `\#` like in shell scripts or conf files. There can be multiple
 entries like this with a number (the HIP number), the string, and the
 block containing the attributes. Celestia gets more complicated than
 this because you can have multiple stars going around a barycenter, but
@@ -230,8 +233,8 @@ Let's define comments as a syntax element and see how `contained` works.
     syn keyword celTodo contained TODO FIXME XXX NOTE
     syn match celComment "#.*$" contains=celTodo
 
-Comments start with a "\#" and run until the end of line. So that's a
-simple regular expression `'#.*$'`. Starts with a "\#" and match all
+Comments start with a `\#` and run until the end of line. So that's a
+simple regular expression `'#.*$'`. Starts with a `\#` and match all
 characters until the end of a line.
 
 `contained` tells the editor that the keyword is only valid when
@@ -280,7 +283,7 @@ Telling Vim how to highlight + final touches
 We can now take the syntax elements and use the `hi def link` command to
 tell Vim how to highlight them.
 
-Set the `b:current_syntax` variable to a name, for example, "cel". That
+Set the `b:current_syntax` variable to a name, for example, `cel`. That
 name can be used to modify the Un/Commentify (F6/Shift-F6) script in
 Cream, for example to block comment-out lines with the new file type.
 
@@ -297,7 +300,7 @@ Cream, for example to block comment-out lines with the new file type.
 The `hi def link` command has different types of highlighting options
 that we need not consider. The ones used here are:
 
--   `Todo`: used for the todo comments (ones that have "TODO: something"
+-   `Todo`: used for the todo comments (ones that have `TODO: something`
     in them)
 -   `Comment`: indicates a code comment
 -   `Statement`: a code statement like a for loop
@@ -377,7 +380,7 @@ new filetype.
 #### Add to <filetype.vim>
 
 Add filetype detection to <filetype.vim>: in this case the Vim script is
-named `cel.vim` so we use the filetype "cel".
+named `cel.vim` so we use the filetype `cel`.
 
     au BufRead,BufNewFile *.stc setfiletype cel
 
@@ -398,11 +401,11 @@ See also
 --------
 
 -   [Syntax folding of Vim
-    scripts](Syntax folding of Vim scripts "wikilink") for an example of
-    adding to an existing syntax instead of creating your own as this
-    tip demonstrates.
--   [celstarcat.vim](User:Clearmoments/celstarcat "wikilink") an actual
-    stc syntax file
--   [celssc.vim](User:Clearmoments/celssc "wikilink") an actual ssc
-    syntax file
+    scripts](http://vim.wikia.com/wiki/Syntax_folding_of_Vim_scripts)
+    for an example of adding to an existing syntax instead of creating
+    your own as this tip demonstrates.
+-   [celstarcat.vim](http://vim.wikia.com/wiki/User:Clearmoments/celstarcat)
+    an actual stc syntax file
+-   [celssc.vim](http://vim.wikia.com/wiki/User:Clearmoments/celssc) an
+    actual ssc syntax file
 
