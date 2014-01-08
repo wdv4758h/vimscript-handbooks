@@ -3,7 +3,7 @@
 % 2006
 
 Abstract
---------
+========
 
 Many syntax files provide fold information. Unfortunately, the
 officially distributed vimscript syntax file did not until [version
@@ -14,7 +14,7 @@ incidentally, the vim.vim syntax file does). Here is a good set of
 syntax folding definitions that you can at least use as a starting
 point.
 
-### Usage
+## Usage
 
 The code at the end of this tip allows folding of various Vim script
 constructs via `foldmethod=syntax`. Put it in `after/syntax/vim.vim`,
@@ -47,7 +47,7 @@ probably the best ones to use. Calling `zR` as well when you do this
 will [start with all the folds open when loading the
 file](All folds open when opening a file "wikilink").
 
-### How it works
+## How it works
 
 These syntax groups set up regions between start and end patterns as
 long as they don't start within certain syntax groups such as comments,
@@ -93,7 +93,7 @@ follows:
 constructs (with try...catch...finally...endtry instead of
 if...elseif...else...endif).
 
-### Problems
+## Problems
 
 These syntax folds are not perfect, and suffer from at least the
 following:
@@ -122,7 +122,7 @@ following:
     group protects these.
 
 New built-in folding
---------------------
+====================
 
 Version 7.1-76 of the default vim.vim syntax file (released January 24,
 2008) includes folding for the following as a [configurable
@@ -141,7 +141,7 @@ either your vimrc or in vim.vim in your ftplugin directory:
     let g:vimsyn_folding='af'
 
 Syntax definitions
-------------------
+==================
 
 As mentioned above, place the following in your after/syntax Vim file:
 
@@ -293,12 +293,12 @@ endif
 ~~~~
 
 See also
---------
+========
 
 -   <Folding> presents an overview of how to use folding
 
 References
-----------
+==========
 
 -   tells how to add to a syntax file as done in this tip
 
@@ -309,7 +309,7 @@ References
 -   used to "back up" on an if-else to allow else-endif to match
 
 Comments
---------
+========
 
 -   Fix problems mentioned in tip.
 -   Rework so that fold groups contain top-level language constructs

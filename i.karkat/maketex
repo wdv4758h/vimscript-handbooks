@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# MAKETEX
+#
+# Convert from markdown to LaTeX using pandoc
+
+DOC="folding"
+
+#--standalone
+#:  Produce output with an appropriate header and footer (e.g. a
+#   standalone  HTML,  LaTeX,  or  RTF  file, not a fragment).
+#
+#--smart
+#:  Produce typographically correct output.
+#
+#--latex-engine=xelatex
+#:  Use the specified LaTeX engine when producing PDF output.
+#
+#--template=FILE
+#:  Use FILE as a custom template for the generated document.
+#
+#-V KEY[:VALUE]
+#:  Set the template variable KEY to the value VAL when
+#   rendering the document in standalone mode.
+
+pandoc $DOC.markdown --standalone --smart \
+    --latex-engine=xelatex --template=../ajt.latex \
+    -V papersize:a4paper -V openside:openany \
+    -V documentclass:book -V tables -V urlcolor:black \
+    -V linkcolor:black -V numbersections -V lowertoc \
+    --output=$DOC.tex

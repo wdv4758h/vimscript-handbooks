@@ -3,7 +3,7 @@
 % 2008
 
 Abstract
---------
+========
 
 This is a tutorial showing how to create your own syntax files in Vim.
 This provides syntax highlighting to show the different elements of
@@ -12,7 +12,7 @@ particular extension will use the highlighting rules defined with the
 syntax commands shown below.
 
 Example: Celestia star catalogs
--------------------------------
+===============================
 
 This tutorial creates a syntax file for Celestia star catalogs.
 [Celestia](http://www.shatters.net/celestia/) is a great program for
@@ -40,9 +40,9 @@ this because you can have multiple stars going around a barycenter, but
 we will only cover stars.
 
 Syntax files
-------------
+============
 
-### Build a syntax file
+## Build a syntax file
 
 First, create a new file named `cel.vim` with the following contents:
 
@@ -60,7 +60,7 @@ built-in syntax files, we start with a comment flower box. The test
 `if&nbsp;exists("b:current_syntax") ...` checks whether an earlier file
 has defined a syntax already. If so, the script exits with `finish`.
 
-### Keyword, match and region elements
+## Keyword, match and region elements
 
 There are three major syntax elements, and commands to describe those
 elements. In order to syntax highlight, we must be able to describe what
@@ -77,7 +77,7 @@ to highlight. Here is an example of what they look like:
     " Regions
     syn region syntaxElementRegion start='x' end='y'
 
-#### Keywords
+### Keywords
 
 Keywords are simple. Take for example the programming language BASIC. In
 BASIC there are several keywords like PRINT, OPEN and IF. To have Vim
@@ -121,7 +121,7 @@ Vim will now recognize these keywords which may be sufficient for your
 purpose. However, what if we want to match the text following the
 keywords, like those numbers and string values?
 
-#### Matches (and addendum to keywords)
+### Matches (and addendum to keywords)
 
 All this keyword stuff logically leads to matches. Take the above
 example once again. After the keywords ("RA", "Dec", "AbsMag" etc) there
@@ -176,7 +176,7 @@ We can keep creating more lines like `syn match celNumber ''pattern''`
 to match all those patterns as one syntax element type (in this case
 `celNumber`).
 
-#### Regions
+### Regions
 
 Looking at the star catalog entry again shows another challenge:
 
@@ -241,7 +241,7 @@ characters until the end of a line.
 contained by another syntax element, in this case a `celTodo` is only
 treated as a separate syntax element when contained by `celComment`.
 
-#### Bringing it together
+### Bringing it together
 
     syn keyword celTodo contained TODO FIXME XXX NOTE
     syn match celComment "#.*$" contains=celTodo
@@ -278,7 +278,7 @@ treated as a separate syntax element when contained by `celComment`.
     syn keyword celBlockCmd SpectralType nextgroup=celString
 
 Telling Vim how to highlight + final touches
---------------------------------------------
+============================================
 
 We can now take the syntax elements and use the `hi def link` command to
 tell Vim how to highlight them.
@@ -314,7 +314,7 @@ or pre-processor commands, however `celBlockCmd` has been set to use
 
 You can view more options in Vim with
 
-### Install the syntax file
+## Install the syntax file
 
 Save the file, then install it by copying the file to
 `~/.vim/syntax/cel.vim` on Unix-based systems, or to
@@ -358,13 +358,13 @@ overwritten when you next upgrade Vim. Do not use a directory containing
 the files distributed with Vim because that will be overwritten during
 an upgrade (in particular, do not use the `$VIMRUNTIME` directory).
 
-### Make Vim recognize the filetype
+## Make Vim recognize the filetype
 
 Now we have to make sure Vim knows how to interpret your file. There are
 a few methods to add filetype detection for files of this new type. See
 for full details, but the basics are here.
 
-#### Add a file in the ftdetect directory
+### Add a file in the ftdetect directory
 
 This is probably the simplest method.
 
@@ -377,7 +377,7 @@ a single line to set the filetype on buffer read or creation:
 Note that this will override any previously detected filetype with the
 new filetype.
 
-#### Add to <filetype.vim>
+### Add to <filetype.vim>
 
 Add filetype detection to <filetype.vim>: in this case the Vim script is
 named `cel.vim` so we use the filetype `cel`.
@@ -388,7 +388,7 @@ Note the use of instead of `set filetype=`. This is so that Vim does not
 override any previously detected filetypes while running this script.
 Details .
 
-#### Add to scripts.vim
+### Add to scripts.vim
 
 This method does not apply in our example case, but some filetypes can
 only be detected by examining buffer contents. For example, maybe you
@@ -398,7 +398,7 @@ Basically you just add tests using , , etc. and use them to determine
 whether to set the filetype with .
 
 See also
---------
+========
 
 -   [Syntax folding of Vim
     scripts](http://vim.wikia.com/wiki/Syntax_folding_of_Vim_scripts)
