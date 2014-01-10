@@ -10,14 +10,14 @@ First step is, of course, to learn how to start Vim.
 
 Windows
 :   Click on Start → Programs → Vim 7 → gVim. Or type the
-    windows key %2B r type ‘gvim’
+    windows key + r type ‘gvim’
 
 Mac OS X
 :   Click on Finder → Applications → MacVim.
 
 Linux/BSD
 :   Click on Applications → Accessories → GVim Text Editor, or
-    press Alt%2BF2, type `gvim` and press the enter key.
+    press Alt+F2, type `gvim` and press the enter key.
 
 ###  Terminal version
 
@@ -29,17 +29,18 @@ Mac OS X
     and press the enter key.
 
 Linux/BSD
-:   Click on Applications → Accessories → Terminal, or press Alt%2BF2,
+:   Click on Applications → Accessories → Terminal, or press Alt+F2,
     type `konsole`/`gnome-terminal` and press the enter key. Then, type
     `vim` and press the enter key.
 
 From now onwards when we say ‘open Vim’, use either of the two methods
 mentioned above.
 
-| Note:
-| When you started Vim, you might have noticed that you can’t
-  immediately start typing text. Don’t panic, all will be explained in a
-  little while.
+> Note:
+>
+> When you started Vim, you might have noticed that you can’t
+> immediately start typing text. Don’t panic, all will be explained in a
+> little while.
 
 Graphical or Terminal?
 ----------------------
@@ -113,20 +114,20 @@ and the ‘to’ word and then click on ‘Replace’. Then, check the ‘Replac
 All’ option. In Vim, you simply run `:%s/from/to/g` in the normal mode.
 See how simple this is?
 
-### Explanation of the substitute command
-
-Consider the command
-`:%s/from/to/g`. The `%` is a shortcut for the range on which we want to
-run the command and it means “all the lines of the file”. Alternatively
-you can specify the range of lines such as `0,10` which means lines 0 to
-10. The `:s` is the “substitute” command. The ‘from’ and ‘to’ are the
-respective text to be found and replaced. The `g` (for “global”)
-indicates that if there is more than one ‘from’ string on the same line,
-it should replace all of them.  At first glance, it seems like a lot of
-things, but imagine you learn this once, and every time it is available
-with a key press away in your command mode instead of having to hunt
-down menus and fiddle around with a dialog box to do exactly what you
-want.
+> Explanation of the substitute command:
+> 
+> Consider the command
+> `:%s/from/to/g`. The `%` is a shortcut for the range on which we want to
+> run the command and it means “all the lines of the file”. Alternatively
+> you can specify the range of lines such as `0,10` which means lines 0 to
+> 10. The `:s` is the “substitute” command. The ‘from’ and ‘to’ are the
+> respective text to be found and replaced. The `g` (for “global”)
+> indicates that if there is more than one ‘from’ string on the same line,
+> it should replace all of them.  At first glance, it seems like a lot of
+> things, but imagine you learn this once, and every time it is available
+> with a key press away in your command mode instead of having to hunt
+> down menus and fiddle around with a dialog box to do exactly what you
+> want.
 
 What if you want to now run this substitution only in the first 10 lines
 of the text and you want to have a yes/no confirmation for each
@@ -158,11 +159,12 @@ prefer calling the insert mode as “writing” mode and the normal mode as
 “rewriting” mode, but we will stick to the standard Vim terminology to
 avoid confusion.
 
-| Note:
-| All commands in the normal mode should end with the enter key to
-  signal Vim that we have written the full command. So, when we say run
-  `:help vim-modes-intro`, it means you should type `:help
-  vim-modes-intro` and then press the enter key at the end of the command.
+> Note:
+>
+> All commands in the normal mode should end with the enter key to
+> signal Vim that we have written the full command. So, when we say run
+> `:help vim-modes-intro`, it means you should type `:help
+> vim-modes-intro` and then press the enter key at the end of the command.
 
 Writing a file
 --------------
@@ -188,20 +190,20 @@ into editing the content of the document.
 Let us see what the above commands do.
 
 * `:edit hello.txt` or simply `:e hello.txt`
-  * This opens a file for _e_diting. If the file with the specified
-    name does not exist, it will be created the first time we “save”
-    the file.
+    * This opens a file for _e_diting. If the file with the specified
+      name does not exist, it will be created the first time we “save”
+      the file.
 * Press `i`
-  * This switches Vim to the insert mode
+    * This switches Vim to the insert mode
 * Type the text `Hello World`
-  * This is where you type the actual text that you want to write.
+    * This is where you type the actual text that you want to write.
 * Press ``
-  * This escapes Vim back to normal mode
+    * This escapes Vim back to normal mode
 * `:write` or simply `:w`
-  * This tells Vim to _w_rite the text (which is currently stored in a
-    temporary file created by Vim automatically) to the file on the
-    hard disk. This means that whatever we wrote so far is now
-    permanently stored.
+    * This tells Vim to _w_rite the text (which is currently stored in a
+      temporary file created by Vim automatically) to the file on the
+      hard disk. This means that whatever we wrote so far is now
+      permanently stored.
 * `:quit` or simply `:q` to quit the file in the “window” that we are
   editing. If there was only one “window” open, this will also close
   Vim (Concept of windows will be discussed in a later chapter).
@@ -210,7 +212,7 @@ Try to repeat this process a few times with different file names,
 different text, etc. so that you get used to the basic set of steps in
 using Vim.
 
-Notice that when you are in insert mode, Vim displays `\-- INSERT --` at
+Notice that when you are in insert mode, Vim displays \-- INSERT \-- at
 the bottom left corner. When you switch to normal mode, it will not
 display anything. This is because normal mode is the _default_ mode in
 which Vim runs.

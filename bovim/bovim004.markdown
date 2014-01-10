@@ -9,7 +9,7 @@ Windows
 If you use Microsoft Windows, then the following steps will help you get
 the latest version of Vim 7 installed on your computer:
 
-1. Visit 
+1. Visit <http://www.vim.org/download.php#pc>
 2. Download the “Self-installing executable” (`gvim72.exe` as of this
    writing)
 3. Double-click the file and install Vim like any other Windows-based

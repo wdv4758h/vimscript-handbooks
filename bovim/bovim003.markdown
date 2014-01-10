@@ -30,10 +30,12 @@ Let’s see some random examples to compare Vim with your current editor.
 The point of this exercise is for you to answer the question _“How would
 I do this in the editor I currently use?”_ for each example.
 
-Note: Don’t worry too much about the details of the Vim commands here,
-the point here is to enlighten you with the possibilities, not to start
-explaining how these things work. That is what the rest of the book is
-for.
+> Note
+> 
+> Don’t worry too much about the details of the Vim commands here,
+> the point here is to enlighten you with the possibilities, not to start
+> explaining how these things work. That is what the rest of the book is
+> for.
 
 1. How do you move the cursor down by 7 lines?
 
