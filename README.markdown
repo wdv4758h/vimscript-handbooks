@@ -9,7 +9,7 @@ in _Pandoc_-markdown format.
 Content of the repository
 -------------------------
 
-At the moment there are three handbooks, one for every folder:
+At the moment there are the following handbooks, one for every folder:
 
 d.conway
 :	Dr. Damian Conway   
@@ -25,6 +25,11 @@ b.moolenaar
 :   Bram Moolenaar  
     _usr_41_  
     20 February 2013  
+
+swaroop
+:   Swaroop C. H.  
+    _A byte of Vim_  
+    25 November 2008  
 
 
 How to use it
@@ -48,4 +53,3 @@ Contributing
 ------------
 
 Fork and pull requests are wellcome.
-
