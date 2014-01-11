@@ -227,8 +227,10 @@ documentation open up. Go ahead, try it.
 Summary
 -------
 
-We have now discussed the basic concepts and usage of Vim. See `:help notation` and `:help keycodes` also.
+We have now discussed the basic concepts and usage of Vim. See `:help
+notation` and `:help keycodes` also.
 
-Be sure to understand these concepts well. Once you start “thinking in Vim”, understanding the rest of Vim’s features is easy.
+Be sure to understand these concepts well. Once you start “thinking in
+Vim”, understanding the rest of Vim’s features is easy.
 
 * * *
