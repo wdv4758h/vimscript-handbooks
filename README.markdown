@@ -31,6 +31,16 @@ swaroop
     _A byte of Vim_  
     25 November 2008  
 
+clearmoments
+:   Clearmoments on vim.wikia.com  
+    _Creating your own syntax files_  
+    2008  
+
+i.karkat
+:   Ingo Karkat on vim.wikia.com  
+    _Syntax folding of Vim scripts_  
+    2006
+
 
 How to use it
 -------------
@@ -53,3 +63,4 @@ Contributing
 ------------
 
 Fork and pull requests are wellcome.
+
