@@ -377,9 +377,9 @@ a single line to set the filetype on buffer read or creation:
 Note that this will override any previously detected filetype with the
 new filetype.
 
-### Add to <filetype.vim>
+### Add to \<filetype.vim\>
 
-Add filetype detection to <filetype.vim>: in this case the Vim script is
+Add filetype detection to \<filetype.vim\>: in this case the Vim script is
 named `cel.vim` so we use the filetype `cel`.
 
     au BufRead,BufNewFile *.stc setfiletype cel

@@ -7,7 +7,7 @@ Abstract
 
 Many syntax files provide fold information. Unfortunately, the
 officially distributed vimscript syntax file did not until [version
-7.1-76](#New_built-in_folding "wikilink"), and even now only provides
+7.1-76](http://vim.wikia.com/wiki/Syntax_folding_of_Vim_scripts?useskin=monobook#New_built-in_folding), and even now only provides
 limited support. You will need to define your own syntax folding, or
 resign yourself to inserting fold markers all over the place (which,
 incidentally, the vim.vim syntax file does). Here is a good set of
@@ -18,9 +18,11 @@ point.
 
 The code at the end of this tip allows folding of various Vim script
 constructs via `foldmethod=syntax`. Put it in `after/syntax/vim.vim`,
-located either in your system-wide or home Vim directory (see ).
+located either in your system-wide or home Vim directory (see [:help
+after-directory](http://vimdoc.sourceforge.net/cgi-bin/help?tag=after-directory)).
 
-To [use these folds](Use folds in your program "wikilink"), put
+To [use these
+folds](http://vim.wikia.com/wiki/Syntax_folding_of_Vim_scripts?useskin=monobook#New_built-in_folding), put
 `setlocal foldmethod=syntax` in `after/ftplugin/vim.vim`. While you're
 at it, it also makes sense to avoid folding in the command window
 (`q:`). You can use the following fragment for that:
@@ -45,7 +47,7 @@ Alternatively, you can use an autocommand or a mapping to enable
 folding. If using an autocommand, the FileType and Syntax events are
 probably the best ones to use. Calling `zR` as well when you do this
 will [start with all the folds open when loading the
-file](All folds open when opening a file "wikilink").
+file](http://vim.wikia.com/wiki/All_folds_open_when_opening_a_file).
 
 ## How it works
 
@@ -54,15 +56,17 @@ long as they don't start within certain syntax groups such as comments,
 strings, or the lhs of a mapping, and attempt to skip over commented-out
 end patterns with the skip pattern.
 
-A syntax cluster () called vimNoFold is defined to easily exclude
-certain syntax items from containing a fold. The `containedin` option is
-set to @vimNoFold to make sure the fold definitions do not match in
-areas such as comments, syntax definitions, embedded scripts, and the
-like. The syntax items contained in @vimNoFold were determined through
-(a) finding an error and (b) looking at vim.vim to determine which ones
-are triggering the syntax folding that shouldn't be. It is useful to
-[display the highlight group under the
-cursor](Identify the syntax highlighting group used at the cursor "wikilink")
+A syntax cluster ([:help
+:syn-cluster](http://vimdoc.sourceforge.net/cgi-bin/help?tag=%3Asyn-cluster))
+called vimNoFold is defined to easily exclude certain syntax items from
+containing a fold. The `containedin` option is set to @vimNoFold to make
+sure the fold definitions do not match in areas such as comments, syntax
+definitions, embedded scripts, and the like. The syntax items contained
+in @vimNoFold were determined through (a) finding an error and (b)
+looking at vim.vim to determine which ones are triggering the syntax
+folding that shouldn't be. It is useful to [display the highlight group
+under the
+cursor](http://vim.wikia.com/wiki/Identify_the_syntax_highlighting_group_used_at_the_cursor)
 while debugging in this way.
 
 Most of the syntax rules have "begin" and "end" keywords that set up a
@@ -126,13 +130,14 @@ New built-in folding
 
 Version 7.1-76 of the default vim.vim syntax file (released January 24,
 2008) includes folding for the following as a [configurable
-option](Check your syntax files for configurable options "wikilink"):
+option](http://vim.wikia.com/wiki/Check_your_syntax_files_for_configurable_options):
 
 -   augroups
 -   functions
 -   embedded scripts in scheme, perl, python, ruby, and tcl
 
-See for details.
+See [`:help
+g:vimsyn_folding`](http://vimdoc.sourceforge.net/cgi-bin/help?tag=g%3Avimsyn_folding) for details.
 
 Get the latest distribution of Vim from [whichever source you
 prefer](Where to download Vim "wikilink") and put the following in
@@ -149,8 +154,11 @@ As mentioned above, place the following in your after/syntax Vim file:
 " The default Vim syntax file has limited 'fold' definitions, so define more.
 
 " define groups that cannot contain the start of a fold
-syn cluster vimNoFold contains=vimComment,vimLineComment,vimCommentString,vimString,vimSynKeyRegion,vimSynRegPat,vimPatRegion,vimMapLhs,vimOperParen,@EmbeddedScript
-syn cluster vimEmbeddedScript contains=vimMzSchemeRegion,vimTclRegion,vimPythonRegion,vimRubyRegion,vimPerlRegion
+syn cluster vimNoFold contains=vimComment,vimLineComment,
+\   vimCommentString,vimString,vimSynKeyRegion,vimSynRegPat,
+\   vimPatRegion,vimMapLhs,vimOperParen,@EmbeddedScript
+syn cluster vimEmbeddedScript contains=vimMzSchemeRegion,
+\   vimTclRegion,vimPythonRegion,vimRubyRegion,vimPerlRegion
 
 " fold while loops
 syn region vimFoldWhile
@@ -159,7 +167,8 @@ syn region vimFoldWhile
       \ transparent fold
       \ keepend extend
       \ containedin=ALLBUT,@vimNoFold
-      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+ "comment to fix highlight on wiki'
+      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+
+      \     "comment to fix highlight on wiki'
 
 " fold for loops
 syn region vimFoldFor
@@ -168,7 +177,8 @@ syn region vimFoldFor
       \ transparent fold
       \ keepend extend
       \ containedin=ALLBUT,@vimNoFold
-      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+ "comment to fix highlight on wiki'
+      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+
+      \     "comment to fix highlight on wiki'
 
 " fold if...else...endif constructs
 "
@@ -182,7 +192,8 @@ syn region vimFoldIfContainer
       \ keepend extend
       \ containedin=ALLBUT,@vimNoFold
       \ contains=NONE
-      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+ "comment to fix highlight on wiki'
+      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+
+      \     "comment to fix highlight on wiki'
 syn region vimFoldIf
       \ start="\<if\>"
       \ end="^\s*\\\?\s*else\%[if]\>"ms=s-1,me=s-1
@@ -191,7 +202,8 @@ syn region vimFoldIf
       \ contained containedin=vimFoldIfContainer
       \ nextgroup=vimFoldElseIf,vimFoldElse
       \ contains=TOP
-      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+ "comment to fix highlight on wiki'
+      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+
+      \     "comment to fix highlight on wiki'
 syn region vimFoldElseIf
       \ start="\<else\%[if]\>"
       \ end="^\s*\\\?\s*else\%[if]\>"ms=s-1,me=s-1
@@ -200,7 +212,8 @@ syn region vimFoldElseIf
       \ contained containedin=vimFoldIfContainer
       \ nextgroup=vimFoldElseIf,vimFoldElse
       \ contains=TOP
-      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+ "comment to fix highlight on wiki'
+      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+
+      \     "comment to fix highlight on wiki'
 syn region vimFoldElse
       \ start="\<el\%[se]\>"
       \ end="\<en\%[dif]\>=\@!"
@@ -208,7 +221,8 @@ syn region vimFoldElse
       \ keepend
       \ contained containedin=vimFoldIfContainer
       \ contains=TOP
-      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+ "comment to fix highlight on wiki'
+      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+
+      \     "comment to fix highlight on wiki'
 
 " fold try...catch...finally...endtry constructs
 syn region vimFoldTryContainer
@@ -218,7 +232,8 @@ syn region vimFoldTryContainer
       \ keepend extend
       \ containedin=ALLBUT,@vimNoFold
       \ contains=NONE
-      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+ "comment to fix highlight on wiki'
+      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+
+      \     "comment to fix highlight on wiki'
 syn region vimFoldTry
       \ start="\<try\>"
       \ end="^\s*\\\?\s*\(fina\%[lly]\|cat\%[ch]\)\>"ms=s-1,me=s-1
@@ -227,7 +242,8 @@ syn region vimFoldTry
       \ contained containedin=vimFoldTryContainer
       \ nextgroup=vimFoldCatch,vimFoldFinally
       \ contains=TOP
-      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+ "comment to fix highlight on wiki'
+      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+
+      \     "comment to fix highlight on wiki'
 syn region vimFoldCatch
       \ start="\<cat\%[ch]\>"
       \ end="^\s*\\\?\s*\(cat\%[ch]\|fina\%[lly]\)\>"ms=s-1,me=s-1
@@ -236,7 +252,8 @@ syn region vimFoldCatch
       \ contained containedin=vimFoldTryContainer
       \ nextgroup=vimFoldCatch,vimFoldFinally
       \ contains=TOP
-      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+ "comment to fix highlight on wiki'
+      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+
+      \     "comment to fix highlight on wiki'
 syn region vimFoldFinally
       \ start="\<fina\%[lly]\>"
       \ end="\<endt\%[ry]\>"
@@ -244,7 +261,8 @@ syn region vimFoldFinally
       \ keepend
       \ contained containedin=vimFoldTryContainer
       \ contains=TOP
-      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+ "comment to fix highlight on wiki'
+      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+
+      \     "comment to fix highlight on wiki'
 
 " Folding of functions and augroups is built-in since VIM 7.2 (it was introduced
 " with vim.vim version 7.1-76) if g:vimsyn_folding contains 'a' and 'f', so set
@@ -270,12 +288,14 @@ if v:version <= 701 && exists('g:vimsyn_folding')
   if s:vimsyn_folding =~# 'f'
     " fold functions
     syn region vimFoldFunction
-      \ start="\<fu\%[nction]!\=\s\+\%(<[sS][iI][dD]>\|[sSgGbBwWtTlL]:\)\?\%(\i\|[#.]\|{.\{-1,}}\)*\ze\s*("
+      \ start="\<fu\%[nction]!\=\s\+\%(<[sS][iI][dD]>\|
+      \[sSgGbBwWtTlL]:\)\?\%(\i\|[#.]\|{.\{-1,}}\)*\ze\s*("
       \ end="\<endfu\%[nction]\>"
       \ transparent fold
       \ keepend extend
       \ containedin=ALLBUT,@vimNoFold
-      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+ "comment to fix highlight on wiki'
+      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+
+      \     "comment to fix highlight on wiki'
   endif
 
 " fold augroups
@@ -286,7 +306,8 @@ if v:version <= 701 && exists('g:vimsyn_folding')
       \ transparent fold
       \ keepend extend
       \ containedin=ALLBUT,@vimNoFold
-      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+ "comment to fix highlight on wiki'
+      \ skip=+"\%(\\"\|[^"]\)\{-}\%("\|$\)\|'[^']\{-}'+
+      \     "comment to fix highlight on wiki'
   endif
   unlet s:vimsyn_folding
 endif
@@ -295,63 +316,27 @@ endif
 See also
 ========
 
--   <Folding> presents an overview of how to use folding
+- [Folding](http://vim.wikia.com/wiki/Folding) presents an overview of
+  how to use folding
 
 References
 ==========
 
--   tells how to add to a syntax file as done in this tip
-
--   -   -   used to match only when a string *doesn't* match
-
--   used to match parts of a string
-
--   used to "back up" on an if-else to allow else-endif to match
-
-Comments
-========
-
--   Fix problems mentioned in tip.
--   Rework so that fold groups contain top-level language constructs
-    instead of being contained within them. This approach would make
-    more sense conceptually, and could potentially be less dependent on
-    the specific names in the distributed syntax file. The current
-    @vimNoFold cluster is getting very long and probably still doesn't
-    cover everything. It is very difficult to maintain; I frequently
-    find new groups to add, especially when examining other syntax
-    files.
--   Explain excerpts from the script in the tip proper, with the full
-    script at the end as it is currently.
-
-* * * * *
-
-I've been thinking about the re-implementation. We certainly need a more
-robust design, but the method used here (contain in everything, use
-keepend and extend, add exceptions through trial and error) is probably
-the easiest, and sufficient for many purposes. I think we should still
-do the re-implementation, but may just include it as a patch to the
-distributed vim.vim on the vim scripts website, and note the link here.
-Thoughts?
-
-Also, this script is big enough that it should probably be linked to as
-a sub-page. Excerpts can be included in the tip to explain what is going
-on, but the giant script at the end is very unwieldy for a "tip" page.
-It is more of a script.
-
---[Fritzophrenic](User:Fritzophrenic "wikilink") 18:15, 26 August 2008
-(UTC)
-
-* * * * *
-
-Has anybody tried to make a patch to integrate this functionality into
-the official vim syntax script? It seems to me, that we would benefit
-more if these changes could be merged into the official syntax file. I
-am pretty sure, Charles would include them.
-[Chrisbra](User:Chrisbra "wikilink") 09:26, September 16, 2011 (UTC)
-
-* * * * *
-
-I'm currently unable to log in to wikia. Yes, I contacted Dr. Chip back
-in in December 2007 about these. He added functions and a couple other
-items but only said he'd "consider if/else folding". We might try again,
-I suppose. --Fritzophrenic
+- [`:help
+  mysyntaxfile-add`](http://vimdoc.sourceforge.net/cgi-bin/help?tag=mysyntaxfile-add)
+  tells how to add to a syntax file as done in this tip
+- [`:help
+  :syn-region`](http://vimdoc.sourceforge.net/cgi-bin/help?tag=%3Asyn-region)
+- [`:help
+  :syn-fold`](http://vimdoc.sourceforge.net/cgi-bin/help?tag=%3Asyn-fold)
+- [`:help
+  /\@!`](http://vimdoc.sourceforge.net/cgi-bin/help?tag=%2F%5C%40%21)
+  used to match only when a string doesn't match
+- [`:help
+  /\%`](http://vimdoc.sourceforge.net/cgi-bin/help?tag=%2F%5C%25%5B%5D)
+  used to match parts of a string
+- [`:help
+  :syn-pattern-offset`](http://vimdoc.sourceforge.net/cgi-bin/help?tag=%3Asyn-pattern-offset)
+  used to "back up" on an if-else to allow else-endif to match.
+  
+* * * *
