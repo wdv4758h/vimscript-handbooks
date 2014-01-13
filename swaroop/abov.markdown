@@ -56,7 +56,7 @@ becomes ‘good’.
 
 As Louis Brandeis once said:
 
-> “There is no great writing, only great rewriting.”
+> _There is no great writing, only great rewriting._
 
 Making these numerous rapid changes would be a lot easier if we had a
 capable editor to help us, and that is _exactly_ where Vim shines, and
@@ -1177,21 +1177,35 @@ We can do things a bit smarter in Vim. Move the cursor to the 5th line
 in the following text (the words by John Lennon). Use `ma` to create a
 mark named ‘a’. Move the cursor to wherever you want, for example `4j`.
 
-> _I am eagerly awaiting my next disappointment. —Ashleigh Brilliant_
+> _I am eagerly awaiting my next disappointment._
 >
-> _Every man’s memory is his private literature. —Aldous Huxley_
+> _— Ashleigh Brilliant_
 >
-> _Life is what happens to you while you’re busy making other plans.
-> —John Lennon_
 >
-> _Life is really simple, but we insist on making it complicated.
-> —Confucius_
+> _Every man’s memory is his private literature._
+>
+> _— Aldous Huxley__
+>
+>
+> _Life is what happens to you while you’re busy making other plans._
+>
+> _— John Lennon_
+>
+>
+> _Life is really simple, but we insist on making it complicated._
+>
+> _— Confucius_
 >
 > _Do not dwell in the past, do not dream of the future, concentrate the
-> mind on the present moment. —Buddha_
+> mind on the present moment._
+>
+> _— Buddha_
+>
 >
 > _The more decisions that you are forced to make alone, the more you are
-> aware of your freedom to choose. —Thornton Wilder_
+> aware of your freedom to choose._
+>
+> _— Thornton Wilder_
 
 Press `'a` (i.e., single quote followed by the name of the mark) and
 voila, Vim jumps (back) to the line where that mark was located.
@@ -1296,7 +1310,6 @@ Let us take some sample text from `:help abbreviate`:
             existed it is replaced with the new {rhs}.  {rhs} may
             contain spaces.
             See |:map-<expr>| for the optional  argument.
-
 
 Notice that there is a standard way of writing help in Vim to make it
 easy for us to figure out the parts that are needed for us instead of
@@ -1498,7 +1511,6 @@ Write this text in Vim (exactly as shown):
 
     This is the second paragraph.
 
-
 Place the cursor at the topmost leftmost position, by pressing `1G` and
 `|` that moves to the first line and the first column respectively.
 
@@ -1518,7 +1530,6 @@ One character   l (lower case L)
 at current
 cursor position
 ------------------------------------
-
 
 So, we have to just press `dl` and we delete one character! Notice that
 we can use `l` even though it is a motion.
