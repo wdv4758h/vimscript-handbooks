@@ -1184,7 +1184,7 @@ mark named ‘a’. Move the cursor to wherever you want, for example `4j`.
 >
 > _Every man’s memory is his private literature._
 >
-> _— Aldous Huxley__
+> _— Aldous Huxley_
 >
 >
 > _Life is what happens to you while you’re busy making other plans._
