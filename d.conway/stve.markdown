@@ -174,8 +174,8 @@ it does in most Web browsers), like so:
 
     :nmap <Space> <PageDown>
 
-You can see the complete list of these special symbols by typing `:help
-keycodes` within Vim.
+You can see the complete list of these special symbols in the [last
+part](#keycodes) of the manual or by typing `:help keycodes` within Vim.
 
 Note too that `ToggleSyntax()` was able to call the built-in `syntax`
 command directly. That's because every built-in colon command in Vim is
@@ -736,7 +736,8 @@ can start learning about them by typing:
 
     :help functions
     
-or, to access a (more useful) categorized listing:
+or, to access a (more useful) categorized listing, go to the [last
+part](#function-list) of the book or type:
 
     :help function-list
 
@@ -812,7 +813,7 @@ functionality in a maintainable way.
 
 ### Declaring functions ###
 
-Functions in Vimscript are defined using the function keyword, followed
+Functions in Vimscript are defined using the `function` keyword, followed
 by the name of the function, then the list of parameters (which is
 mandatory, even if the function takes no arguments).  The body of the
 function then starts on the next line, and continues until a matching
@@ -820,7 +821,7 @@ endfunction keyword is encountered. For example:
 
     Listing 1. A correctly structured function
     
-    functionExpurgateText (text)
+    function ExpurgateText (text)
         let expurgated_text = a:text
         
         for expletive in [ 'cagal', 'frak', 'gorram', 'mebs', 'zarking']
@@ -948,7 +949,7 @@ within the function by prefixing an a: to the parameter name:
 
     function PrintDetails(name, title, email)
         echo 'Name:     ' a:title a:name
-        echo 'Contact:  ` a:email
+        echo 'Contact:  ' a:email
     endfunction
 
 If you don't know how many arguments a function may be given, you can
@@ -964,11 +965,11 @@ arguments is available as a:0 . For example:
     function Average(...)
         let sum = 0.0
         
-        for nextval in a:000"a:000 is the list of arguments
+        for nextval in a:000  "a:000 is the list of arguments
             let sum += nextval
         endfor
         
-        return sum / a:0"a:0 is the number of arguments
+        return sum / a:0      "a:0 is the number of arguments
     endfunction
 
 Note that, in this example, `sum` must be initialized to an explicit
@@ -1095,8 +1096,8 @@ every line in the range:
     "Center every line from five above the current line to five below it...
     :-5,+5center
 
-You can type :help cmdline-ranges in any Vim session to learn more about
-this facility.
+You can type `:help cmdline-ranges` in any Vim session to learn more about
+this facility or go to the [last part](#command-line-ranges) of the book.
 
 In the case of the `call` command, specifying a range causes the
 requested function to be called repeatedly: once for each line in the
@@ -1155,7 +1156,8 @@ function declaration:
         for linenum in range(a:firstline, a:lastline)
             "Replace loose ampersands (as in DeAmperfy())...
             let curr_line   = getline(linenum)
-            let replacement = substitute(curr_line,'&\(\w\+;\)\@!','&amp;','g')
+            let replacement =
+            \   substitute(curr_line,'&\(\w\+;\)\@!','&amp;','g')
             call setline(linenum, replacement)
         endfor
 
@@ -1315,7 +1317,7 @@ Alternatively, you could redefine `ASSIGN_OP` to recognize other types
 of "alignables," such as comment introducers or column markers, and
 align them instead.
 
-The pattern in `ASSIGN_LINE`matches only at the start of a line (`^`),
+The pattern in `ASSIGN_LINE` matches only at the start of a line (`^`),
 matching a minimal number of characters (`.\{-}`), then any whitespace
 (`\s*`), then an assignment operator.
 
@@ -1507,7 +1509,7 @@ data at once: reformatting lists of text lines, accessing
 multidimensional tables of configuration data, filtering sequences of
 filenames, and sorting sets of line numbers.
 
-In this article, we’ll explore Vimscript’s excellent support for lists
+In this chapter, we’ll explore Vimscript’s excellent support for lists
 and the arrays that store them, as well as the language's many built-in
 functions that make using lists so easy, efficient, and maintainable.
 
@@ -1632,7 +1634,8 @@ return some property of it:
     " Size of list...
     let list_length = len(a_list)
     let list_is_empty = empty(a_list) " same as: len(a_list) == 0
-                                      " Numeric minima and maxima...
+    
+    " Numeric minima and maxima...
     let greatest_elem = max(list_of_numbers)
     let least_elem = min(list_of_numbers)
 
@@ -2552,7 +2555,7 @@ structure.
 A dictionary is a container data structure that offers different
 optimizations and trade-offs from a list. In particular, in a dictionary
 the order of the elements stored is irrelevant and the identity of each
-element is explicit. In this fourth part we introduce to dictionaries,
+element is explicit. In this fourth chapter we introduce to dictionaries,
 including an overview of their basic syntax and many functions.  We'll
 conclude with several examples that illustrate the use of dictionaries
 for more efficient data processing and cleaner code.
@@ -2697,7 +2700,8 @@ explicitly:
 There are two ways to remove a single entry from a dictionary: the
 built-in `remove()` function, or the `unlet` command:
 
-    let removed_value = remove(dict, "key")unlet dict["key"]
+    let removed_value = remove(dict, "key")
+    unlet dict["key"]
 
 When removing multiple entries from a dictionary, it is cleaner and more
 efficient to use `filter()`.  The `filter()` function works much the
@@ -3549,7 +3553,7 @@ external utility to do that for you.
 
 The simplest approach is to make use of the `'InsertLeave` event. This
 event is queued whenever you exit from `Insert` mode (most commonly,
-immediately after you hit *<ESC>*). You can easily set up a handler that
+immediately after you hit `<ESC>`). You can easily set up a handler that
 reformats your code every time you finish adding to it, like so:
 
     Listing 13. Invoking PerlTidy after every edit
@@ -3944,3 +3948,714 @@ which allows you to factor out parts of your .vimrc and isolate them in
 separate modules. We’ll look at how that plug-in system works by
 developing a standalone module that ameliorates some of the horrors of
 working with XML.
+
+
+Addictional contents
+====================
+
+Keycodes
+--------
+
+These names for keys are used in the documentation.  They can also be used
+with the ":map" command (insert the key name by pressing CTRL-K and then the
+key you want the name for).
+
+-------------------------------------------------------------------------------
+notation	        meaning		            equivalent	decimal value(s)	
+-----------         -----------------       ----------- -----------------------
+`<Nul>`		        zero			        CTRL-@	    0 (stored as 10) 
+
+`<BS>`		        backspace		        CTRL-H	    8	
+
+`<Tab>`		        tab			            CTRL-I	    9	
+
+`<NL>`		        linefeed		        CTRL-J	    10 (used for `<Nul>`)
+
+`<FF>`		        formfeed		        CTRL-L	    12
+
+`<CR>`		        carriage return	        CTRL-M	    13	
+
+`<Return>`	        same as `<CR>`	        			
+
+`<Enter>`		    same as `<CR>`	        			
+
+`<Esc>`		        escape			        CTRL-[	    27	
+
+`<Space>`		    space			        	        32
+
+`<lt>`		        less-than		        <	        60	
+
+`<Bslash>`	        backslash		        \	        92	
+
+`<Bar>`		        vertical bar	        	|	    124	
+
+`<Del>`		        delete			        	        127
+
+`<CSI>`		        command                 ALT-Esc     155	
+                    sequence intro
+
+`<xCSI>`		    CSI when typed
+                    in the GUI
+
+`<EOL>`		        end-of-line
+                    (can be `<CR>`,
+                    `<LF>` or
+                    `<CR>``<LF>`,
+                    depends on
+                    system and
+                    'fileformat')
+
+`<Up>`		        cursor-up
+
+`<Down>`		    cursor-down			
+
+`<Left>`		    cursor-left		
+
+`<Right>`		    cursor-right
+
+`<S-Up>`		    shift-cursor-up
+
+`<S-Down>`	        shift-cursor-down
+
+`<S-Left>`	        shift-cursor-left
+
+`<S-Right>`	        shift-cursor-right
+
+`<C-Left>`	        control-cursor-left
+
+`<C-Right>`	        control-cursor-right
+
+`<F1>`-`<F12>`	    function keys 1
+                    to 12
+
+`<S-F1>-<S-F12>`    shift-function keys
+                    1 to 12	
+
+`<Help>`		    help key
+
+`<Undo>`		    undo key
+
+`<Insert>`	        insert key
+
+`<Home>`		    home				       
+
+`<End>`		        end				           
+
+`<PageUp>`	        page-up				       
+
+`<PageDown>`	    page-down			       
+
+`<kHome>`		    keypad home
+                    (upper left)   
+
+`<kEnd>`		    keypad end
+                    (lower left)	   
+
+`<kPageUp>`	        keypad page-up
+                    (upper right)	
+
+`<kPageDown>`	    keypad page-down
+                    (lower right)	
+
+`<kPlus>`		    keypad +			
+
+`<kMinus>`	        keypad -			
+
+`<kMultiply>`	    keypad *			
+
+`<kDivide>`	        keypad /			
+
+`<kEnter>`	        keypad Enter		
+
+`<kPoint>`	        keypad Decimal point
+
+`<k0>` - `<k9>`	    keypad 0 to 9		
+
+`<S-...>`		    shift-key			
+
+`<C-...>`		    control-key			
+
+`<M-...>`		    alt-key or meta-key	
+
+`<A-...>`		    same as `<M-...>`		
+
+`<D-...>`		    command-key
+                    (Macintosh only)
+`<t_xx>`		    key with "xx"
+                    entry in termcap
+-------------------------------------------------------------------------------
+
+> Note:
+>
+> The shifted cursor keys, the help key, and the undo key are only
+> available on a few terminals.  On the Amiga, shifted function key 10
+> produces a code (CSI) that is also used by key sequences.  It will be
+> recognized only after typing another key.
+
+> Note:
+>
+> There are two codes for the delete key.  127 is the decimal ASCII
+> value for the delete key, which is always recognized.  Some delete
+> keys send another value, in which case this value is obtained from the
+> termcap entry "kD".  Both values have the same effect.  Also see
+> |:fixdel|.
+
+> Note:
+>
+> The keypad keys are used in the same way as the corresponding "normal"
+> keys.  For example, `<kHome>` has the same effect as `<Home>`.  If a
+> keypad key sends the same raw key code as its non-keypad equivalent,
+> it will be recognized as the non-keypad code.  For example, when
+> `<kHome>` sends the same code as `<Home>`, when pressing `<kHome>` Vim
+> will think `<Home>` was pressed.  Mapping `<kHome>` will not work
+> then.
+
+
+Function-list
+-------------
+
+There are many functions.  We will mention them here, grouped by what they are
+used for. 
+
+String manipulation:
+
+----------------    ----------------------------------------------------
+nr2char()		    get a character by its ASCII value
+char2nr()		    get ASCII value of a character
+str2nr()		    convert a string to a Number
+str2float()		    convert a string to a Float
+printf()		    format a string according to % items
+escape()		    escape characters in a string with a '\'
+shellescape()	    escape a string for use with a shell command
+fnameescape()	    escape a file name for use with a Vim command
+tr()			    translate characters from one set to another
+strtrans()		    translate a string to make it printable
+tolower()		    turn a string to lowercase
+toupper()		    turn a string to uppercase
+match()			    position where a pattern matches in a string
+matchend()		    position where a pattern match ends in a string
+matchstr()		    match of a pattern in a string
+matchlist()		    like matchstr() and also return submatches
+stridx()		    first index of a short string in a long string
+strridx()		    last index of a short string in a long string
+strlen()		    length of a string
+substitute()	    substitute a pattern match with a string
+submatch()		    get a specific match in ":s" and substitute()
+strpart()		    get part of a string
+expand()		    expand special keywords
+iconv()			    convert text from one encoding to another
+byteidx()		    byte index of a character in a string
+repeat()		    repeat a string multiple times
+eval()			    evaluate a string expression
+------------------------------------------------------------------------
+
+List manipulation:
+
+-----------     --------------------------------------------------------
+get()			get an item without error for wrong index
+len()			number of items in a List
+empty()			check if List is empty
+insert()		insert an item somewhere in a List
+add()			append an item to a List
+extend()		append a List to a List
+remove()		remove one or more items from a List
+copy()			make a shallow copy of a List
+deepcopy()		make a full copy of a List
+filter()		remove selected items from a List
+map()			change each List item
+sort()			sort a List
+reverse()		reverse the order of a List
+split()			split a String into a List
+join()			join List items into a String
+range()			return a List with a sequence of numbers
+string()		String representation of a List
+call()			call a function with List as arguments
+index()			index of a value in a List
+max()			maximum value in a List
+min()			minimum value in a List
+count()			count number of times a value appears in a List
+repeat()		repeat a List multiple times
+-----------------------------------------------------------------------
+
+Dictionary manipulation:
+
+------------    -------------------------------------------------------
+get()			get an entry without an error for a wrong key
+len()			number of entries in a Dictionary
+has_key()		check whether a key appears in a Dictionary
+empty()			check if Dictionary is empty
+remove()		remove an entry from a Dictionary
+extend()		add entries from one Dictionary to another
+filter()		remove selected entries from a Dictionary
+map()			change each Dictionary entry
+keys()			get List of Dictionary keys
+values()		get List of Dictionary values
+items()			get List of Dictionary key-value pairs
+copy()			make a shallow copy of a Dictionary
+deepcopy()		make a full copy of a Dictionary
+string()		String representation of a Dictionary
+max()			maximum value in a Dictionary
+min()			minimum value in a Dictionary
+count()			count number of times a value appears
+-----------------------------------------------------------------------
+
+Floating point computation:
+
+------------    -------------------------------------------------------
+float2nr()		convert Float to Number
+abs()			absolute value (also works for Number)
+round()			round off
+ceil()			round up
+floor()			round down
+trunc()			remove value after decimal point
+log10()			logarithm to base 10
+pow()			value of x to the exponent y
+sqrt()			square root
+sin()			sine
+cos()			cosine
+tan()			tangent
+asin()			arc sine
+acos()			arc cosine
+atan()			arc tangent
+atan2()			arc tangent
+sinh()			hyperbolic sine
+cosh()			hyperbolic cosine
+tanh()			hyperbolic tangent
+-----------------------------------------------------------------------
+
+Other computation:
+
+----------      -------------------------------------------------------
+and()			bitwise AND
+invert()		bitwise invert
+or()			bitwise OR
+xor()			bitwise XOR
+-----------------------------------------------------------------------
+
+Variables:
+
+-------------       ---------------------------------------------------
+type()			    type of a variable
+islocked()		    check if a variable is locked
+function()		    get a Funcref for a function name
+getbufvar()		    get a variable value from a specific buffer
+setbufvar()		    set a variable in a specific buffer
+getwinvar()		    get a variable from specific window
+gettabvar()		    get a variable from specific tab page
+gettabwinvar()	    get a variable from specific window & tab page
+setwinvar()		    set a variable in a specific window
+settabvar()		    set a variable in a specific tab page
+settabwinvar()	    set a variable in a specific window & tab page
+garbagecollect()    possibly free memory
+-----------------------------------------------------------------------
+
+Cursor and mark position:
+
+--------------  -------------------------------------------------------
+col()			column number of the cursor or a mark
+virtcol()		screen column of the cursor or a mark
+line()			line number of the cursor or mark
+wincol()		window column number of the cursor
+winline()		window line number of the cursor
+cursor()		position the cursor at a line/column
+getpos()		get position of cursor, mark, etc.
+setpos()		set position of cursor, mark, etc.
+byte2line()		get line number at a specific byte count
+line2byte()		byte count at a specific line
+diff_filler()	get the number of filler lines above a line
+-----------------------------------------------------------------------
+
+Working with text in the current buffer:
+
+----------------    ---------------------------------------------------
+getline()		    get a line or list of lines from the buffer
+setline()		    replace a line in the buffer
+append()		    append line or list of lines in the buffer
+indent()		    indent of a specific line
+cindent()		    indent according to C indenting
+lispindent()	    indent according to Lisp indenting
+nextnonblank()	    find next non-blank line
+prevnonblank()	    find previous non-blank line
+search()		    find a match for a pattern
+searchpos()		    find a match for a pattern
+searchpair()	    find the other end of a start/skip/end
+searchpairpos()	    find the other end of a start/skip/end
+searchdecl()	    search for the declaration of a name
+-----------------------------------------------------------------------
+
+System functions and manipulation of files:
+
+-----------------   ---------------------------------------------------
+glob()			    expand wildcards
+globpath()		    expand wildcards in a number of directories
+findfile()		    find a file in a list of directories
+finddir()		    find a directory in a list of directories
+resolve()		    find out where a shortcut points to
+fnamemodify()	    modify a file name
+pathshorten()	    shorten directory names in a path
+simplify()		    simplify a path without changing its meaning
+executable()	    check if an executable program exists
+filereadable()	    check if a file can be read
+filewritable()	    check if a file can be written to
+getfperm()		    get the permissions of a file
+getftype()		    get the kind of a file
+isdirectory()	    check if a directory exists
+getfsize()		    get the size of a file
+getcwd()		    get the current working directory
+haslocaldir()	    check if current window used |:lcd|
+tempname()		    get the name of a temporary file
+mkdir()			    create a new directory
+delete()		    delete a file
+rename()		    rename a file
+system()		    get the result of a shell command
+hostname()		    name of the system
+readfile()		    read a file into a List of lines
+writefile()		    write a List of lines into a file
+-----------------------------------------------------------------------
+
+Date and Time:
+
+--------------  -------------------------------------------------------
+getftime()		get last modification time of a file
+localtime()		get current time in seconds
+strftime()		convert time to a string
+reltime()		get the current or elapsed time accurately
+reltimestr()	convert reltime() result to a string
+-----------------------------------------------------------------------
+
+Buffers, windows and the argument list:
+
+-----------------   ---------------------------------------------------
+argc()			    number of entries in the argument list
+argidx()		    current position in the argument list
+argv()			    get one entry from the argument list
+bufexists()		    check if a buffer exists
+buflisted()		    check if a buffer exists and is listed
+bufloaded()		    check if a buffer exists and is loaded
+bufname()		    get the name of a specific buffer
+bufnr()			    get the buffer number of a specific buffer
+tabpagebuflist()    return List of buffers in a tab page
+tabpagenr()		    get the number of a tab page
+tabpagewinnr()	    like winnr() for a specified tab page
+winnr()			    get the window number for the current window
+bufwinnr()		    get the window number of a specific buffer
+winbufnr()		    get the buffer number of a specific window
+getbufline()	    get a list of lines from the specified buffer
+-----------------------------------------------------------------------
+
+Command line:
+
+--------------  -------------------------------------------------------
+getcmdline()	get the current command line
+getcmdpos()		get position of the cursor in the command line
+setcmdpos()		set position of the cursor in the command line
+getcmdtype()	return the current command-line type
+-----------------------------------------------------------------------
+
+Quickfix and location lists:
+
+-------------   -------------------------------------------------------
+getqflist()		list of quickfix errors
+setqflist()		modify a quickfix list
+getloclist()	list of location list items
+setloclist()	modify a location list
+-----------------------------------------------------------------------
+
+Insert mode completion:
+
+-----------------   ---------------------------------------------------
+complete()		    set found matches
+complete_add()		add to found matches
+complete_check()	check if completion should be aborted
+pumvisible()		check if the popup menu is displayed
+-----------------------------------------------------------------------
+
+Folding:
+
+------------------  ---------------------------------------------------
+foldclosed()		check for a closed fold at a specific line
+foldclosedend()		like foldclosed() but return the last line
+foldlevel()		    check for the fold level at a specific line
+foldtext()		    generate the line displayed for a closed fold
+foldtextresult()	get the text displayed for a closed fold
+-----------------------------------------------------------------------
+
+Syntax and highlighting:
+
+------------------  ---------------------------------------------------
+clearmatches()		clear all matches defined by matchadd() and
+			        the :match commands
+
+getmatches()		get all matches defined by matchadd() and
+			        the :match commands
+                    
+hlexists()		    check if a highlight group exists
+
+hlID()			    get ID of a highlight group
+
+synID()			    get syntax ID at a specific position
+
+synIDattr()		    get a specific attribute of a syntax ID
+
+synIDtrans()	    get translated syntax ID
+
+synstack()		    get list of syntax IDs at a specific position
+
+synconcealed()	    get info about concealing
+
+diff_hlID()		    get highlight ID for diff mode at a position
+
+matchadd()		    define a pattern to highlight (a "match")
+
+matcharg()		    get info about :match arguments
+
+matchdelete()	    delete a match defined by matchadd() or a
+			        :match command
+
+setmatches()		restore a list of matches saved by
+			        getmatches()
+-----------------------------------------------------------------------
+
+Spelling:
+
+--------------  -------------------------------------------------------
+spellbadword()	locate badly spelled word at or after cursor
+spellsuggest()	return suggested spelling corrections
+soundfold()		return the sound-a-like equivalent of a word
+-----------------------------------------------------------------------
+
+History:
+
+------------    -------------------------------------------------------
+histadd()		add an item to a history
+histdel()		delete an item from a history
+histget()		get an item from a history
+histnr()		get highest index of a history list
+-----------------------------------------------------------------------
+
+Interactive:
+
+--------------  -------------------------------------------------------
+browse()		put up a file requester
+browsedir()		put up a directory requester
+confirm()		let the user make a choice
+getchar()		get a character from the user
+getcharmod()	get modifiers for the last typed character
+feedkeys()		put characters in the typeahead queue
+input()			get a line from the user
+inputlist()		let the user pick an entry from a list
+inputsecret()	get a line from the user without showing it
+inputdialog()	get a line from the user in a dialog
+inputsave()		save and clear typeahead
+inputrestore()	restore typeahead
+-----------------------------------------------------------------------
+
+GUI:
+
+------------------  ---------------------------------------------------
+getfontname()		get name of current font being used
+getwinposx()		X position of the GUI Vim window
+getwinposy()		Y position of the GUI Vim window
+-----------------------------------------------------------------------
+
+Vim server:
+
+------------------- ---------------------------------------------------
+serverlist()		return the list of server names
+remote_send()		send command characters to a Vim server
+remote_expr()		evaluate an expression in a Vim server
+server2client()		send a reply to a client of a Vim server
+remote_peek()		check if there is a reply from a Vim server
+remote_read()		read a reply from a Vim server
+foreground()		move the Vim window to the foreground
+remote_foreground()	move the Vim server window to the foreground
+-----------------------------------------------------------------------
+
+Window size and position:
+
+--------------  -------------------------------------------------------
+winheight()		get height of a specific window
+winwidth()		get width of a specific window
+winrestcmd()	return command to restore window sizes
+winsaveview()	get view of current window
+winrestview()	restore saved view of current window
+-----------------------------------------------------------------------
+
+Mappings:
+
+--------------  -------------------------------------------------------
+hasmapto()		check if a mapping exists
+mapcheck()		check if a matching mapping exists
+maparg()		get rhs of a mapping
+wildmenumode()	check if the wildmode is active
+-----------------------------------------------------------------------
+
+Various:
+
+------------------- ---------------------------------------------------
+mode()			    get current editing mode
+visualmode()	    last visual mode used
+exists()		    check if a variable, function, etc. exists
+has()			    check if a feature is supported in Vim
+changenr()		    return number of most recent change
+cscope_connection()	check if a cscope connection exists
+did_filetype()		check if a FileType autocommand was used
+eventhandler()		check if invoked by an event handler
+getpid()		    get process ID of Vim
+libcall()		    call a function in an external library
+libcallnr()		    idem, returning a number
+getreg()		    get contents of a register
+getregtype()	    get type of a register
+setreg()		    set contents and type of a register
+taglist()		    get list of matching tags
+tagfiles()		    get a list of tags files
+mzeval()		    evaluate MzScheme expression
+-----------------------------------------------------------------------
+
+
+Command-line ranges
+-------------------
+
+Some Ex commands accept a line range in front of them.  This is noted as
+`[range]`.  It consists of one or more line specifiers, separated with
+`','` or `';'`.
+
+The basics are explained in section `10.3` of the user manual.
+
+When separated with `';'` the cursor position will be set to that line
+before interpreting the next line specifier.  This doesn't happen for
+`','`.
+
+Examples:
+
+    4,/this line/
+    " from line 4 till match with "this line" after the cursor line.
+    
+    5;/that line/
+    " from line 5 till match with "that line" after line 5.
+
+The default line specifier for most commands is the cursor position, but
+the commands `":write"` and `":global"` have the whole file (`1,$`) as
+default.
+
+If more line specifiers are given than required for the command, the
+first one(s) will be ignored.
+
+Line numbers may be specified with:
+
+--------------  -------------------------------------------------------
+`{number}`      an absolute line number
+
+`.`		        the current line
+
+`$`		        the last line in the file
+
+`%`		        equal to 1,$ (the entire file)
+
+`'t`		    position of mark t (lowercase)
+
+`'T`	        position of mark T (uppercase); when the mark is in
+		        another file it cannot be used in a range
+
+`/{pattern}[/]` the next line where {pattern} matches
+
+`?{pattern}[?]` the previous line where {pattern} matches
+
+`\/`		    the next line where the previously used search
+		        pattern matches
+
+`\?`	        the previous line where the previously used search
+		        pattern matches
+
+`\&`	        the next line where the previously used substitute
+		        pattern matches
+----------------------------------------------------------------------
+
+Each may be followed (several times) by `'+'` or `'-'` and an optional
+number.  This number is added or subtracted from the preceding line
+number.  If the number is omitted, 1 is used.
+
+The `"/"` and `"?"` after {pattern} are required to separate the pattern
+from anything that follows.
+
+The `"/"` and `"?"` may be preceded with another address.  The search
+starts from there.  The difference from using `';'` is that the cursor
+isn't moved.
+
+Examples:
+
+	/pat1//pat2/    " Find line containing "pat2" after line containing
+                    " pat1", without moving the cursor.
+	7;/pat2/	    " Find line containing "pat2", after line 7, leaving
+			        " the cursor in line 7.
+
+The `{number}` must be between 0 and the number of lines in the file.
+When using a 0 (zero) this is interpreted as a 1 by most commands.
+Commands that use it as a count do use it as a zero (`:tag`, `:pop`,
+etc).  Some commands interpret the zero as "before the first line"
+(`:read`, search pattern, etc).
+
+Examples:
+
+	.+3         " three lines below the cursor
+	/that/+1	" the line below the next line containing "that"
+	.,$		    " from current line until end of file
+	0;/that		" the first line containing "that", also matches in the
+			    " first line.
+	1;/that		" the first line after line 1 containing "that"
+
+Some commands allow for a count after the command.  This count is used
+as the number of lines to be used, starting with the line given in the
+last line specifier (the default is the cursor line).  The commands that
+accept a count are the ones that use a range but do not have a file name
+argument (because a file name can also be a number).
+
+Examples:
+
+	:s/x/X/g 5  " substitute 'x' by 'X' in the current line and four
+			    " following lines
+	:23d 4		" delete lines 23, 24, 25 and 26
+
+
+### Folds and Range
+
+When folds are active the line numbers are rounded off to include the
+whole closed fold.  See `fold-behavior`.
+
+
+### Reverse Range
+
+A range should have the lower line number first.  If this is not the
+case, Vim will ask you if it should swap the line numbers.
+
+    Backwards range given, OK to swap ~
+
+This is not done within the global command `":g"`.
+
+You can use `":silent"` before a command to avoid the question, the
+range will always be swapped then.
+
+
+### Count and Range
+
+When giving a count before entering `":"`, this is translated into:
+
+        :.,.+(count - 1)
+
+In words: The `'count'` lines at and after the cursor.
+
+Example: To delete three lines:
+
+        3:d<CR>		is translated into: .,.+2d<CR>
+
+
+### Visual Mode and Range
+
+`{Visual}`: Starts a command-line with the Visual selected lines as a
+range.  The code `:'<,'>` is used for this range, which makes it
+possible to select a similar line from the command-line history for
+repeating a command on different Visually selected lines.
+
+When Visual mode was already ended, a short way to use the Visual area
+for a range is `:*`.  This requires that `"*"` does not appear in
+`'cpo'`, see `cpo-star`. Otherwise you will have to type `:'<,'>`
