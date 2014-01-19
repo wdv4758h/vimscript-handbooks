@@ -514,7 +514,7 @@ Let us see how to open, write and close a file.
 2. Type `:edit hello.txt` and press the enter key.
 3. Press `i`.
 4. Type the text `Hello World`.
-5. Press the `` key.
+5. Press the `<Esc>` key.
 6. Type `:write` and press the enter key.
 7. Close Vim by running `:q`.
 
@@ -1240,7 +1240,7 @@ second paragraph. Hint: Use `}`, `j`, `w`.
 
 Press `v` to start the visual mode, and press `ap` to select ‘a’
 ‘p’aragraph. Press `~` to flip the case of the text. If you want to
-cancel the selection, simply press ``.
+cancel the selection, simply press `<Esc>`.
 
 > _Dapping means being determined about being determined and being
 > passionate about being passionate._
@@ -1635,7 +1635,7 @@ You can create a mark by pressing `m` followed by the name of the mark
 which is a single character from `a-zA-Z`. For example, pressing `ma`
 creates the mark called ‘a’.
 
-Pressing `'a` returns the cursor to line of the mark.  Pressing ``a`
+Pressing `'a` returns the cursor to line of the mark.  Pressing ````a`
 will take you to the exact line and column of the mark.
 
 The best part is that you can jump to this position using these marks
@@ -1793,8 +1793,8 @@ just the exact text to look.
 For example, you will notice that `/step` will take you to `steps` as
 well as `step` and even `footstep` if such a word is present. What if
 you wanted to look for the exact word `step` and not when it is part of
-any other word? Then you can search using `/`. The `` indicate the start
-and end positions of a “word” respectively.
+any other word? Then you can search using `/`. The `\<\>` indicate the
+start and end positions of a “word” respectively.
 
 Similarly, what if you wanted to search for any number? Searching for
 `/d` will look for a ‘digit’. But a number is just a group of digits
@@ -2646,7 +2646,7 @@ A better way would be to use macros.
 8. Type `w` to move to the next word.
 9. Type `cw` to change the word.
 10. Type `a`.
-11. Press ``.
+11. Press `<Esc>`.
 12. Type `A` to insert text at the end of the line.
 13. Type `in Akbar's court.`
 14. Press `<Esc>`.
@@ -2690,7 +2690,7 @@ How do you change the theme, i.e., colors used by Vim? Just run:
 
 Here, I am using the ‘desert’ color scheme, which happens to be my
 favorite. You can view the other schemes available by typing
-`:colorscheme ` and then pressing `` key to cycle through the available
+`:colorscheme` and then pressing `` key to cycle through the available
 schemes.
 
 What if you wanted to know how many characters are in the current line?
