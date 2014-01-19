@@ -782,264 +782,339 @@ an overview.
     `"a*"` matches the `"aaa"` (as many `"a"`s as possible), thus the
     `"ab"` can't match.
 
-<!--
-==============================================================================
-6.  Ordinary atoms                    *pattern-atoms*
+
+### 6.  Ordinary atoms
 
 An ordinary atom can be:
 
-                            */^*
-^    At beginning of pattern or after "\|", "\(", "\%(" or "\n": matches
-    start-of-line; at other positions, matches literal '^'. 
-    Example        matches ~
-    ^beep(        the start of the C function "beep" (probably).
+`^`
+:   At beginning of pattern or after `"\|"`, `"\("`, `"\%("` or `"\n"`:
+    matches start-of-line; at other positions, matches literal `'^'`.
+    
+        Example       matches
+        ^beep(        the start of the C function `"beep"` (probably).
 
-                            */\^*
-\^    Matches literal '^'.  Can be used at any position in the pattern.
+`\^`
+:   Matches literal `'^'`, Can be used at any position in the pattern.
 
-                            */\_^*
-\_^    Matches start-of-line.   Can be used at any position in
+`\_^`
+:   Matches start-of-line.   Can be used at any position in
     the pattern.
-    Example        matches ~
-    \_s*\_^foo    white space and blank lines and then "foo" at
-            start-of-line
+    
+        Example       matches
+        \_s*\_^foo    white space and blank lines and then `"foo"` at
+                      start-of-line
 
-                            */$*
-$    At end of pattern or in front of "\|", "\)" or "\n" ('magic' on):
-    matches end-of-line <EOL>; at other positions, matches literal '$'.
+`$`
+:   At end of pattern or in front of `"\|"`, `"\)"` or `"\n"` ('magic' on):
+    matches end-of-line `<EOL>`; at other positions, matches literal '$'.
+
+`\$`
+:   Matches literal '$'.  Can be used at any position in the pattern.
+
+`\_$`
+:   Matches end-of-line.   Can be used at any position in the
+    pattern.  Note that `"a\_$b"` never matches, since `"b"` cannot
+    match an end-of-line.  Use `"a\nb"` instead.
+    
+        Example        matches
+        foo\_$\_s*     `"foo"` at end-of-line and following white 
+                       space and blank lines
+
+`.`
+:   (with 'nomagic': `\.`). Matches any single character, but not an
+    end-of-line.
+
+`\_.`
+:   Matches any single character or end-of-line.
+    Careful: `"\_.*"` matches all text to the end of the buffer!
+
+`\<`
+:   Matches the beginning of a word: The next char is the first char
+    of a word. The 'iskeyword' option specifies what is a word
+    character.
     
 
-                            */\$*
-\$    Matches literal '$'.  Can be used at any position in the pattern.
-
-                            */\_$*
-\_$    Matches end-of-line.   Can be used at any position in the
-    pattern.  Note that "a\_$b" never matches, since "b" cannot match an
-    end-of-line.  Use "a\nb" instead `/\n`.
-    Example        matches ~
-    foo\_$\_s*    "foo" at end-of-line and following white space and
-            blank lines
-
-.    (with 'nomagic': \.)                */.* */\.*
-    Matches any single character, but not an end-of-line.
-
-                            */\_.*
-\_.    Matches any single character or end-of-line.
-    Careful: "\_.*" matches all text to the end of the buffer!
-
-                            */\<*
-\<    Matches the beginning of a word: The next char is the first char of a
+`\>`
+:   Matches the end of a word: The previous char is the last char of a
     word.  The 'iskeyword' option specifies what is a word character.
     
 
-                            */\>*
-\>    Matches the end of a word: The previous char is the last char of a
-    word.  The 'iskeyword' option specifies what is a word character.
-    
-
-                            */\zs*
-\zs    Matches at any position, and sets the start of the match there: The
+`\zs`
+:   Matches at any position, and sets the start of the match there: The
     next char is the first char of the whole match. 
-    Example: >
+    
+    Example:
+    
         /^\s*\zsif
-<    matches an "if" at the start of a line, ignoring white space.
+    
+    matches an `"if"` at the start of a line, ignoring white space.
     Can be used multiple times, the last one encountered in a matching
-    branch is used.  Example: >
+    branch is used.  Example:
+
         /\(.\{-}\zsFab\)\{3}
-<    Finds the third occurrence of "Fab".
-    {not in Vi} {not available when compiled without the `+syntax` feature}
-                            */\ze*
-\ze    Matches at any position, and sets the end of the match there: The
+    
+    Finds the third occurrence of `"Fab"`.
+    {not in Vi}. {not available when compiled without the `+syntax`
+    feature}.
+
+`\ze`
+:   Matches at any position, and sets the end of the match there: The
     previous char is the last char of the whole match. 
     Can be used multiple times, the last one encountered in a matching
     branch is used.
-    Example: "end\ze\(if\|for\)" matches the "end" in "endif" and
-    "endfor".
-    {not in Vi} {not available when compiled without the `+syntax` feature}
+    
+    Example:
+    
+        end\ze\(if\|for\)
+        
+    matches the `"end"` in `"endif"` and `"endfor"`.
+    {not in Vi}. {not available when compiled without the `+syntax`
+    feature}.
 
-                        */\%^* *start-of-file*
-\%^    Matches start of the file.  When matching with a string, matches the
-    start of the string. {not in Vi}
-    For example, to find the first "VIM" in a file: >
+`\%^`
+:   Matches start of the file.  When matching with a string, matches the
+    start of the string. {not in Vi}.
+    For example, to find the first `"VIM"` in a file:
+
         /\%^\_.\{-}\zsVIM
-<
-                        */\%$* *end-of-file*
-\%$    Matches end of the file.  When matching with a string, matches the
-    end of the string. {not in Vi}
-    Note that this does NOT find the last "VIM" in a file: >
+
+`\%$`
+:   Matches end of the file.  When matching with a string, matches the
+    end of the string. {not in Vi}.
+    Note that this does NOT find the last `"VIM"` in a file:
+
         /VIM\_.\{-}\%$
-<    It will find the next VIM, because the part after it will always
-    match.  This one will find the last "VIM" in the file: >
+    
+    It will find the next VIM, because the part after it will always
+    match.  This one will find the last `"VIM"` in the file:
+
         /VIM\ze\(\(VIM\)\@!\_.\)*\%$
-<    This uses `/\@!` to ascertain that "VIM" does NOT match in any
-    position after the first "VIM".
+
+    This uses `/\@!` to ascertain that `"VIM"` does NOT match in any
+    position after the first `"VIM"`.
     Searching from the end of the file backwards is easier!
 
-                        */\%V*
-\%V    Match inside the Visual area.  When Visual mode has already been
+`\%V`
+:   Match inside the Visual area.  When Visual mode has already been
     stopped match in the area that `gv` would reselect.
     This is a  match.  To make sure the whole pattern is
     inside the Visual area put it at the start and end of the pattern,
-    e.g.: >
+    e.g.:
+
         /\%Vfoo.*bar\%V
-<    Only works for the current buffer.
 
-                        */\%#* *cursor-position*
-\%#    Matches with the cursor position.  Only works when matching in a
-    buffer displayed in a window. {not in Vi}
-    WARNING: When the cursor is moved after the pattern was used, the
-    result becomes invalid.  Vim doesn't automatically update the matches.
-    This is especially relevant for syntax highlighting and 'hlsearch'.
-    In other words: When the cursor moves the display isn't updated for
-    this change.  An update is done for lines which are changed (the whole
-    line is updated) or when using the `CTRL-L` command (the whole screen
-    is updated).  Example, to highlight the word under the cursor: >
+    Only works for the current buffer.
+
+`\%#`
+:   Matches with the cursor position.  Only works when matching in a
+    buffer displayed in a window. {not in Vi}.  *WARNING*: When the
+    cursor is moved after the pattern was used, the result becomes
+    invalid.  Vim doesn't automatically update the matches.  This is
+    especially relevant for syntax highlighting and 'hlsearch'.  In
+    other words: When the cursor moves the display isn't updated for
+    this change.  An update is done for lines which are changed (the
+    whole line is updated) or when using the `CTRL-L` command (the whole
+    screen is updated).  Example, to highlight the word under the
+    cursor:
+
         /\k*\%#\k*
-<    When 'hlsearch' is set and you move the cursor around and make changes
-    this will clearly show when the match is updated or not.
 
-                        */\%'m* */\%<'m* */\%>'m*
-\%'m    Matches with the position of mark m.
-\%<'m    Matches before the position of mark m.
-\%>'m    Matches after the position of mark m.
-    Example, to highlight the text from mark 's to 'e: >
+    When 'hlsearch' is set and you move the cursor around and make
+    changes this will clearly show when the match is updated or not.
+
+`\%'m`
+:   Matches with the position of mark m.
+
+`\%<'m`
+:   Matches before the position of mark m.
+
+`\%>'m`
+:   Matches after the position of mark m.
+
+    Example, to highlight the text from mark 's to 'e:
+
         /.\%>'s.*\%<'e..
-<    Note that two dots are required to include mark 'e in the match.  That
-    is because "\%<'e" matches at the character before the 'e mark, and
-    since it's a  match it doesn't include that character.
-    {not in Vi}
-    WARNING: When the mark is moved after the pattern was used, the result
-    becomes invalid.  Vim doesn't automatically update the matches.
-    Similar to moving the cursor for "\%#" `/\%#`.
+    
+    Note that two dots are required to include mark 'e in the match.
+    That is because `"\%<'e"` matches at the character before the 'e
+    mark, and since it's a  match it doesn't include that character.
+    {not in Vi}.  *WARNING*: When the mark is moved after the pattern
+    was used, the result becomes invalid.  Vim doesn't automatically
+    update the matches.  Similar to moving the cursor for `"\%#"`
+    `/\%#`.
 
-                        */\%l* */\%>l* */\%<l*
-\%23l    Matches in a specific line.
-\%<23l    Matches above a specific line (lower line number).
-\%>23l    Matches below a specific line (higher line number).
-    These three can be used to match specific lines in a buffer.  The "23"
-    can be any line number.  The first line is 1. {not in Vi}
-    WARNING: When inserting or deleting lines Vim does not automatically
-    update the matches.  This means Syntax highlighting quickly becomes
-    wrong.
-    Example, to highlight the line where the cursor currently is: >
-        :exe '/\%' . line(".") . 'l.*'
-<    When 'hlsearch' is set and you move the cursor around and make changes
-    this will clearly show when the match is updated or not.
+`\%23l`
+:   Matches in a specific line.
 
-                        */\%c* */\%>c* */\%<c*
-\%23c    Matches in a specific column.
-\%<23c    Matches before a specific column.
-\%>23c    Matches after a specific column.
+`\%<23l`
+:   Matches above a specific line (lower line number).
+
+`\%>23l`
+:   Matches below a specific line (higher line number).
+    These three can be used to match specific lines in a buffer.  The
+    `"23"` can be any line number.  The first line is 1. {not in Vi}.
+    *WARNING*: When inserting or deleting lines Vim does not
+    automatically update the matches.  This means Syntax highlighting
+    quickly becomes wrong.  Example, to highlight the line where the
+    cursor currently is:
+
+        :exe '/\%' . line(`"."`) . 'l.*'
+    
+    When 'hlsearch' is set and you move the cursor around and make
+    changes this will clearly show when the match is updated or not.
+
+`\%23c`
+:   Matches in a specific column.
+
+`\%<23c`
+:   Matches before a specific column.
+
+`\%>23c`
+:   Matches after a specific column.
     These three can be used to match specific columns in a buffer or
-    string.  The "23" can be any column number.  The first column is 1.
-    Actually, the column is the byte number (thus it's not exactly right
-    for multi-byte characters).  {not in Vi}
-    WARNING: When inserting or deleting text Vim does not automatically
-    update the matches.  This means Syntax highlighting quickly becomes
-    wrong.
-    Example, to highlight the column where the cursor currently is: >
-        :exe '/\%' . col(".") . 'c'
-<    When 'hlsearch' is set and you move the cursor around and make changes
-    this will clearly show when the match is updated or not.
-    Example for matching a single byte in column 44: >
+    string.  The `"23"` can be any column number.  The first column is
+    1. Actually, the column is the byte number (thus it's not exactly
+    right for multi-byte characters).  {not in Vi}.  *WARNING*: When
+    inserting or deleting text Vim does not automatically update the
+    matches.  This means Syntax highlighting quickly becomes wrong.
+
+    Example, to highlight the column where the cursor currently is:
+
+        :exe '/\%' . col(`"."`) . 'c'
+    
+    When 'hlsearch' is set and you move the cursor around and make
+    changes this will clearly show when the match is updated or not.
+    
+    Example for matching a single byte in column 44:
+
         /\%>43c.\%<46c
-<    Note that "\%<46c" matches in column 45 when the "." matches a byte in
-    column 44.
-                        */\%v* */\%>v* */\%<v*
-\%23v    Matches in a specific virtual column.
-\%<23v    Matches before a specific virtual column.
-\%>23v    Matches after a specific virtual column.
-    These three can be used to match specific virtual columns in a buffer
-    or string.  When not matching with a buffer in a window, the option
-    values of the current window are used (e.g., 'tabstop').
-    The "23" can be any column number.  The first column is 1.
-    Note that some virtual column positions will never match, because they
-    are halfway through a tab or other character that occupies more than
-    one screen character.  {not in Vi}
-    WARNING: When inserting or deleting text Vim does not automatically
-    update highlighted matches.  This means Syntax highlighting quickly
-    becomes wrong.
-    Example, to highlight all the characters after virtual column 72: >
+    
+    Note that `"\%<46c"` matches in column 45 when the `"."` matches a
+    byte in column 44.
+
+`\%23v`
+:   Matches in a specific virtual column.
+
+`\%<23v`
+:   Matches before a specific virtual column.
+
+`\%>23v`
+:   Matches after a specific virtual column.
+    These three can be used to match specific virtual columns in a
+    buffer or string.  When not matching with a buffer in a window, the
+    option values of the current window are used (e.g., 'tabstop').  The
+    `"23"` can be any column number.  The first column is 1.  Note that
+    some virtual column positions will never match, because they are
+    halfway through a tab or other character that occupies more than one
+    screen character.  {not in Vi}.  *WARNING*: When inserting or
+    deleting text Vim does not automatically update highlighted matches.
+    This means Syntax highlighting quickly becomes wrong.
+
+    Example, to highlight all the characters after virtual column 72:
+
         /\%>72v.*
-<    When 'hlsearch' is set and you move the cursor around and make changes
-    this will clearly show when the match is updated or not.
-    To match the text up to column 17: >
+    
+    When 'hlsearch' is set and you move the cursor around and make
+    changes this will clearly show when the match is updated or not.
+    
+    To match the text up to column 17:
+        
         /.*\%17v
-<    Column 17 is included, because that's where the "\%17v" matches,
-    even though this is a  match.  Adding a dot to match the
-    next character has the same result: >
+    
+    Column 17 is included, because that's where the `"\%17v"` matches,
+    even though this is a  match.  Adding a dot to match the next
+    character has the same result:
+        
         /.*\%17v.
-<    This command does the same thing, but also matches when there is no
-    character in column 17: >
+    
+    This command does the same thing, but also matches when there is no
+    character in column 17:
+
         /.*\%<18v.
-<
 
-Character classes: {not in Vi}
-\i    identifier character (see 'isident' option)    */\i*
-\I    like "\i", but excluding digits            */\I*
-\k    keyword character (see 'iskeyword' option)    */\k*
-\K    like "\k", but excluding digits            */\K*
-\f    file name character (see 'isfname' option)    */\f*
-\F    like "\f", but excluding digits            */\F*
-\p    printable character (see 'isprint' option)    */\p*
-\P    like "\p", but excluding digits            */\P*
 
-NOTE: the above also work for multi-byte characters.  The ones below only
-match ASCII characters, as indicated by the range.
+### Character classes: {not in Vi}
 
-                        *whitespace* *white-space*
-\s    whitespace character: <Space> and <Tab>        */\s*
-\S    non-whitespace character; opposite of \s    */\S*
-\d    digit:                [0-9]        */\d*
-\D    non-digit:            [^0-9]        */\D*
-\x    hex digit:            [0-9A-Fa-f]    */\x*
-\X    non-hex digit:            [^0-9A-Fa-f]    */\X*
-\o    octal digit:            [0-7]        */\o*
-\O    non-octal digit:        [^0-7]        */\O*
-\w    word character:            [0-9A-Za-z_]    */\w*
-\W    non-word character:        [^0-9A-Za-z_]    */\W*
-\h    head of word character:        [A-Za-z_]    */\h*
-\H    non-head of word character:    [^A-Za-z_]    */\H*
-\a    alphabetic character:        [A-Za-z]    */\a*
-\A    non-alphabetic character:    [^A-Za-z]    */\A*
-\l    lowercase character:        [a-z]        */\l*
-\L    non-lowercase character:    [^a-z]        */\L*
-\u    uppercase character:        [A-Z]        */\u*
-\U    non-uppercase character:    [^A-Z]        */\U*
+----- ---------------------------------------------------------
+`\i`   identifier character (see 'isident' option)
+`\I`   like `"\i"`, but excluding digits         
+`\k`   keyword character (see 'iskeyword' option) 
+`\K`   like `"\k"`, but excluding digits          
+`\f`   file name character (see 'isfname' option) 
+`\F`   like `"\f"`, but excluding digits          
+`\p`   printable character (see 'isprint' option) 
+`\P`   like `"\p"`, but excluding digits          
+---------------------------------------------------------------
 
-    NOTE: Using the atom is faster than the [] form.
+NOTE: the above also work for multi-byte characters. The ones
+below only match ASCII characters, as indicated by the range.
 
-    NOTE: 'ignorecase', "\c" and "\C" are not used by character classes.
+------ --------------------------------------------------------
+`\s`   whitespace character: `<Space>` and `<Tab>`
+`\S`   non-whitespace character; opposite of `\s`
+`\d`   digit:                       [0-9]                 
+`\D`   non-digit:                   [^0-9]                
+`\x`   hex digit:                   [0-9A-Fa-f]           
+`\X`   non-hex digit:               [^0-9A-Fa-f]      
+`\o`   octal digit:                 [0-7]               
+`\O`   non-octal digit:             [^0-7]              
+`\w`   word character:              [0-9A-Za-z_]     
+`\W`   non-word character:          [^0-9A-Za-z_]    
+`\h`   head of word character:      [A-Za-z_]    
+`\H`   non-head of word character:  [^A-Za-z_]   
+`\a`   alphabetic character:        [A-Za-z]       
+`\A`   non-alphabetic character:    [^A-Za-z]      
+`\l`   lowercase character:         [a-z]           
+`\L`   non-lowercase character:     [^a-z]          
+`\u`   uppercase character:         [A-Z]           
+`\U`   non-uppercase character:     [^A-Z]
+---------------------------------------------------------------
 
-            */\_* *E63* */\_i* */\_I* */\_k* */\_K* */\_f* */\_F*
-            */\_p* */\_P* */\_s* */\_S* */\_d* */\_D* */\_x* */\_X*
-            */\_o* */\_O* */\_w* */\_W* */\_h* */\_H* */\_a* */\_A*
-            */\_l* */\_L* */\_u* */\_U*
-\_x    Where "x" is any of the characters above: The character class with
-    end-of-line added
-(end of character classes)
+> NOTE:
+>
+> Using the atom is faster than the [] form.
 
-\e    matches <Esc>                    */\e*
-\t    matches <Tab>                    */\t*
-\r    matches <CR>                    */\r*
-\b    matches <BS>                    */\b*
-\n    matches an end-of-line                */\n*
+> NOTE:
+>
+> 'ignorecase', `"\c"` and `"\C"` are not used by character classes.
+
+`\_x`
+:   Where `"x"` is any of the characters above: The character class
+    with end-of-line added.
+
+`\e`
+:   matches `<Esc>`
+
+`\t`
+:   matches `<Tab>`
+
+`\r`
+:   matches `<CR>`
+
+`\b`
+:   matches `<BS>`
+
+`\n`
+:   matches an end-of-line.
     When matching in a string instead of buffer text a literal newline
     character is matched.
 
-~    matches the last given substitute string    */~* */\~*
+`~`
+:   matches the last given substitute string.
 
-\(\)    A pattern enclosed by escaped parentheses.    */\(* */\(\)* */\)*
-    E.g., "\(^a\)" matches 'a' at the start of a line.
-    *E51* *E54* *E55* *E872* *E873*
+`\(\)`
+:   A pattern enclosed by escaped parentheses.
+    E.g., `"\(^a\)"` matches 'a' at the start of a line.
 
+<!--
 \1      Matches the same string that was matched by    */\1* *E65*
     the first sub-expression in \( and \). {not in Vi}
-    Example: "\([a-z]\).\1" matches "ata", "ehe", "tot", etc.
-\2      Like "\1", but uses second sub-expression,    */\2*
+    Example: `"\([a-z]\).\1"` matches `"ata"`, `"ehe"`, `"tot"`, etc.
+\2      Like `"\1"`, but uses second sub-expression,    */\2*
    ...                            */\3*
-\9      Like "\1", but uses ninth sub-expression.    */\9*
-    Note: The numbering of groups is done based on which "\(" comes first
+\9      Like `"\1"`, but uses ninth sub-expression.    */\9*
+    Note: The numbering of groups is done based on which `"\("` comes first
     in the pattern (going left to right), NOT based on what is matched
     first.
 
@@ -1065,22 +1140,22 @@ x    A single character, with no special meaning, matches itself
     [А-яЁё]        Russian alphabet (with utf-8 and cp1251)
 
                                 */[\n]*
-    With "\_" prepended the collection also includes the end-of-line.
-    The same can be done by including "\n" in the collection.  The
-    end-of-line is also matched when the collection starts with "^"!  Thus
-    "\_[^ab]" matches the end-of-line and any character but "a" and "b".
-    This makes it Vi compatible: Without the "\_" or "\n" the collection
+    With `"\_"` prepended the collection also includes the end-of-line.
+    The same can be done by including `"\n"` in the collection.  The
+    end-of-line is also matched when the collection starts with `"^"`!  Thus
+    `"\_[^ab]"` matches the end-of-line and any character but `"a"` and `"b"`.
+    This makes it Vi compatible: Without the `"\_"` or `"\n"` the collection
     does not match an end-of-line.
                                 *E769*
     When the ']' is not there Vim will not give an error message but
     assume no collection is used.  Useful to search for '['.  However, you
     do get E769 for internal searching.
 
-    If the sequence begins with "^", it matches any single character NOT
-    in the collection: "[^xyz]" matches anything but 'x', 'y' and 'z'.
+    If the sequence begins with `"^"`, it matches any single character NOT
+    in the collection: `"[^xyz]"` matches anything but 'x', 'y' and 'z'.
     - If two characters in the sequence are separated by '-', this is
       shorthand for the full list of ASCII characters between them.  E.g.,
-      "[0-9]" matches any decimal digit.  Non-ASCII characters can be
+      `"[0-9]"` matches any decimal digit.  Non-ASCII characters can be
       used, but the character values must not be more than 256 apart.
     - A character class expression is evaluated to the set of characters
       belonging to that character class.  The following character classes
@@ -1100,13 +1175,13 @@ x    A single character, with no special meaning, matches itself
 *[:upper:]*          [:upper:]     uppercase letters (all letters when
                     'ignorecase' is used)
 *[:xdigit:]*          [:xdigit:]    hexadecimal digits
-*[:return:]*          [:return:]    the <CR> character
-*[:tab:]*          [:tab:]    the <Tab> character
-*[:escape:]*          [:escape:]    the <Esc> character
-*[:backspace:]*          [:backspace:]    the <BS> character
+*[:return:]*          [:return:]    the `<CR>` character
+*[:tab:]*          [:tab:]    the `<Tab>` character
+*[:escape:]*          [:escape:]    the `<Esc>` character
+*[:backspace:]*          [:backspace:]    the `<BS>` character
       The brackets in character class expressions are additional to the
       brackets delimiting a collection.  For example, the following is a
-      plausible pattern for a UNIX filename: "[-./[:alnum:]_~]\+" That is,
+      plausible pattern for a UNIX filename: `"[-./[:alnum:]_~]\+"` That is,
       a list of at least one character, each of which is either '-', '.',
       '/', alphabetic, numeric, '_' or '~'.
       These items only work for 8-bit characters.
@@ -1121,23 +1196,23 @@ x    A single character, with no special meaning, matches itself
         [.a.]
                               */\]*
     - To include a literal ']', '^', '-' or '\' in the collection, put a
-      backslash before it: "[xyz\]]", "[\^xyz]", "[xy\-z]" and "[xyz\\]".
+      backslash before it: `"[xyz\]]"`, `"[\^xyz]"`, `"[xy\-z]"` and `"[xyz\\]"`.
       (Note: POSIX does not support the use of a backslash this way).  For
       ']' you can also make it the first character (following a possible
-      "^"):  "[]xyz]" or "[^]xyz]" {not in Vi}.
-      For '-' you can also make it the first or last character: "[-xyz]",
-      "[^-xyz]" or "[xyz-]".  For '\' you can also let it be followed by
-      any character that's not in "^]-\bdertnoUux".  "[\xyz]" matches '\',
-      'x', 'y' and 'z'.  It's better to use "\\" though, future expansions
+      `"^"`):  `"[]xyz]"` or `"[^]xyz]"` {not in Vi}.
+      For '-' you can also make it the first or last character: `"[-xyz]"`,
+      `"[^-xyz]"` or `"[xyz-]"`.  For '\' you can also let it be followed by
+      any character that's not in `"^]-\bdertnoUux"`.  `"[\xyz]"` matches '\',
+      'x', 'y' and 'z'.  It's better to use `"\\"` though, future expansions
       may use other characters after '\'.
-    - Omitting the trailing ] is not considered an error. "[]" works like
-      "[]]", it matches the ']' character.
+    - Omitting the trailing ] is not considered an error. `"[]"` works like
+      `"[]]"`, it matches the ']' character.
     - The following translations are accepted when the 'l' flag is not
       included in 'cpoptions' {not in Vi}:
-        \e    <Esc>
-        \t    <Tab>
-        \r    <CR>    (NOT end-of-line!)
-        \b    <BS>
+        \e    `<Esc>`
+        \t    `<Tab>`
+        \r    `<CR>`    (NOT end-of-line!)
+        \b    `<BS>`
         \n    line break, see above `/[\n]`
         \d123    decimal number of character
         \o40    octal number of character up to 0377
@@ -1148,28 +1223,28 @@ x    A single character, with no special meaning, matches itself
       []!
     - Matching with a collection can be slow, because each character in
       the text has to be compared with each character in the collection.
-      Use one of the other atoms above when possible.  Example: "\d" is
-      much faster than "[0-9]" and matches the same characters.
+      Use one of the other atoms above when possible.  Example: `"\d"` is
+      much faster than `"[0-9]"` and matches the same characters.
 
                         */\%[]* *E69* *E70* *E369*
 \%[]    A sequence of optionally matched atoms.  This always matches.
     It matches as much of the list of atoms it contains as possible.  Thus
     it stops at the first atom that doesn't match.  For example: >
         /r\%[ead]
-<    matches "r", "re", "rea" or "read".  The longest that matches is used.
-    To match the Ex command "function", where "fu" is required and
-    "nction" is optional, this would work: >
-        /\<fu\%[nction]\>
-<    The end-of-word atom "\>" is used to avoid matching "fu" in "full".
+<    matches `"r"`, `"re"`, `"rea"` or `"read"`.  The longest that matches is used.
+    To match the Ex command `"function"`, where `"fu"` is required and
+    `"nction"` is optional, this would work: >
+        /\`<fu\%[nction]\>`
+`<    The end-of-word atom `"\>`"` is used to avoid matching `"fu"` in `"full"`.
     It gets more complicated when the atoms are not ordinary characters.
     You don't often have to use it, but it is possible.  Example: >
-        /\<r\%[[eo]ad]\>
-<    Matches the words "r", "re", "ro", "rea", "roa", "read" and "road".
+        /\`<r\%[[eo]ad]\>`
+<    Matches the words `"r"`, `"re"`, `"ro"`, `"rea"`, `"roa"`, `"read"` and `"road"`.
     There can be no \(\), \%(\) or \z(\) items inside the [] and \%[] does
     not nest.
-    To include a "[" use "[[]" and for "]" use []]", e.g.,: >
+    To include a `"["` use `"[[]"` and for `"]"` use []]", e.g.,: >
         /index\%[[[]0[]]]
-<    matches "index" "index[", "index[0" and "index[0]".
+<    matches `"index"` `"index["`, `"index[0"` and `"index[0]"`.
     {not available when compiled without the `+syntax` feature}
 
                 */\%d* */\%x* */\%o* */\%u* */\%U* *E678*
@@ -1191,11 +1266,11 @@ If the 'ignorecase' option is on, the case of normal letters is ignored.
 'smartcase' can be set to ignore case when the pattern contains lowercase
 letters only.
                             */\c* */\C*
-When "\c" appears anywhere in the pattern, the whole pattern is handled like
+When `"\c"` appears anywhere in the pattern, the whole pattern is handled like
 'ignorecase' is on.  The actual value of 'ignorecase' and 'smartcase' is
-ignored.  "\C" does the opposite: Force matching case for the whole pattern.
+ignored.  `"\C"` does the opposite: Force matching case for the whole pattern.
 {only Vim supports \c and \C}
-Note that 'ignorecase', "\c" and "\C" are not used for the character classes.
+Note that 'ignorecase', `"\c"` and `"\C"` are not used for the character classes.
 
 Examples:
       pattern    'ignorecase'  'smartcase'    matches ~
@@ -1208,20 +1283,20 @@ Examples:
 
 Technical detail:                *NL-used-for-Nul*
 <Nul> characters in the file are stored as <NL> in memory.  In the display
-they are shown as "^@".  The translation is done when reading and writing
+they are shown as `"^@"`.  The translation is done when reading and writing
 files.  To match a <Nul> with a search pattern you can just enter CTRL-@ or
-"CTRL-V 000".  This is probably just what you expect.  Internally the
+`"CTRL-V 000"`.  This is probably just what you expect.  Internally the
 character is replaced with a <NL> in the search pattern.  What is unusual is
 that typing CTRL-V CTRL-J also inserts a <NL>, thus also searches for a <Nul>
 in the file.  {Vi cannot handle <Nul> characters in the file at all}
 
                         *CR-used-for-NL*
-When 'fileformat' is "mac", <NL> characters in the file are stored as <CR>
-characters internally.  In the text they are shown as "^J".  Otherwise this
+When 'fileformat' is `"mac"`, <NL> characters in the file are stored as <CR>
+characters internally.  In the text they are shown as `"^J"`.  Otherwise this
 works similar to the usage of <NL> for a <Nul>.
 
 When working with expression evaluation, a <NL> character in the pattern
-matches a <NL> in the string.  The use of "\n" (backslash n) to match a <NL>
+matches a <NL> in the string.  The use of `"\n"` (backslash n) to match a <NL>
 doesn't work there, it only works to match text in the buffer.
 
                         *pattern-multi-byte*
