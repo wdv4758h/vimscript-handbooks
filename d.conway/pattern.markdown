@@ -51,11 +51,11 @@ Patterns and search commands
 :   Search forward for the `[count]`'th occurrence of the word nearest
     to the cursor.  The word used for the search is the first of:
     
-        1. the keyword under the cursor `'iskeyword'`
-        2. the first keyword after the cursor, in the current line
-        3. the non-blank word under the cursor
-        4. the first non-blank word after the cursor, in the current
-        line.
+    1. the keyword under the cursor `'iskeyword'`
+    2. the first keyword after the cursor, in the current line
+    3. the non-blank word under the cursor
+    4. the first non-blank word after the cursor, in the current
+       line.
 
     Only whole keywords are searched for, like with the command
     `"/\<keyword\>"`. `exclusive` {not in Vi}, 'ignorecase' is used,
@@ -222,7 +222,7 @@ The search usually skips matches that don't move the cursor.  Whether
 the next match is found at the next character or after the skipped match
 depends on the 'c' flag in 'cpoptions'.  See `cpo-c`.
 
-    with 'c' flag:   "/..." advances 1 to 3 characters
+    with 'c' flag:      "/..." advances 1 to 3 characters
     without 'c' flag:   "/..." advances 1 character
     
 The unpredictability with the 'c' flag is caused by starting the search
@@ -294,10 +294,10 @@ For starters, read chapter 27 of the user manual `usr_27.txt`.
    matches `"foo"` and matches `"beep"`.  If more than one branch
    matches, the first one is used.
 
-       pattern ::=      branch
-                    or  branch \| branch
-                    or  branch \| branch \| branch
-                    etc.
+        pattern ::=      branch
+                     or  branch \| branch
+                     or  branch \| branch \| branch
+                     etc.
 
 2. A branch is one or more concats, separated by `"\&"`.  It matches the
    last concat, but only if all the preceding concats also match at the
@@ -307,53 +307,48 @@ For starters, read chapter 27 of the user manual `usr_27.txt`.
         ".*Peter\&.*Bob" matches in a line containing both
                          "Peter" and "Bob"
 
-        branch ::=        concat
-             or  concat \& concat
-             or  concat \& concat \& concat
-             etc.
+        branch ::=      concat
+                    or  concat \& concat
+                    or  concat \& concat \& concat
+                    etc.
 
 3. A concat is one or more pieces, concatenated.  It matches a
    match for the first piece, followed by a match for the second piece,
-   etc.  Example:
+   etc.  Example: `"f[0-9]b"`, first matches `"f"`, then a digit and
+   then `"b"`.
 
-        "f[0-9]b", first matches "f", then a digit and then "b".
+        concat  ::=     piece
+                    or  piece piece
+                    or  piece piece piece
+                    etc.
 
-        concat  ::=        piece
-             or  piece piece
-             or  piece piece piece
-             etc.
+4. A piece is an atom, possibly followed by a multi, an indication of
+   how many times the atom can be matched.  Example: `"a*"` matches
+   any sequence of `"a"` characters: "`", "`a`", "`aa", etc.
+   See `/multi`.
 
-<!-- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
+        piece   ::=     atom
+                    or  atom  multi
 
-*/piece*
-4. A piece is an atom, possibly followed by a multi, an indication of how many
-   times the atom can be matched.  Example: `"a*"` matches any sequence of `"a"`
-   characters: "`", "`a`", "`aa", etc.  See `/multi`.
+5. An atom can be one of a long list of items.  Many atoms match one
+   character in the text.  It is often an ordinary character or a
+   character class.  Braces can be used to make a pattern into an atom.
+   The `"\z(\)"` construct is only for syntax highlighting.
 
-   piece   ::=        atom
-        or  atom  multi
+        atom    ::=     ordinary-atom
+                    or  \( pattern \)
+                    or  \%( pattern \)
+                    or  \z( pattern \)
 
-                        */atom*
-5. An atom can be one of a long list of items.  Many atoms match one character
-   in the text.  It is often an ordinary character or a character class.
-   Braces can be used to make a pattern into an atom.  The "\z(\)" construct
-   is only for syntax highlighting.
-
-   atom    ::=        ordinary-atom        `/ordinary-atom`
-        or  \( pattern \)        `/\(`
-        or  \%( pattern \)        `/\%(`
-        or  \z( pattern \)        `/\z(`
-
-
-                */\%#=* *two-engines* *NFA*
 Vim includes two regexp engines:
-1. An old, backtracking engine that supports everything.
-2. A new, NFA engine that works much faster on some patterns, but does not
-   support everything.
 
-Vim will automatically select the right engine for you.  However, if you run
-into a problem or want to specifically select one engine or the other, you can
-prepend one of the following to the pattern:
+1. An old, backtracking engine that supports everything.
+2. A new, NFA engine that works much faster on some patterns, but
+   does not support everything.
+
+Vim will automatically select the right engine for you.  However, if you
+run into a problem or want to specifically select one engine or the
+other, you can prepend one of the following to the pattern:
 
     \%#=0    Force automatic selection.  Only has an effect when
             'regexpengine' has been set to a non-zero value.
@@ -362,285 +357,306 @@ prepend one of the following to the pattern:
 
 You can also use the 'regexpengine' option to change the default.
 
-             *E864* *E868* *E874* *E875* *E876* *E877* *E878*
-If selecting the NFA engine and it runs into something that is not implemented
-the pattern will not match.  This is only useful when debugging Vim.
+If selecting the NFA engine and it runs into something that is not
+implemented the pattern will not match.  This is only useful when
+debugging Vim.
 
-==============================================================================
-3. Magic                            */magic*
 
-Some characters in the pattern are taken literally.  They match with the same
-character in the text.  When preceded with a backslash however, these
-characters get a special meaning.
+### Magic
 
-Other characters have a special meaning without a backslash.  They need to be
-preceded with a backslash to match literally.
+Some characters in the pattern are taken literally.  They match with the
+same character in the text.  When preceded with a backslash however,
+these characters get a special meaning.
 
-If a character is taken literally or not depends on the 'magic' option and the
-items mentioned next.
-                            */\m* */\M*
-Use of "\m" makes the pattern after it be interpreted as if 'magic' is set,
-ignoring the actual value of the 'magic' option.
-Use of "\M" makes the pattern after it be interpreted as if 'nomagic' is used.
-                            */\v* */\V*
-Use of "\v" means that in the pattern after it all ASCII characters except
-'0'-'9', 'a'-'z', 'A'-'Z' and '_' have a special meaning.  "very magic"
+Other characters have a special meaning without a backslash.  They need
+to be preceded with a backslash to match literally.
 
-Use of "\V" means that in the pattern after it only the backslash has a
-special meaning.  "very nomagic"
+If a character is taken literally or not depends on the 'magic' option
+and the items mentioned next.
+
+Use of `"\m"` makes the pattern after it be interpreted as if 'magic' is
+set, ignoring the actual value of the 'magic' option.  Use of `"\M"`
+makes the pattern after it be interpreted as if 'nomagic' is used.
+
+Use of `"\v"` means that in the pattern after it all ASCII characters
+except '0'-'9', 'a'-'z', 'A'-'Z' and `'_'` have a special meaning.
+`"very magic"`
+
+Use of `"\V"` means that in the pattern after it only the backslash has
+a special meaning.  `"very nomagic"`
 
 Examples:
-after:      \v       \m        \M         \V        matches ~
-        'magic' 'nomagic'
-      $       $        $         \$        matches end-of-line
-      .       .        \.         \.        matches any character
-      *       *        \*         \*        any number of the previous atom
-      ()       \(\)     \(\)     \(\)    grouping into an atom
-      `       \`        \`         \`        separating alternatives
-      \a       \a        \a         \a        alphabetic character
-      \\       \\        \\         \\        literal backslash
-      \.       \.        .         .        literal dot
-      \{       {        {         {        literal '{'
-      a       a        a         a        literal 'a'
 
-{only Vim supports \m, \M, \v and \V}
+|after:| `\v` |  `\m`   |  `\M`   |  `\V`| matches
+|:-----|:----:|:-------:|:-------:|:----:|:-------------------------------
+|      |      |'magic'  |'nomagic'|      |
+|      | `$`  |   `$`   | `$`     | `\$` | matches end-of-line
+|      | `.`  |   `.`   | `\.`    | `\.` | matches any character
+|      | `*`  |   `*`   | `\*`    | `\*` | any number of the previous atom
+|      | `()` | `\(\)`  | `\(\)`  |`\(\)`| grouping into an atom
+|      | `|`  |   `\|`  | `\|`    | `\|` | separating alternatives
+|      | `\a` |   `\a`  | `\a`    | `\a` | alphabetic character
+|      | `\\` |   `\\`  | `\\`    | `\\` | literal backslash
+|      | `\.` |   `\.`  | `.`     |  `.` | literal dot
+|      | `\{` |   `{`   | `{`     |  `{` | literal `'{'`
+|      | `a`  |   `a`   | `a`     |  `a` | literal `'a'`
 
-It is recommended to always keep the 'magic' option at the default setting,
-which is 'magic'.  This avoids portability problems.  To make a pattern immune
-to the 'magic' option being set or not, put "\m" or "\M" at the start of the
-pattern.
+{only Vim supports `\m`, `\M`, `\v` and `\V`.}
 
-==============================================================================
-4. Overview of pattern items                *pattern-overview*
-                        *E865* *E866* *E867* *E869*
+It is recommended to always keep the 'magic' option at the default
+setting, which is 'magic'.  This avoids portability problems.  To make a
+pattern immune to the 'magic' option being set or not, put `"\m"` or
+`"\M"` at the start of the pattern.
 
-Overview of multi items.                */multi* *E61* *E62*
-More explanation and examples below, follow the links.        *E64* *E871*
 
-      multi ~
-     'magic' 'nomagic'    matches of the preceding atom ~
-`/star`    *    \*    0 or more    as many as possible
-`/\+`    \+    \+    1 or more    as many as possible (*)
-`/\=`    \=    \=    0 or 1        as many as possible (*)
-`/\?`    \?    \?    0 or 1        as many as possible (*)
+### Overview of pattern items
 
-`/\{`    \{n,m}    \{n,m}    n to m        as many as possible (*)
-    \{n}    \{n}    n        exactly (*)
-    \{n,}    \{n,}    at least n    as many as possible (*)
-    \{,m}    \{,m}    0 to m        as many as possible (*)
-    \{}    \{}    0 or more    as many as possible (same as *) (*)
+Overview of multi items.
 
-`/\{-`    \{-n,m}    \{-n,m}    n to m        as few as possible (*)
-    \{-n}    \{-n}    n        exactly (*)
-    \{-n,}    \{-n,}    at least n    as few as possible (*)
-    \{-,m}    \{-,m}    0 to m        as few as possible (*)
-    \{-}    \{-}    0 or more    as few as possible (*)
+```
+     multi 
+'magic' 'nomagic'        matches of the preceding atom ~
+  *         \*           0 or more    as many as possible
+  \+        \+           1 or more    as many as possible (*)
+  \=        \=           0 or 1        as many as possible (*)
+  \?        \?           0 or 1        as many as possible (*)
 
-                            *E59*
-`/\@>`    \@>    \@>    1, like matching a whole pattern (*)
-`/\@=`    \@=    \@=    nothing, requires a match `/zero-width` (*)
-`/\@!`    \@!    \@!    nothing, requires NO match `/zero-width` (*)
-`/\@<=`    \@<=    \@<=    nothing, requires a match behind `/zero-width` (*)
-`/\@<!`    \@<!    \@<!    nothing, requires NO match behind `/zero-width` (*)
+  \{n,m}    \{n,m}       n to m        as many as possible (*)
+  \{n}      n            exactly (*)
+  \{n,}     at least n   as many as possible (*)
+  \{,m}     0 to m       as many as possible (*)
+  \{}       0 or more    as many as possible (same as *) (*)
+  \{-n,m}   \{-n,m}      n to m        as few as possible (*)
+  \{-n}     n            exactly (*)
+
+  \{-n,}    at least n   as few as possible (*)
+  \{-,m}    0 to m       as few as possible (*)
+  \{-}      0 or more    as few as possible (*)
+
+  \@>       \@>          1, like matching a whole pattern (*)
+  \@=       \@=          nothing, requires a match /zero-width (*)
+  \@!       \@!          nothing, requires NO match /zero-width (*)
+  \@<=      \@<=         nothing, requires a match behind /zero-width (*)
+  \@<!      \@<!         nothing, requires NO match behind /zero-width (*)
 
 (*) {not in Vi}
+```
 
+Overview of ordinary atoms.
 
-Overview of ordinary atoms.                */ordinary-atom*
-More explanation and examples below, follow the links.
+```
+ordinary atom 
+magic   nomagic     matches 
+  ^       ^         start-of-line (at start of pattern) 
+  \^      \^        literal '^'
+  \_^     \_^       start-of-line (used anywhere) 
+  $       $         end-of-line (at end of pattern) 
+  \$      \$        literal '$'
+  \_$     \_$       end-of-line (used anywhere) 
+  .       \.        any single character (not an end-of-line)
+  \_.     \_.       any single character or end-of-line
+  \<      \<        beginning of a word 
+  \>      \>        end of a word 
+  \zs     \zs       anything, sets start of match \ze
+  \ze     \ze       anything, sets end of match
+  \%^     \%^       beginning of file 
+  \%$     \%$       end of file 
+  \%V     \%V       inside Visual area 
+  \%#     \%#       cursor position 
+  \%'m    \%'m      mark m position 
+  \%23l   \%23l     in line 23 
+  \%23c   \%23c     in column 23 
+  \%23v   \%23v     in virtual column 23 
+```
 
-      ordinary atom ~
-      magic   nomagic    matches ~
-`/^`    ^    ^    start-of-line (at start of pattern) `/zero-width`
-`/\^`    \^    \^    literal '^'
-`/\_^`    \_^    \_^    start-of-line (used anywhere) `/zero-width`
-`/$`    $    $    end-of-line (at end of pattern) `/zero-width`
-`/\$`    \$    \$    literal '$'
-`/\_$`    \_$    \_$    end-of-line (used anywhere) `/zero-width`
-`/.`    .    \.    any single character (not an end-of-line)
-`/\_.`    \_.    \_.    any single character or end-of-line
-`/\<`    \<    \<    beginning of a word `/zero-width`
-`/\>`    \>    \>    end of a word `/zero-width`
-`/\zs`    \zs    \zs    anything, sets start of match
-`/\ze`    \ze    \ze    anything, sets end of match
-`/\%^`    \%^    \%^    beginning of file `/zero-width`        *E71*
-`/\%$`    \%$    \%$    end of file `/zero-width`
-`/\%V`    \%V    \%V    inside Visual area `/zero-width`
-`/\%#`    \%#    \%#    cursor position `/zero-width`
-`/\%'m`    \%'m    \%'m    mark m position `/zero-width`
-`/\%l`    \%23l    \%23l    in line 23 `/zero-width`
-`/\%c`    \%23c    \%23c    in column 23 `/zero-width`
-`/\%v`    \%23v    \%23v    in virtual column 23 `/zero-width`
+Character classes {not in Vi}:
 
-Character classes {not in Vi}:                */character-classes*
-`/\i`    \i    \i    identifier character (see 'isident' option)
-`/\I`    \I    \I    like "\i", but excluding digits
-`/\k`    \k    \k    keyword character (see 'iskeyword' option)
-`/\K`    \K    \K    like "\k", but excluding digits
-`/\f`    \f    \f    file name character (see 'isfname' option)
-`/\F`    \F    \F    like "\f", but excluding digits
-`/\p`    \p    \p    printable character (see 'isprint' option)
-`/\P`    \P    \P    like "\p", but excluding digits
-`/\s`    \s    \s    whitespace character: <Space> and <Tab>
-`/\S`    \S    \S    non-whitespace character; opposite of \s
-`/\d`    \d    \d    digit:                [0-9]
-`/\D`    \D    \D    non-digit:            [^0-9]
-`/\x`    \x    \x    hex digit:            [0-9A-Fa-f]
-`/\X`    \X    \X    non-hex digit:            [^0-9A-Fa-f]
-`/\o`    \o    \o    octal digit:            [0-7]
-`/\O`    \O    \O    non-octal digit:        [^0-7]
-`/\w`    \w    \w    word character:            [0-9A-Za-z_]
-`/\W`    \W    \W    non-word character:        [^0-9A-Za-z_]
-`/\h`    \h    \h    head of word character:        [A-Za-z_]
-`/\H`    \H    \H    non-head of word character:    [^A-Za-z_]
-`/\a`    \a    \a    alphabetic character:        [A-Za-z]
-`/\A`    \A    \A    non-alphabetic character:    [^A-Za-z]
-`/\l`    \l    \l    lowercase character:        [a-z]
-`/\L`    \L    \L    non-lowercase character:    [^a-z]
-`/\u`    \u    \u    uppercase character:        [A-Z]
-`/\U`    \U    \U    non-uppercase character        [^A-Z]
-`/\_`    \_x    \_x    where x is any of the characters above: character
-            class with end-of-line included
+```
+\i    \i    identifier character (see 'isident' option)
+\I    \I    like "\i", but excluding digits
+\k    \k    keyword character (see 'iskeyword' option)
+\K    \K    like "\k", but excluding digits
+\f    \f    file name character (see 'isfname' option)
+\F    \F    like "\f", but excluding digits
+\p    \p    printable character (see 'isprint' option)
+\P    \P    like "\p", but excluding digits
+\s    \s    whitespace character: <Space> and <Tab>
+\S    \S    non-whitespace character; opposite of \s
+\d    \d    digit:                [0-9]
+\D    \D    non-digit:            [^0-9]
+\x    \x    hex digit:            [0-9A-Fa-f]
+\X    \X    non-hex digit:            [^0-9A-Fa-f]
+\o    \o    octal digit:            [0-7]
+\O    \O    non-octal digit:        [^0-7]
+\w    \w    word character:            [0-9A-Za-z_]
+\W    \W    non-word character:        [^0-9A-Za-z_]
+\h    \h    head of word character:        [A-Za-z_]
+\H    \H    non-head of word character:    [^A-Za-z_]
+\a    \a    alphabetic character:        [A-Za-z]
+\A    \A    non-alphabetic character:    [^A-Za-z]
+\l    \l    lowercase character:        [a-z]
+\L    \L    non-lowercase character:    [^a-z]
+\u    \u    uppercase character:        [A-Z]
+\U    \U    non-uppercase character        [^A-Z]
+\_x    \_x  where x is any of the characters above: character
+           class with end-of-line included
+
 (end of character classes)
 
-`/\e`    \e    \e    <Esc>
-`/\t`    \t    \t    <Tab>
-`/\r`    \r    \r    <CR>
-`/\b`    \b    \b    <BS>
-`/\n`    \n    \n    end-of-line
-`/~`    ~    \~    last given substitute string
-`/\1`    \1    \1    same string as matched by first \(\) {not in Vi}
-`/\2`    \2    \2    Like "\1", but uses second \(\)
-       ...
-`/\9`    \9    \9    Like "\1", but uses ninth \(\)
-                                *E68*
-`/\z1`    \z1    \z1    only for syntax highlighting, see `:syn-ext-match`
-       ...
-`/\z1`    \z9    \z9    only for syntax highlighting, see `:syn-ext-match`
+\e    \e    <Esc>
+\t    \t    <Tab>
+\r    \r    <CR>
+\b    \b    <BS>
+\n    \n    end-of-line
+~     \~    last given substitute string
+\1    \1    same string as matched by first \(\) {not in Vi}
+\2    \2    Like "\1", but uses second \(\)
+   ...
+\9    \9    Like "\1", but uses ninth \(\)
+\z1   \z1   only for syntax highlighting, see `:syn-ext-match`
+   ...
+\z9   \z9   only for syntax highlighting, see `:syn-ext-match`
 
-    x    x    a character with no special meaning matches itself
+x     x     a character with no special meaning matches itself
 
-`/[]`    []    \[]    any character specified inside the []
-`/\%[]`    \%[]    \%[]    a sequence of optionally matched atoms
+[]    \[]   any character specified inside the []
+\%[]  \%[]  a sequence of optionally matched atoms
 
-`/\c`    \c    \c    ignore case, do not use the 'ignorecase' option
-`/\C`    \C    \C    match case, do not use the 'ignorecase' option
-`/\Z`    \Z    \Z    ignore differences in Unicode "combining characters".
+\c    \c    ignore case, do not use the 'ignorecase' option
+\C    \C    match case, do not use the 'ignorecase' option
+\Z    \Z    ignore differences in Unicode "combining characters".
             Useful when searching voweled Hebrew or Arabic text.
 
-`/\m`    \m    \m    'magic' on for the following chars in the pattern
-`/\M`    \M    \M    'magic' off for the following chars in the pattern
-`/\v`    \v    \v    the following chars in the pattern are "very magic"
-`/\V`    \V    \V    the following chars in the pattern are "very nomagic"
-`/\%#=`   \%#=1   \%#=1   select regexp engine `/zero-width`
+\m    \m    'magic' on for the following chars in the pattern
+\M    \M    'magic' off for the following chars in the pattern
+\v    \v    the following chars in the pattern are "very magic"
+\V    \V    the following chars in the pattern are "very nomagic"
+\%#=1 \%#=1 select regexp engine 
 
-`/\%d`    \%d    \%d    match specified decimal character (eg \%d123)
-`/\%x`    \%x    \%x    match specified hex character (eg \%x2a)
-`/\%o`    \%o    \%o    match specified octal character (eg \%o040)
-`/\%u`    \%u    \%u    match specified multibyte character (eg \%u20ac)
-`/\%U`    \%U    \%U    match specified large multibyte character (eg
+\%d   \%d   match specified decimal character (eg \%d123)
+\%x   \%x   match specified hex character (eg \%x2a)
+\%o   \%o   match specified octal character (eg \%o040)
+\%u   \%u   match specified multibyte character (eg \%u20ac)
+\%U   \%U   match specified large multibyte character (eg
             \%U12345678)
-
-Example            matches ~
+```
+```
+Example                 matches
 \<\I\i*        or
 \<\h\w*
 \<[a-zA-Z_][a-zA-Z0-9_]*
-            An identifier (e.g., in a C program).
+                        An identifier (e.g., in a C program).
 
-\(\.$\|\. \)        A period followed by <EOL> or a space.
+\(\.$\|\. \)            A period followed by <EOL> or a space.
 
-[.!?][])"']*\($\|[ ]\)    A search pattern that finds the end of a sentence,
-            with almost the same definition as the ")" command.
+[.!?][])"']*\($\|[ ]\)  A search pattern that finds the end of a sentence,
+                        with almost the same definition as the ")" command.
+```
 
-cat\Z            Both "cat" and "càt" ("a" followed by 0x0300)
-            Does not match "càt" (character 0x00e0), even
-            though it may look the same.
+### Multi items
 
+An atom can be followed by an indication of how many times the atom can
+be matched and in what way.  This is called a multi.  See `/multi` for
+an overview.
 
-==============================================================================
-5. Multi items                        *pattern-multi-items*
+`*`
+:   (use \* when 'magic' is not set) Matches 0 or more of the preceding
+    atom, as many as possible.
+    
+        Example  'nomagic'    matches
+          a*       a\*        "", "a", "aa", "aaa", etc.
+          .*       \.\*       anything, also an empty string, no end-of-line
+          \_.*     \_.\*      everything up to the end of the buffer
+          \_.*END  \_.\*END   everything up to and including the last "END"
+                              in the buffer
 
-An atom can be followed by an indication of how many times the atom can be
-matched and in what way.  This is called a multi.  See `/multi` for an
-overview.
+    Exception: When `"*"`is used at the start of the pattern or just after
+    `"^"` it matches the star character.
+    
+    Be aware that repeating `"\_."` can match a lot of text and take a
+    long time.  For example, `"\_.*END"` matches all text from the
+    current position to the last occurrence of `"END"` in the file.
+    Since the `"*"` will match as many as possible, this first skips
+    over all lines until the end of the file and then tries matching
+    `"END"`, backing up one character at a time.
 
-                        */star* */\star* *E56*
-*    (use \* when 'magic' is not set)
-    Matches 0 or more of the preceding atom, as many as possible.
-    Example  'nomagic'    matches ~
-    a*       a\*        "", "a", "aa", "aaa", etc.
-    .*       \.\*        anything, also an empty string, no end-of-line
-    \_.*       \_.\*    everything up to the end of the buffer
-    \_.*END       \_.\*END    everything up to and including the last "END"
-                in the buffer
+`\+`
+:   Matches 1 or more of the preceding atom, as many as possible. {not
+    in Vi}
 
-    Exception: When "*" is used at the start of the pattern or just after
-    "^" it matches the star character.
+        Example         matches
+        ^.\+$           any non-empty line
+        \s\+            white space of at least one character
 
-    Be aware that repeating "\_." can match a lot of text and take a long
-    time.  For example, "\_.*END" matches all text from the current
-    position to the last occurrence of "END" in the file.  Since the "*"
-    will match as many as possible, this first skips over all lines until
-    the end of the file and then tries matching "END", backing up one
-    character at a time.
+`\=`
+:   Matches 0 or 1 of the preceding atom, as many as possible. {not in Vi}
 
-                            */\+* *E57*
-\+    Matches 1 or more of the preceding atom, as many as possible. {not in
-    Vi}
-    Example        matches ~
-    ^.\+$        any non-empty line
-    \s\+        white space of at least one character
+        Example        matches
+        foo\=          "fo" and "foo"
 
-                            */\=*
-\=    Matches 0 or 1 of the preceding atom, as many as possible. {not in Vi}
-    Example        matches ~
-    foo\=        "fo" and "foo"
+`\?`
+:   Just like `\=`. Cannot be used when searching backwards with the
+    `"?"` command. {not in Vi}
 
-                            */\?*
-\?    Just like \=.  Cannot be used when searching backwards with the "?"
-    command. {not in Vi}
+`\{n,m}`
+:   Matches n to m of the preceding atom, as many as possible
 
-                    */\{* *E58* *E60* *E554* *E870*
-\{n,m}    Matches n to m of the preceding atom, as many as possible
-\{n}    Matches n of the preceding atom
-\{n,}    Matches at least n of the preceding atom, as many as possible
-\{,m}    Matches 0 to m of the preceding atom, as many as possible
-\{}    Matches 0 or more of the preceding atom, as many as possible (like *)
-                            */\{-*
-\{-n,m}    matches n to m of the preceding atom, as few as possible
-\{-n}    matches n of the preceding atom
-\{-n,}    matches at least n of the preceding atom, as few as possible
-\{-,m}    matches 0 to m of the preceding atom, as few as possible
-\{-}    matches 0 or more of the preceding atom, as few as possible
-    {Vi does not have any of these}
+`\{n}`
+:   Matches n of the preceding atom
 
-    n and m are positive decimal numbers or zero
-                                *non-greedy*
-    If a "-" appears immediately after the "{", then a shortest match
-    first algorithm is used (see example below).  In particular, "\{-}" is
-    the same as "*" but uses the shortest match first algorithm.  BUT: A
-    match that starts earlier is preferred over a shorter match: "a\{-}b"
-    matches "aaab" in "xaaab".
+`\{n,}`
+:   Matches at least n of the preceding atom, as many as possible
 
-    Example            matches ~
-    ab\{2,3}c        "abbc" or "abbbc"
-    a\{5}            "aaaaa"
-    ab\{2,}c        "abbc", "abbbc", "abbbbc", etc.
-    ab\{,3}c        "ac", "abc", "abbc" or "abbbc"
-    a[bc]\{3}d        "abbbd", "abbcd", "acbcd", "acccd", etc.
-    a\(bc\)\{1,2}d        "abcd" or "abcbcd"
-    a[bc]\{-}[cd]        "abc" in "abcd"
-    a[bc]*[cd]        "abcd" in "abcd"
+`\{,m}`
+:   Matches 0 to m of the preceding atom, as many as possible
 
-    The } may optionally be preceded with a backslash: \{n,m\}.
+`\{}`
+:   Matches 0 or more of the preceding atom, as many as possible
+    (like *)
 
-                            */\@=*
-\@=    Matches the preceding atom with zero width. {not in Vi}
+`\{-n,m}`
+:   matches n to m of the preceding atom, as few as possible
+
+`\{-n}`
+:   matches n of the preceding atom
+
+`\{-n,}`
+:   matches at least n of the preceding atom, as few as possible
+
+`\{-,m}`
+:   matches 0 to m of the preceding atom, as few as possible
+
+`\{-}`
+:   matches 0 or more of the preceding atom, as few as possible
+    {Vi does not have any of these}. `n` and `m` are positive decimal
+    numbers or zero.
+    
+    If a `"-"` appears immediately after the `"{"`, then a shortest
+    match first algorithm is used (see example below).  In particular,
+    `"\{-}"` is the same as `"*"` but uses the shortest match first
+    algorithm.  BUT: A match that starts earlier is preferred over a
+    shorter match: `"a\{-}b"` matches "aaab" in "xaaab".
+
+        Example             matches
+        ab\{2,3}c           "abbc" or "abbbc"
+        a\{5}               "aaaaa"
+        ab\{2,}c            "abbc", "abbbc", "abbbbc", etc.
+        ab\{,3}c            "ac", "abc", "abbc" or "abbbc"
+        a[bc]\{3}d          "abbbd", "abbcd", "acbcd", "acccd", etc.
+        a\(bc\)\{1,2}d      "abcd" or "abcbcd"
+        a[bc]\{-}[cd]       "abc" in "abcd"
+        a[bc]*[cd]          "abcd" in "abcd"
+
+    The `}` may optionally be preceded with a backslash: `\{n,m\}`.
+
+`\@=`
+:   Matches the preceding atom with zero width. {not in Vi}
     Like "(?=pattern)" in Perl.
-    Example            matches ~
-    foo\(bar\)\@=        "foo" in "foobar"
-    foo\(bar\)\@=foo    nothing
-                            */zero-width*
+    
+        Example            matches
+        foo\(bar\)\@=      "foo" in "foobar"
+        foo\(bar\)\@=foo   nothing
+    
     When using "\@=" (or "^", "$", "\<", "\>") no characters are included
     in the match.  These items are only used to check if a match can be
     made.  This can be tricky, because a match with following items will
@@ -652,106 +668,121 @@ overview.
     same as "\(foo\)\@=..".  But using "\&" is easier, you don't need the
     braces.
 
+`\@!`
+:   Matches with zero width if the preceding atom does NOT match at the
+    current position. {not in Vi}. Like `"(?!pattern)"` in Perl.
 
-                            */\@!*
-\@!    Matches with zero width if the preceding atom does NOT match at the
-    current position. `/zero-width` {not in Vi}
-    Like "(?!pattern)" in Perl.
-    Example            matches ~
-    foo\(bar\)\@!        any "foo" not followed by "bar"
-    a.\{-}p\@!        "a", "ap", "app", "appp", etc. not immediately
-                followed by a "p"
-    if \(\(then\)\@!.\)*$    "if " not followed by "then"
+        Example                 matches
+        foo\(bar\)\@!           any "foo" not followed by "bar"
+        a.\{-}p\@!              "a", "ap", "app", "appp", etc. not
+                                immediately followed by a "p"
+        if \(\(then\)\@!.\)*$   "if " not followed by "then"
 
-    Using "\@!" is tricky, because there are many places where a pattern
-    does not match.  "a.*p\@!" will match from an "a" to the end of the
-    line, because ".*" can match all characters in the line and the "p"
-    doesn't match at the end of the line.  "a.\{-}p\@!" will match any
-    "a", "ap", "app", etc. that isn't followed by a "p", because the "."
-    can match a "p" and "p\@!" doesn't match after that.
+    Using `"\@!"` is tricky, because there are many places where a
+    pattern does not match.  `"a.*p\@!"` will match from an `"a"` to the
+    end of the line, because `".*"` can match all characters in the line
+    and the `"p"` doesn't match at the end of the line.  `"a.\{-}p\@!"`
+    will match any `"a"`, `"ap"`, `"app"`, etc. that isn't followed by a
+    `"p"`, because the `"."` can match a `"p"` and `"p\@!"` doesn't
+    match after that.
 
-    You can't use "\@!" to look for a non-match before the matching
-    position: "\(foo\)\@!bar" will match "bar" in "foobar", because at the
-    position where "bar" matches, "foo" does not match.  To avoid matching
-    "foobar" you could use "\(foo\)\@!...bar", but that doesn't match a
-    bar at the start of a line.  Use "\(foo\)\@<!bar".
+    You can't use `"\@!"` to look for a non-match before the matching
+    position: `"\(foo\)\@!bar"` will match `"bar"` in `"foobar"`,
+    because at the position where `"bar"` matches, `"foo"` does not
+    match.  To avoid matching `"foobar"` you could use
+    `"\(foo\)\@!...bar"`, but that doesn't match a bar at the start of a
+    line.  Use `"\(foo\)\@<!bar"`.
 
-    Useful example: to find "foo" in a line that does not contain "bar": >
+    Useful example: to find `"foo"` in a line that does not contain
+    `"bar"`:
+
         /^\%(.*bar\)\@!.*\zsfoo
-<    This pattern first checks that there is not a single position in the
-    line where "bar" matches.  If ".*bar" matches somewhere the \@! will
-    reject the pattern.  When there is no match any "foo" will be found.
-    The "\zs" is to have the match start just before "foo".
+    
+    This pattern first checks that there is not a single position in the
+    line where `"bar"` matches.  If `".*bar"` matches somewhere the
+    `\@!` will reject the pattern.  When there is no match any `"foo"`
+    will be found.  The `"\zs"` is to have the match start just before
+    `"foo"`.
 
-                            */\@<=*
-\@<=    Matches with zero width if the preceding atom matches just before what
-    follows. `/zero-width` {not in Vi}
-    Like "(?<=pattern)" in Perl, but Vim allows non-fixed-width patterns.
-    Example            matches ~
-    \(an\_s\+\)\@<=file    "file" after "an" and white space or an
-                end-of-line
-    For speed it's often much better to avoid this multi.  Try using "\zs"
-    instead `/\zs`.  To match the same as the above example:
+`\@<=`
+:   Matches with zero width if the preceding atom matches just before
+    what follows. {not in Vi}. Like `"(?<=pattern)"` in Perl, but Vim
+    allows non-fixed-width patterns.
+    
+        Example                 matches
+        \(an\_s\+\)\@<=file     "file" after "an" and white space or an
+                                end-of-line
+
+    For speed it's often much better to avoid this multi.  Try using
+    `"\zs"` instead `/\zs`.  To match the same as the above example:
+
         an\_s\+\zsfile
+    
     At least set a limit for the look-behind, see below.
 
-    "\@<=" and "\@<!" check for matches just before what follows.
-    Theoretically these matches could start anywhere before this position.
-    But to limit the time needed, only the line where what follows matches
-    is searched, and one line before that (if there is one).  This should
-    be sufficient to match most things and not be too slow.
-    The part of the pattern after "\@<=" and "\@<!" are checked for a
-    match first, thus things like "\1" don't work to reference \(\) inside
-    the preceding atom.  It does work the other way around:
-    Example            matches ~
-    \1\@<=,\([a-z]\+\)    ",abc" in "abc,abc"
+    `"\@<="` and ` "\@<!"` check for matches just before what follows.
+    Theoretically these matches could start anywhere before this
+    position.  But to limit the time needed, only the line where what
+    follows matches is searched, and one line before that (if there is
+    one).  This should be sufficient to match most things and not be too
+    slow.  The part of the pattern after `"\@<="` and `"\@<!"` are
+    checked for a match first, thus things like `"\1"` don't work to
+    reference `\(\)` inside the preceding atom.  It does work the other
+    way around:
+    
+        Example                 matches
+        \1\@<=,\([a-z]\+\)      ",abc" in "abc,abc"
 
-\@123<=
-    Like "\@<=" but only look back 123 bytes. This avoids trying lots
-    of matches that are known to fail and make executing the pattern very
-    slow.  Example, check if there is a "<" just before "span":
+`\@123<=`
+:   Like `"\@<="` but only look back 123 bytes. This avoids trying lots
+    of matches that are known to fail and make executing the pattern
+    very slow.  Example, check if there is a `"<"` just before `"span"`:
+
         /<\@1<=span
-    This will try matching "<" only one byte before "span", which is the
-    only place that works anyway.
-    After crossing a line boundary, the limit is relative to the end of
-    the line.  Thus the characters at the start of the line with the match
-    are not counted (this is just to keep it simple).
-    The number zero is the same as no limit.
+    
+    This will try matching `"<"` only one byte before `"span"`, which is
+    the only place that works anyway. After crossing a line boundary,
+    the limit is relative to the end of the line.  Thus the characters
+    at the start of the line with the match are not counted (this is
+    just to keep it simple).  The number zero is the same as no limit.
 
-                            */\@<!*
-\@<!    Matches with zero width if the preceding atom does NOT match just
-    before what follows.  Thus this matches if there is no position in the
-    current or previous line where the atom matches such that it ends just
-    before what follows.  `/zero-width` {not in Vi}
-    Like "(?<!pattern)" in Perl, but Vim allows non-fixed-width patterns.
-    The match with the preceding atom is made to end just before the match
-    with what follows, thus an atom that ends in ".*" will work.
-    Warning: This can be slow (because many positions need to be checked
-    for a match).  Use a limit if you can, see below.
-    Example            matches ~
-    \(foo\)\@<!bar        any "bar" that's not in "foobar"
-    \(\/\/.*\)\@<!in    "in" which is not after "//"
+`\@<!`
+:   Matches with zero width if the preceding atom does NOT match just
+    before what follows.  Thus this matches if there is no position in
+    the current or previous line where the atom matches such that it
+    ends just before what follows. {not in Vi}. Like `"(?<!pattern)"` in
+    Perl, but Vim allows non-fixed-width patterns.  The match with the
+    preceding atom is made to end just before the match with what
+    follows, thus an atom that ends in `".*"` will work.  Warning: This
+    can be slow (because many positions need to be checked for a match).
+    Use a limit if you can, see below.
 
-\@123<!
-    Like "\@<!" but only look back 123 bytes. This avoids trying lots of
-    matches that are known to fail and make executing the pattern very
-    slow.
+        Example            matches
+        \(foo\)\@<!bar     any "bar" that's not in "foobar"
+        \(\/\/.*\)\@<!in   "in" which is not after "//"
 
-                            */\@>*
-\@>    Matches the preceding atom like matching a whole pattern. {not in Vi}
-    Like "(?>pattern)" in Perl.
-    Example        matches ~
-    \(a*\)\@>a    nothing (the "a*" takes all the "a"'s, there can't be
-            another one following)
+`\@123<!`
+:   Like `"\@<!"` but only look back 123 bytes. This avoids trying lots
+    of matches that are known to fail and make executing the pattern
+    very slow.
 
-    This matches the preceding atom as if it was a pattern by itself.  If
-    it doesn't match, there is no retry with shorter sub-matches or
-    anything.  Observe this difference: "a*b" and "a*ab" both match
-    "aaab", but in the second case the "a*" matches only the first two
-    "a"s.  "\(a*\)\@>ab" will not match "aaab", because the "a*" matches
-    the "aaa" (as many "a"s as possible), thus the "ab" can't match.
+`\@>`
+:   Matches the preceding atom like matching a whole pattern. {not in Vi}
+    Like `"(?>pattern)"` in Perl.
+    
+        Example        matches
+        \(a*\)\@>a     nothing (the "a*" takes all the "a"'s, there can't
+                       be another one following)
 
+    This matches the preceding atom as if it was a pattern by itself.
+    If it doesn't match, there is no retry with shorter sub-matches or
+    anything.  Observe this difference: `"a*b"` and `"a*ab"` both match
+    `"aaab"`, but in the second case the `"a*"` matches only the first
+    two `"a"`s.  `"\(a*\)\@>ab"` will not match `"aaab"`, because the
+    `"a*"` matches the `"aaa"` (as many `"a"`s as possible), thus the
+    `"ab"` can't match.
 
+<!--
 ==============================================================================
 6.  Ordinary atoms                    *pattern-atoms*
 
@@ -759,7 +790,7 @@ An ordinary atom can be:
 
                             */^*
 ^    At beginning of pattern or after "\|", "\(", "\%(" or "\n": matches
-    start-of-line; at other positions, matches literal '^'. `/zero-width`
+    start-of-line; at other positions, matches literal '^'. 
     Example        matches ~
     ^beep(        the start of the C function "beep" (probably).
 
@@ -767,7 +798,7 @@ An ordinary atom can be:
 \^    Matches literal '^'.  Can be used at any position in the pattern.
 
                             */\_^*
-\_^    Matches start-of-line. `/zero-width`  Can be used at any position in
+\_^    Matches start-of-line.   Can be used at any position in
     the pattern.
     Example        matches ~
     \_s*\_^foo    white space and blank lines and then "foo" at
@@ -776,13 +807,13 @@ An ordinary atom can be:
                             */$*
 $    At end of pattern or in front of "\|", "\)" or "\n" ('magic' on):
     matches end-of-line <EOL>; at other positions, matches literal '$'.
-    `/zero-width`
+    
 
                             */\$*
 \$    Matches literal '$'.  Can be used at any position in the pattern.
 
                             */\_$*
-\_$    Matches end-of-line. `/zero-width`  Can be used at any position in the
+\_$    Matches end-of-line.   Can be used at any position in the
     pattern.  Note that "a\_$b" never matches, since "b" cannot match an
     end-of-line.  Use "a\nb" instead `/\n`.
     Example        matches ~
@@ -799,16 +830,16 @@ $    At end of pattern or in front of "\|", "\)" or "\n" ('magic' on):
                             */\<*
 \<    Matches the beginning of a word: The next char is the first char of a
     word.  The 'iskeyword' option specifies what is a word character.
-    `/zero-width`
+    
 
                             */\>*
 \>    Matches the end of a word: The previous char is the last char of a
     word.  The 'iskeyword' option specifies what is a word character.
-    `/zero-width`
+    
 
                             */\zs*
 \zs    Matches at any position, and sets the start of the match there: The
-    next char is the first char of the whole match. `/zero-width`
+    next char is the first char of the whole match. 
     Example: >
         /^\s*\zsif
 <    matches an "if" at the start of a line, ignoring white space.
@@ -819,7 +850,7 @@ $    At end of pattern or in front of "\|", "\)" or "\n" ('magic' on):
     {not in Vi} {not available when compiled without the `+syntax` feature}
                             */\ze*
 \ze    Matches at any position, and sets the end of the match there: The
-    previous char is the last char of the whole match. `/zero-width`
+    previous char is the last char of the whole match. 
     Can be used multiple times, the last one encountered in a matching
     branch is used.
     Example: "end\ze\(if\|for\)" matches the "end" in "endif" and
@@ -847,7 +878,7 @@ $    At end of pattern or in front of "\|", "\)" or "\n" ('magic' on):
                         */\%V*
 \%V    Match inside the Visual area.  When Visual mode has already been
     stopped match in the area that `gv` would reselect.
-    This is a `/zero-width` match.  To make sure the whole pattern is
+    This is a  match.  To make sure the whole pattern is
     inside the Visual area put it at the start and end of the pattern,
     e.g.: >
         /\%Vfoo.*bar\%V
@@ -875,7 +906,7 @@ $    At end of pattern or in front of "\|", "\)" or "\n" ('magic' on):
         /.\%>'s.*\%<'e..
 <    Note that two dots are required to include mark 'e in the match.  That
     is because "\%<'e" matches at the character before the 'e mark, and
-    since it's a `/zero-width` match it doesn't include that character.
+    since it's a  match it doesn't include that character.
     {not in Vi}
     WARNING: When the mark is moved after the pattern was used, the result
     becomes invalid.  Vim doesn't automatically update the matches.
@@ -935,7 +966,7 @@ $    At end of pattern or in front of "\|", "\)" or "\n" ('magic' on):
     To match the text up to column 17: >
         /.*\%17v
 <    Column 17 is included, because that's where the "\%17v" matches,
-    even though this is a `/zero-width` match.  Adding a dot to match the
+    even though this is a  match.  Adding a dot to match the
     next character has the same result: >
         /.*\%17v.
 <    This command does the same thing, but also matches when there is no
