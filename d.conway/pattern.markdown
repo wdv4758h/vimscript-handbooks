@@ -1107,125 +1107,160 @@ below only match ASCII characters, as indicated by the range.
 :   A pattern enclosed by escaped parentheses.
     E.g., `"\(^a\)"` matches 'a' at the start of a line.
 
-<!--
-\1      Matches the same string that was matched by    */\1* *E65*
-    the first sub-expression in \( and \). {not in Vi}
+`\1`
+:   Matches the same string that was matched by
+    the first sub-expression in `\(` and `\)`. {not in Vi}.
+
     Example: `"\([a-z]\).\1"` matches `"ata"`, `"ehe"`, `"tot"`, etc.
-\2      Like `"\1"`, but uses second sub-expression,    */\2*
-   ...                            */\3*
-\9      Like `"\1"`, but uses ninth sub-expression.    */\9*
+    
+`\2`
+:   Like `"\1"`, but uses second sub-expression,
+
+`\9`
+:   Like `"\1"`, but uses ninth sub-expression.
     Note: The numbering of groups is done based on which `"\("` comes first
     in the pattern (going left to right), NOT based on what is matched
     first.
 
-\%(\)    A pattern enclosed by escaped parentheses.    */\%(\)* */\%(* *E53*
-    Just like \(\), but without counting it as a sub-expression.  This
+`\%(\)`
+:   A pattern enclosed by escaped parentheses.
+    Just like `\(\)`, but without counting it as a sub-expression. This
     allows using more groups and it's a little bit faster.
-    {not in Vi}
+    {not in Vi}.
 
-x    A single character, with no special meaning, matches itself
+`x`
+:   A single character, with no special meaning, matches itself.
 
-                            */\* */\\*
-\x    A backslash followed by a single character, with no special meaning,
+`\x`
+:   A backslash followed by a single character, with no special meaning,
     is reserved for future expansions
 
-[]    (with 'nomagic': \[])        */[]* */\[]* */\_[]* */collection*
-\_[]
-    A collection.  This is a sequence of characters enclosed in brackets.
-    It matches any single character in the collection.
-    Example        matches ~
-    [xyz]        any 'x', 'y' or 'z'
-    [a-zA-Z]$    any alphabetic character at the end of a line
-    \c[a-z]$    same
-    [А-яЁё]        Russian alphabet (with utf-8 and cp1251)
+`[]`
+:   (with 'nomagic': `\[]`)
 
-                                */[\n]*
+`\_[]`
+:   A collection.  This is a sequence of characters enclosed in
+    brackets.  It matches any single character in the collection.
+    
+        Example         matches
+        [xyz]           any 'x', 'y' or 'z'
+        [a-zA-Z]$       any alphabetic character at the end of a line
+        \c[a-z]$        same
+
     With `"\_"` prepended the collection also includes the end-of-line.
     The same can be done by including `"\n"` in the collection.  The
-    end-of-line is also matched when the collection starts with `"^"`!  Thus
-    `"\_[^ab]"` matches the end-of-line and any character but `"a"` and `"b"`.
-    This makes it Vi compatible: Without the `"\_"` or `"\n"` the collection
-    does not match an end-of-line.
-                                *E769*
-    When the ']' is not there Vim will not give an error message but
-    assume no collection is used.  Useful to search for '['.  However, you
-    do get E769 for internal searching.
+    end-of-line is also matched when the collection starts with `"^"`!
+    Thus `"\_[^ab]"` matches the end-of-line and any character but `"a"`
+    and `"b"`.  This makes it Vi compatible: Without the `"\_"` or
+    `"\n"` the collection does not match an end-of-line.  When the `']'`
+    is not there Vim will not give an error message but assume no
+    collection is used.  Useful to search for `'['`. However, you do get
+    E769 for internal searching.
 
-    If the sequence begins with `"^"`, it matches any single character NOT
-    in the collection: `"[^xyz]"` matches anything but 'x', 'y' and 'z'.
+    If the sequence begins with `"^"`, it matches any single character
+    NOT in the collection: `"[^xyz]"` matches anything but 'x', 'y' and
+    'z'.
+    
     - If two characters in the sequence are separated by '-', this is
-      shorthand for the full list of ASCII characters between them.  E.g.,
-      `"[0-9]"` matches any decimal digit.  Non-ASCII characters can be
-      used, but the character values must not be more than 256 apart.
+      shorthand for the full list of ASCII characters between them.
+      E.g., `"[0-9]"` matches any decimal digit.  Non-ASCII characters
+      can be used, but the character values must not be more than 256
+      apart.
     - A character class expression is evaluated to the set of characters
-      belonging to that character class.  The following character classes
-      are supported:
-              Name        Contents ~
-*[:alnum:]*          [:alnum:]     letters and digits
-*[:alpha:]*          [:alpha:]     letters
-*[:blank:]*          [:blank:]     space and tab characters
-*[:cntrl:]*          [:cntrl:]     control characters
-*[:digit:]*          [:digit:]     decimal digits
-*[:graph:]*          [:graph:]     printable characters excluding space
-*[:lower:]*          [:lower:]     lowercase letters (all letters when
-                    'ignorecase' is used)
-*[:print:]*          [:print:]     printable characters including space
-*[:punct:]*          [:punct:]     punctuation characters
-*[:space:]*          [:space:]     whitespace characters
-*[:upper:]*          [:upper:]     uppercase letters (all letters when
-                    'ignorecase' is used)
-*[:xdigit:]*          [:xdigit:]    hexadecimal digits
-*[:return:]*          [:return:]    the `<CR>` character
-*[:tab:]*          [:tab:]    the `<Tab>` character
-*[:escape:]*          [:escape:]    the `<Esc>` character
-*[:backspace:]*          [:backspace:]    the `<BS>` character
+      belonging to that character class.  The following character
+      classes are supported:
+
+      ----------------------------------------------------------
+      Name                Contents
+      ---------------     --------------------------------------
+      [:alnum:]           letters and digits
+      
+      [:alpha:]           letters
+      
+      [:blank:]           space and tab characters
+      
+      [:cntrl:]           control characters
+      
+      [:digit:]           decimal digits
+      
+      [:graph:]           printable characters excluding space
+      
+      [:lower:]           lowercase letters (all letters when
+                          'ignorecase' is used)
+      
+      [:print:]           printable characters including space
+      
+      [:punct:]           punctuation characters
+      
+      [:space:]           whitespace characters
+      
+      [:upper:]           uppercase letters (all letters when
+                          'ignorecase' is used)
+      
+      [:xdigit:]          hexadecimal digits
+      
+      [:return:]          the `<CR>` character
+      
+      [:tab:]             the `<Tab>` character
+      
+      [:escape:]          the `<Esc>` character
+      
+      [:backspace:]       the `<BS>` character
+      ----------------------------------------------------------
+
       The brackets in character class expressions are additional to the
       brackets delimiting a collection.  For example, the following is a
-      plausible pattern for a UNIX filename: `"[-./[:alnum:]_~]\+"` That is,
-      a list of at least one character, each of which is either '-', '.',
-      '/', alphabetic, numeric, '_' or '~'.
-      These items only work for 8-bit characters.
-                            */[[=* *[==]*
+      plausible pattern for a UNIX filename: `"[-./[:alnum:]_~]\+"` That
+      is, a list of at least one character, each of which is either
+      `'-'`, `'.'`, `'/'`, alphabetic, numeric, `'_'` or `'~'`.  These
+      items only work for 8-bit characters.
     - An equivalence class.  This means that characters are matched that
       have almost the same meaning, e.g., when ignoring accents.  This
       only works for Unicode, latin1 and latin9.  The form is:
-        [=a=]
-                            */[[.* *[..]*
+      
+          [=a=]
+    
     - A collation element.  This currently simply accepts a single
       character in the form:
-        [.a.]
-                              */\]*
-    - To include a literal ']', '^', '-' or '\' in the collection, put a
-      backslash before it: `"[xyz\]]"`, `"[\^xyz]"`, `"[xy\-z]"` and `"[xyz\\]"`.
-      (Note: POSIX does not support the use of a backslash this way).  For
-      ']' you can also make it the first character (following a possible
-      `"^"`):  `"[]xyz]"` or `"[^]xyz]"` {not in Vi}.
-      For '-' you can also make it the first or last character: `"[-xyz]"`,
-      `"[^-xyz]"` or `"[xyz-]"`.  For '\' you can also let it be followed by
-      any character that's not in `"^]-\bdertnoUux"`.  `"[\xyz]"` matches '\',
-      'x', 'y' and 'z'.  It's better to use `"\\"` though, future expansions
-      may use other characters after '\'.
-    - Omitting the trailing ] is not considered an error. `"[]"` works like
-      `"[]]"`, it matches the ']' character.
-    - The following translations are accepted when the 'l' flag is not
-      included in 'cpoptions' {not in Vi}:
-        \e    `<Esc>`
-        \t    `<Tab>`
-        \r    `<CR>`    (NOT end-of-line!)
-        \b    `<BS>`
-        \n    line break, see above `/[\n]`
-        \d123    decimal number of character
-        \o40    octal number of character up to 0377
-        \x20    hexadecimal number of character up to 0xff
-        \u20AC    hex. number of multibyte character up to 0xffff
-        \U1234    hex. number of multibyte character up to 0xffffffff
+        
+          [.a.]
+    
+    - To include a literal `']'`, `'^'`, `'-'` or `'\'` in the
+      collection, put a backslash before it: `"[xyz\]]"`, `"[\^xyz]"`,
+      `"[xy\-z]"` and `"[xyz\\]"`.  (Note: POSIX does not support the
+      use of a backslash this way).  For `']'` you can also make it the
+      first character (following a possible `"^"`):  `"[]xyz]"` or
+      `"[^]xyz]"` {not in Vi}.  For `'-'` you can also make it the first
+      or last character: `"[-xyz]"`, `"[^-xyz]"` or `"[xyz-]"`.  For
+      `'\'` you can also let it be followed by any character that's not
+      in `"^]-\bdertnoUux"`.  `"[\xyz]"` matches `'\'`, `'x'`, `'y'` and
+      `'z'`. It's better to use `"\\"` though, future expansions may use
+      other characters after `'\'`.
+    - Omitting the trailing `]` is not considered an error. `"[]"` works
+      like `"[]]"`, it matches the `']'` character.
+    - The following translations are accepted when the `'l'` flag is not
+      included in `'cpoptions'` {not in Vi}:
+
+          ---------   -------------------------------------------------
+          `\e`        `<Esc>`
+          `\t`        `<Tab>`
+          `\r`        `<CR>`    (NOT end-of-line!)
+          `\b`        `<BS>`
+          `\n`        line break, see above `/[\n]`
+          `\d123`     decimal number of character
+          `\o40`      octal number of character up to 0377
+          `\x20`      hexadecimal number of character up to 0xff
+          `\u20AC`    hex. number of multibyte character up to 0xffff
+          `\U1234`    hex. number of multibyte character up to 0xffffffff
+          -------------------------------------------------------------
+      
       NOTE: The other backslash codes mentioned above do not work inside
-      []!
+      `[]`!.
     - Matching with a collection can be slow, because each character in
       the text has to be compared with each character in the collection.
       Use one of the other atoms above when possible.  Example: `"\d"` is
       much faster than `"[0-9]"` and matches the same characters.
-
+<!--
                         */\%[]* *E69* *E70* *E369*
 \%[]    A sequence of optionally matched atoms.  This always matches.
     It matches as much of the list of atoms it contains as possible.  Thus
