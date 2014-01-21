@@ -1,0 +1,222 @@
+Buffer-Local Options and Mappings
+=================================
+
+Now we're going to take a few minutes to revisit three things we've
+already talked about: mappings, abbreviations, and options, but with a
+twist.  We're going to set each of them in a single buffer at a time.
+
+The true power of this idea will become apparent in the next chapter,
+but we need to lay the groundwork for it now.
+
+For this chapter you'll need to open two files in Vim, each in its own
+split.  I'll call them `foo` and `bar`, but you can name them whatever
+you like.  Put some text into each of them.
+
+Mappings
+--------
+
+Switch to file `foo` and run the following commands:
+
+    :nnoremap          <leader>d dd
+    :nnoremap <buffer> <leader>x dd
+
+Now stay in file `foo`, make sure you're in normal mode, and type
+`<leader>d`.  Vim will delete a line.  This is nothing new.
+
+Still in file `foo`, type `<leader>x`.  Vim will delete a line again.
+This makes sense because we mapped `<leader>x` to `dd` as well.
+
+Now move over to file `bar`.  While in normal mode, type `<leader>d`.
+Again, Vim deletes the current line.  Nothing surprising here either.
+
+Now for the twist: while still in file `bar`, type `<leader>x`.
+
+Instead of deleting the entire line, Vim just deleted a single
+character!  What happened?
+
+The `<buffer>` in the second `nnoremap` command told Vim to only
+consider that mapping when we're in the buffer where we defined it.
+
+When you typed `<leader>x` in file `bar` Vim couldn't find a mapping
+that matched it, so it treated it as two commands: `<leader>` (which
+does nothing on its own) and `x` (the normal command to delete a single
+character.)
+
+Local Leader
+------------
+
+In our example we used `<leader>x` for our buffer-local mapping, but
+this is bad form.  In general, when you create a mapping that only
+applies to specific buffers you should use `<localleader>` instead of
+`<leader>`.
+
+Using two separate leader keys provides a sort of "namespacing" that
+will help you keep all your various mappings straight in your head.
+
+It's even more important when you're writing a plugin for other people
+to use.  The convention of using `<localleader>` for local mappings will
+prevent your plugin from overwriting someone else's `<leader>` mapping
+that they've painstakingly burned into their fingers over time.
+
+Settings
+--------
+
+In one of the earliest chapters of the book we talked about settings
+options with `set`.  Some options always apply to all of Vim, but others
+can be set on a per-buffer basis.
+
+Switch to file `foo` and run the following command:
+
+    :setlocal wrap
+
+Now switch to file `bar` and run this command:
+
+    :setlocal nowrap
+
+Make your Vim window smaller and you'll see that the lines in `foo`
+wrap, but the lines in `bar` don't.
+
+Let's try another option.  Switch to `foo` and run this command:
+
+    :setlocal number
+
+Now switch over to `bar` and run this command:
+
+    :setlocal nonumber
+
+You now have line numbers in `foo` but not in `bar`.
+
+Not all options can be used with `setlocal`.  To see if you can set a
+particular option locally, read its `:help`.
+
+I've glossed over a bit of detail about how local options *actually*
+work for now.  In the exercises you'll learn more about the gory
+details.
+
+Shadowing
+---------
+
+Before we move on, let's look at a particularly interesting property of
+local mappings.  Switch over to `foo` and run the following commands:
+
+    :nnoremap <buffer> Q x
+    :nnoremap          Q dd
+
+Now type `Q`.  What happens?
+
+When you press `Q`, Vim will run the first mapping, not the second,
+because the first mapping is *more specific* than the second.
+
+Switch to file `bar` and type `Q` to see that Vim uses the second
+mapping, because it's not shadowed by the first in this buffer.
+
+From the help system
+--------------------
+
+### :help local-options
+
+Some of the options only apply to a window or buffer.  Each window or
+buffer has its own copy of this option, thus can each have their own
+value.  This allows you to set 'list' in one window but not in another.
+And set 'shiftwidth' to 3 in one buffer and 4 in another.
+
+The following explains what happens to these local options in specific
+situations.  You don't really need to know all of this, since Vim mostly
+uses the option values you would expect.  Unfortunately, doing what the
+user expects is a bit complicated...
+
+When splitting a window, the local options are copied to the new window.
+Thus right after the split the contents of the two windows look the
+same.
+
+When editing a new buffer, its local option values must be initialized.
+Since the local options of the current buffer might be specifically for
+that buffer, these are not used.  Instead, for each buffer-local option
+there also is a global value, which is used for new buffers.  With
+`":set"` both the local and global value is changed.  With `"setlocal"`
+only the local value is changed, thus this value is not used when
+editing a new buffer.
+
+When editing a buffer that has been edited before, the last used window
+options are used again.  If this buffer has been edited in this window,
+the values from back then are used.  Otherwise the values from the
+window where the buffer was edited last are used.
+
+It's possible to set a local window option specifically for a type of
+buffer.  When you edit another buffer in the same window, you don't want
+to keep using these local window options.  Therefore Vim keeps a global
+value of the local window options, which is used when editing another
+buffer.  Each window has its own copy of these values.  Thus these are
+local to the window, but global to all buffers in the window.  With this
+you can do:
+
+    :e one
+    :set list
+    :e two
+
+Now the 'list' option will also be set in `"two"`, since with the `":set
+list"` command you have also set the global value.
+
+    :set nolist
+    :e one
+    :setlocal list
+    :e two
+
+Now the 'list' option is not set, because `":set nolist"` resets the
+global value, `":setlocal list"` only changes the local value and `":e
+two"` gets the global value.  Note that if you do this next:
+
+    :e one
+
+You will get back the 'list' value as it was the last time you edited
+`"one"`.  The options local to a window are remembered for each buffer.
+This also happens when the buffer is not loaded, but they are lost when
+the buffer is wiped out `:bwipe`.
+
+### :help setlocal
+
+i`:setl[ocal] ...`
+:   Like `":set"` but set only the value local to the current buffer
+    or window.
+    
+    Not all options have a local value.  If the option does not have a
+    local value the global value is set.  With the `"all"` argument:
+    display local values for all local options.  Without argument:
+    Display local values for all local options which are different from
+    the default.
+    
+    When displaying a specific local option, show the local value.
+    
+    For a global/local boolean option, when the global value is being
+    used, `"--"` is displayed before the option name.
+    
+    For a global option the global value is shown (but that might change
+    in the future).  {not in Vi}
+
+`:setl[ocal] {option}`
+:   Set the local value of {option} to its global value by copying
+    the value.
+
+### :help map-local
+
+If the first argument to one of these commands is `"<buffer>"` the
+mapping will be effective in the current buffer only.  Example:
+
+    :map <buffer>  ,w  /[.,;]<CR>
+
+Then you can map `",w"` to something else in another buffer:
+
+    :map <buffer>  ,w  /[#&!]<CR>
+
+The local buffer mappings are used before the global ones.  See
+`<nowait>` below to make a short local mapping not taking effect when a
+longer global one exists.
+
+The `"<buffer>"` argument can also be used to clear mappings:
+
+	:unmap <buffer> ,w
+	:mapclear <buffer>
+
+Local mappings are also cleared when a buffer is deleted, but not when
+it is unloaded.  Just like local option values.  Also see
+`map-precedence`.
