@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+</head>
+<body>
+<h1 id="setting-options">Setting Options</h1>
+<p>Vim has many options you can set to change how it behaves.</p>
+<p>There are two main kinds of options: boolean options (either &quot;on&quot; or &quot;off&quot;) and options that take a value.</p>
+<h2 id="boolean-options">Boolean Options</h2>
+<p>Run the following command:</p>
+<pre><code>:set number</code></pre>
+<p>Line numbers should appear on the left side of the window if they weren't there already. Now run this:</p>
+<pre><code>:set nonumber</code></pre>
+<p>The line numbers should disappear. <code>number</code> is a boolean option: it can be off or on. You turn it &quot;on&quot; by running <code>:set number</code> and &quot;off&quot; with <code>:set nonumber</code>.</p>
+<p>All boolean options work this way. <code>:set &lt;name&gt;</code> turns the option on and <code>:set no&lt;name&gt;</code> turns it off.</p>
+<h2 id="toggling-boolean-options">Toggling Boolean Options</h2>
+<p>You can also &quot;toggle&quot; boolean options to set them to the <em>opposite</em> of whatever they are now. Run this:</p>
+<pre><code>:set number!</code></pre>
+<p>The line numbers should reappear. Now run it again:</p>
+<pre><code>:set number!</code></pre>
+<p>They should disappear once more. Adding a <code>!</code> (exclamation point or &quot;bang&quot;) to a boolean option toggles it.</p>
+<h2 id="checking-options">Checking Options</h2>
+<p>You can ask Vim what an option is currently set to by using a <code>?</code>. Run these commands and watch what happens after each:</p>
+<pre><code>:set number
+:set number?
+:set nonumber
+:set number?</code></pre>
+<p>Notice how the first <code>:set number?</code> command displayed <code>number</code> while the second displayed <code>nonumber</code>.</p>
+<h2 id="options-with-values">Options with Values</h2>
+<p>Some options take a value instead of just being off or on. Run the following commands and watch what happens after each:</p>
+<pre><code>:set number
+:set numberwidth=10
+:set numberwidth=4
+:set numberwidth?</code></pre>
+<p>The <code>numberwidth</code> option changes how wide the column containing line numbers will be. You can change non-boolean options with <code>:set &lt;name&gt;=&lt;value&gt;</code>, and check them the usual way (<code>:set &lt;name&gt;?</code>).</p>
+<p>Try checking what a few other common options are set to:</p>
+<pre><code>:set wrap?
+:set shiftround?
+:set matchtime?</code></pre>
+<h2 id="setting-multiple-options-at-once">Setting Multiple Options at Once</h2>
+<p>Finally, you can specify more than one option in the same <code>:set</code> command to save on some typing. Try running this:</p>
+<pre><code>:set numberwidth=2
+:set nonumber
+:set number numberwidth=6</code></pre>
+<p>Notice how both options were set and took effect in the last command.</p>
+<h2 id="from-the-help-system">From the help system</h2>
+<h3 id="help-number">:help number</h3>
+<p><code>number</code> <code>nu</code> <code>nonumber</code>nonu`: boolean (default off), local to window</p>
+<p>Print the line number in front of each line. When the <code>'n'</code> option is excluded from <code>'cpoptions'</code> a wrapped line will not use the column of line numbers (this is the default when <code>'compatible'</code> isn't set).</p>
+<p>The <code>'numberwidth'</code> option can be used to set the room used for the line number. When a long, wrapped line doesn<code>'t start with the first character,</code>'<code>-'</code> characters are put before the number.</p>
+<p>See <code>hl-LineNr</code> and <code>hl-CursorLineNr</code> for the highlighting used for the number.</p>
+<p><code>number_relativenumber</code></p>
+<p>The <code>relativenumber</code> option changes the displayed number to be relative to the cursor. Together with <code>'number'</code> there are these four combinations (cursor in line 3):</p>
+<table>
+<tbody>
+<tr class="odd">
+<td align="left"><code>'nonu'</code></td>
+<td align="left"><code>'nu'</code></td>
+<td align="left"><code>'nonu'</code></td>
+<td align="left"><code>'nu'</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>'nornu'</code></td>
+<td align="left"><code>'nornu'</code></td>
+<td align="left"><code>'rnu'</code></td>
+<td align="left"><code>'rnu'</code></td>
+</tr>
+<tr class="odd">
+<td align="left">apple</td>
+<td align="left">1 apple</td>
+<td align="left">2 apple</td>
+<td align="left">2 apple</td>
+</tr>
+<tr class="even">
+<td align="left">pear</td>
+<td align="left">2 pear</td>
+<td align="left">1 pear</td>
+<td align="left">1 pear</td>
+</tr>
+<tr class="odd">
+<td align="left">nobody</td>
+<td align="left">3 nobody</td>
+<td align="left">0 nobody</td>
+<td align="left">3 nobody</td>
+</tr>
+<tr class="even">
+<td align="left">there</td>
+<td align="left">4 there</td>
+<td align="left">1 there</td>
+<td align="left">1 there</td>
+</tr>
+</tbody>
+</table>
+<h3 id="help-relativenumber">:help relativenumber</h3>
+<p><code>'relativenumber'</code> <code>'rnu'</code> <code>'norelativenumber'</code> <code>'nornu'</code> boolean (default off), local to window</p>
+<p>Show the line number relative to the line with the cursor in front of each line. Relative line numbers help you use the <code>count</code> you can precede some vertical motion commands (e.g. <code>j k + -</code>) with, without having to calculate it yourself. Especially useful in combination with other commands (e.g. <code>y d c &lt; &gt; gq gw =</code>).</p>
+<p>When the <code>'n'</code> option is excluded from <code>'cpoptions'</code> a wrapped line will not use the column of line numbers (this is the default when <code>'compatible'</code> isn't set). The <code>'numberwidth'</code> option can be used to set the room used for the line number.</p>
+<p>When a long, wrapped line doesn<code>'t start with the first character, '</code>-' characters are put before the number. See <code>hl-LineNr</code> and <code>hl-CursorLineNr</code> for the highlighting used for the number.</p>
+<p>The number in front of the cursor line also depends on the value of <code>'number'</code>, see <code>number_relativenumber</code> for all combinations of the two options.</p>
+<h3 id="help-numberwidth">:help numberwidth</h3>
+<p><code>'numberwidth'</code> <code>'nuw'</code> <code>'numberwidth'</code> number (Vim default: 4 Vi default: 8). local to window</p>
+<p>Minimal number of columns to use for the line number. Only relevant when the <code>'number'</code> or <code>'relativenumber'</code> option is set or printing lines with a line number. Since one space is always between the number and the text, there is one less character for the number itself.</p>
+<p>The value is the minimum width. A bigger width is used when needed to fit the highest line number in the buffer respectively the number of rows in the window, depending on whether <code>'number'</code> or <code>'relativenumber'</code> is set. Thus with the Vim default of 4 there is room for a line number up to 999. When the buffer has 1000 lines five columns will be used. The minimum value is 1, the maximum value is 10.</p>
+<blockquote>
+<p>NOTE:</p>
+<p><code>'numberwidth'</code> is reset to 8 when <code>'compatible'</code> is set.</p>
+</blockquote>
+<h3 id="help-wrap">:help wrap</h3>
+<p><code>'wrap'</code> <code>'nowrap'</code> boolean (default on). local to window.</p>
+<p>This option changes how text is displayed. It doesn't change the text in the buffer, see <code>'textwidth'</code> for that.</p>
+<p>When on, lines longer than the width of the window will wrap and displaying continues on the next line. When off lines will not wrap and only part of long lines will be displayed. When the cursor is moved to a part that is not shown, the screen will scroll horizontally.</p>
+<p>The line will be broken in the middle of a word if necessary. See <code>'linebreak'</code> to get the break at a word boundary.</p>
+<p>To make scrolling horizontally a bit more useful, try this:</p>
+<pre><code>:set sidescroll=5
+:set listchars+=precedes:&lt;,extends:&gt;</code></pre>
+<p>See <code>'sidescroll'</code>, <code>'listchars'</code> and <code>wrap-off</code>. This option can<code>'t be set from a</code>modeline<code>when the '</code>diff' option is on.</p>
+<h3 id="help-shiftround">:help shiftround</h3>
+<p><code>'shiftround'</code> <code>'sr'</code> <code>'noshiftround'</code> <code>'nosr'</code> boolean (default off).</p>
+<p>Round indent to multiple of <code>'shiftwidth'</code>. Applies to <code>&gt;</code> and <code>&lt;</code> commands. <code>CTRL-T</code> and <code>CTRL-D</code> in Insert mode always round the indent to a multiple of <code>'shiftwidth'</code> (this is Vi compatible).</p>
+<blockquote>
+<p>NOTE:</p>
+<p>This option is reset when <code>'compatible'</code> is set.</p>
+</blockquote>
+<h3 id="help-matchtime">:help matchtime</h3>
+<p><code>'matchtime'</code> <code>'mat'</code> number (default 5).</p>
+<p>Tenths of a second to show the matching paren, when <code>'showmatch'</code> is set. Note that this is not in milliseconds, like other options that set a time. This is to be compatible with Nvi.</p>
+<h2 id="exercises">Exercises</h2>
+<p>Read <code>:help 'number'</code> (notice the quotes).</p>
+<p>Read <code>:help relativenumber</code>.</p>
+<p>Read <code>:help numberwidth</code>.</p>
+<p>Read <code>:help wrap</code>.</p>
+<p>Read <code>:help shiftround</code>.</p>
+<p>Read <code>:help matchtime</code>.</p>
+<p>Add a few lines to your <code>~/.vimrc</code> file to set these options however you like.</p>
+</body>
+</html>

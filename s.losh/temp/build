@@ -1,19 +1,55 @@
+#!/bin/bash
+
 DOC=lvthw.markdown
 
+echo "Adding titles"
 echo "% Learn Vimscript the hard way" >> $DOC
 echo "% Steve Losh (<steve@stevelosh.com>)" >> $DOC
 echo "% April 4, 2013" >> $DOC
 echo "" >> $DOC
+
+echo "Adding preface"
 cat preface.markdown >> $DOC
 echo "" >> $DOC
+
+echo "Adding 00.markdown"
 cat 00.markdown >> $DOC
 echo "" >> $DOC
+
+echo "Adding 01.markdown"
 cat 01.markdown >> $DOC
 echo "" >> $DOC
 
-# pandoc $DOC.markdown --standalone --smart \
-#   --latex-engine=xelatex --template=../ajt.latex \
-#   -V papersize:a4paper -V openside:openany \
-#   -V documentclass:book -V tables -V urlcolor:black \
-#   -V linkcolor:black -V numbersections -V lowertoc \
-#   --output=$DOC.pdf
+echo "Adding 02.markdown"
+cat 02.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 03.markdown"
+cat 03.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 04.markdown"
+cat 04.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 05.markdown"
+cat 05.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 06.markdown"
+cat 06.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 07.markdown"
+cat 07.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Converting " $DOC
+pandoc $DOC --standalone --smart \
+    --latex-engine=xelatex --template=ajt.latex \
+    -V papersize:a4paper -V openside:openany \
+    -V documentclass:book -V tables -V urlcolor:black \
+    -V linkcolor:black -V numbersections -V lowertoc \
+    --output=$DOC.pdf
+
+echo "Done."

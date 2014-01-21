@@ -1,0 +1,217 @@
+Setting Options
+===============
+
+Vim has many options you can set to change how it behaves.
+
+There are two main kinds of options: boolean options (either "on" or
+"off") and options that take a value.
+
+Boolean Options
+---------------
+
+Run the following command:
+
+    :set number
+
+Line numbers should appear on the left side of the window if they
+weren't there already.  Now run this:
+
+    :set nonumber
+
+The line numbers should disappear.  `number` is a boolean option: it can
+be off or on.  You turn it "on" by running `:set number` and "off" with
+`:set nonumber`.
+
+All boolean options work this way.  `:set <name>` turns the option on
+and `:set no<name>` turns it off.
+
+Toggling Boolean Options
+------------------------
+
+You can also "toggle" boolean options to set them to the *opposite* of
+whatever they are now.  Run this:
+
+    :set number!
+
+The line numbers should reappear.  Now run it again:
+
+    :set number!
+
+They should disappear once more.  Adding a `!` (exclamation point or
+"bang") to a boolean option toggles it.
+
+Checking Options
+----------------
+
+You can ask Vim what an option is currently set to by using a `?`.  Run
+these commands and watch what happens after each:
+
+    :set number
+    :set number?
+    :set nonumber
+    :set number?
+
+Notice how the first `:set number?` command displayed `number` while the
+second displayed `nonumber`.
+
+Options with Values
+-------------------
+
+Some options take a value instead of just being off or on.  Run the
+following commands and watch what happens after each:
+
+    :set number
+    :set numberwidth=10
+    :set numberwidth=4
+    :set numberwidth?
+
+The `numberwidth` option changes how wide the column containing line
+numbers will be.  You can change non-boolean options with `:set
+<name>=<value>`, and check them the usual way (`:set <name>?`).
+
+Try checking what a few other common options are set to:
+
+    :set wrap?
+    :set shiftround?
+    :set matchtime?
+
+Setting Multiple Options at Once
+--------------------------------
+
+Finally, you can specify more than one option in the same `:set` command
+to save on some typing.  Try running this:
+
+    :set numberwidth=2
+    :set nonumber
+    :set number numberwidth=6
+
+Notice how both options were set and took effect in the last command.
+
+From the help system
+--------------------
+
+### :help number
+
+`number` `nu` `nonumber `nonu`: boolean	(default off), local to window
+
+Print the line number in front of each line.  When the `'n'` option is
+excluded from `'cpoptions'` a wrapped line will not use the column of
+line numbers (this is the default when `'compatible'` isn't set).
+
+The `'numberwidth'` option can be used to set the room used for the
+line number.  When a long, wrapped line doesn`'t start with the first
+character, `'`-'` characters are put before the number.
+
+See `hl-LineNr` and `hl-CursorLineNr` for the highlighting used for the
+number.
+
+`number_relativenumber`
+
+The `relativenumber` option changes the displayed number to be relative
+to the cursor.  Together with ``'number'`` there are these four
+combinations (cursor in line 3):
+
+------------     -------------- -------------   ---------------
+`'nonu'`         `'nu'`         `'nonu'`        `'nu'`
+`'nornu'`        `'nornu'`      `'rnu'`         `'rnu'`
+apple            1 apple        2 apple         2 apple
+pear             2 pear         1 pear          1 pear
+nobody           3 nobody       0 nobody        3 nobody
+there            4 there        1 there         1 there
+------------     -------------- -------------   ---------------
+
+### :help relativenumber
+
+`'relativenumber'` `'rnu'` `'norelativenumber'` `'nornu'` boolean
+(default off), local to window
+	
+Show the line number relative to the line with the cursor in front of
+each line. Relative line numbers help you use the `count` you can
+precede some vertical motion commands (e.g. `j k + -`) with, without
+having to calculate it yourself. Especially useful in combination with
+other commands (e.g. `y d c < > gq gw =`).
+
+When the `'n'` option is excluded from `'cpoptions'` a wrapped line will
+not use the column of line numbers (this is the default when
+`'compatible'` isn't set).  The `'numberwidth'` option can be used to
+set the room used for the line number.
+
+When a long, wrapped line doesn`'t start with the first character, '`-'
+characters are put before the number.  See `hl-LineNr`  and
+`hl-CursorLineNr` for the highlighting used for the number.
+
+The number in front of the cursor line also depends on the value of
+`'number'`, see `number_relativenumber` for all combinations of the two
+options.
+
+### :help numberwidth
+
+`'numberwidth'` `'nuw'` `'numberwidth'` number (Vim default: 4
+Vi default: 8). local to window
+	
+Minimal number of columns to use for the line number.  Only relevant
+when the `'number'` or `'relativenumber'` option is set or printing
+lines with a line number. Since one space is always between the number
+and the text, there is one less character for the number itself.
+
+The value is the minimum width.  A bigger width is used when needed to
+fit the highest line number in the buffer respectively the number of
+rows in the window, depending on whether `'number'` or
+`'relativenumber'` is set. Thus with the Vim default of 4 there is room
+for a line number up to 999. When the buffer has 1000 lines five columns
+will be used.  The minimum value is 1, the maximum value is 10.
+
+> NOTE:
+>
+> `'numberwidth'` is reset to 8 when `'compatible'` is set.
+
+### :help wrap
+
+`'wrap'` `'nowrap'` boolean (default on). local to window.
+	
+This option changes how text is displayed.  It doesn't change the text
+in the buffer, see `'textwidth'` for that.
+
+When on, lines longer than the width of the window will wrap and
+displaying continues on the next line.  When off lines will not wrap and
+only part of long lines will be displayed.  When the cursor is moved to
+a part that is not shown, the screen will scroll horizontally.
+
+The line will be broken in the middle of a word if necessary.  See
+`'linebreak'` to get the break at a word boundary.
+
+To make scrolling horizontally a bit more useful, try this:
+	
+    :set sidescroll=5
+    :set listchars+=precedes:<,extends:>
+
+See `'sidescroll'`, `'listchars'` and `wrap-off`.  This option can`'t be
+set from a `modeline` when the '`diff' option is on.
+
+### :help shiftround
+
+`'shiftround'` `'sr'` `'noshiftround'` `'nosr'` boolean (default off).
+	
+Round indent to multiple of `'shiftwidth'`.  Applies to `>` and `<`
+commands.  `CTRL-T` and `CTRL-D` in Insert mode always round the indent
+to a multiple of `'shiftwidth'` (this is Vi compatible).
+
+> NOTE:
+>
+> This option is reset when `'compatible'` is set.
+
+### :help matchtime
+
+`'matchtime'` `'mat'` number (default 5).
+
+Tenths of a second to show the matching paren, when `'showmatch'` is
+set.  Note that this is not in milliseconds, like other options that
+set a time.  This is to be compatible with Nvi.
+
+
+
+Exercises
+---------
+
+Add a few lines to your `~/.vimrc` file to set these options however
+you like.
