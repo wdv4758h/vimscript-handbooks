@@ -60,7 +60,13 @@ echo "Adding 11.markdown"
 cat 11.markdown >> $DOC
 echo "" >> $DOC
 
-echo "Converting " $DOC
+echo "Adding 12.markdown"
+cat 12.markdown >> $DOC
+echo "" >> $DOC
+#
+# 12.md va completato prima di continuare
+#
+echo "Converting" $DOC "..."
 pandoc $DOC --standalone --smart \
     --latex-engine=xelatex --template=ajt.latex \
     -V papersize:a4paper -V openside:openany \

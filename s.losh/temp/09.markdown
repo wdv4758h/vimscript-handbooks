@@ -72,41 +72,24 @@ how unreadable they can become.
 From the help system
 --------------------
 
-### :help ````<`
+### :help \``<`
 
+To the last line or character of the last selected Visual area in the
+current buffer.  For block mode it may also be the first character of
+the last line (to be able to define the block).  Note that 'selection'
+applies, the position may be just after the Visual area.
 
-							*'>* *`>*
-'>  `>			To the last line or character of the last selected
-			Visual area in the current buffer.  For block mode it
-			may also be the first character of the last line (to
-			be able to define the block).  Note that 'selection'
-			applies, the position may be just after the Visual
-			area.  {not in Vi}.
+### :help L
 
-
-
-### Help L
-						*L*
-L			To line [count] from bottom of window (default: Last
-			line on the window) on the first non-blank character
-			|linewise|.  See also 'startofline' option.
-			Cursor is adjusted for 'scrolloff' option.
-
-
+To line [count] from bottom of window (default: Last line on the window)
+on the first non-blank character `linewise`. See also 'startofline'
+option.  Cursor is adjusted for 'scrolloff' option.
 
 ### :help H
 
-						*H*
-H			To line [count] from top (Home) of window (default:
-			first line on the window) on the first non-blank
-			character |linewise|.  See also 'startofline' option.
-			Cursor is adjusted for 'scrolloff' option.
-
-
-
-
-
-
+To line [count] from top (Home) of window (default: first line on the
+window) on the first non-blank character |linewise|.  See also
+'startofline' option.  Cursor is adjusted for 'scrolloff' option.
 
 Exercises
 ---------
@@ -115,8 +98,8 @@ Create a mapping similar to the one we just looked at, but for single
 quotes instead of double quotes.
 
 Try using `vnoremap` to add a mapping that will wrap whatever text you
-have *visually selected* in quotes.  You'll probably need the ````<`
-and ````>` commands for this, so read up on them with `:help ````<`.
+have *visually selected* in quotes.  You'll probably need the \``<`
+and \``>` commands for this, so read up on them with `:help` \``<`.
 
 Map `H` in normal mode to go to the beginning of the current line.
 Since `h` moves left you can think of `H` as a "stronger" `h`.
