@@ -1,0 +1,19 @@
+DOC=lvthw.markdown
+
+echo "% Learn Vimscript the hard way" >> $DOC
+echo "% Steve Losh (<steve@stevelosh.com>)" >> $DOC
+echo "% April 4, 2013" >> $DOC
+echo "" >> $DOC
+cat preface.markdown >> $DOC
+echo "" >> $DOC
+cat 00.markdown >> $DOC
+echo "" >> $DOC
+cat 01.markdown >> $DOC
+echo "" >> $DOC
+
+# pandoc $DOC.markdown --standalone --smart \
+#   --latex-engine=xelatex --template=../ajt.latex \
+#   -V papersize:a4paper -V openside:openany \
+#   -V documentclass:book -V tables -V urlcolor:black \
+#   -V linkcolor:black -V numbersections -V lowertoc \
+#   --output=$DOC.pdf

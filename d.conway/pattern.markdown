@@ -1260,240 +1260,268 @@ below only match ASCII characters, as indicated by the range.
       the text has to be compared with each character in the collection.
       Use one of the other atoms above when possible.  Example: `"\d"` is
       much faster than `"[0-9]"` and matches the same characters.
-<!--
-                        */\%[]* *E69* *E70* *E369*
-\%[]    A sequence of optionally matched atoms.  This always matches.
-    It matches as much of the list of atoms it contains as possible.  Thus
-    it stops at the first atom that doesn't match.  For example: >
+
+`\%[]`
+:   A sequence of optionally matched atoms.  This always matches.
+    It matches as much of the list of atoms it contains as possible.
+    Thus it stops at the first atom that doesn't match.  For example:
+
         /r\%[ead]
-<    matches `"r"`, `"re"`, `"rea"` or `"read"`.  The longest that matches is used.
+        
+    matches `"r"`, `"re"`, `"rea"` or `"read"`.  The longest that
+    matches is used.
+    
     To match the Ex command `"function"`, where `"fu"` is required and
-    `"nction"` is optional, this would work: >
+    `"nction"` is optional, this would work:
+
         /\`<fu\%[nction]\>`
-`<    The end-of-word atom `"\>`"` is used to avoid matching `"fu"` in `"full"`.
-    It gets more complicated when the atoms are not ordinary characters.
-    You don't often have to use it, but it is possible.  Example: >
+        
+    The end-of-word atom `\>` is used to avoid matching `"fu"` in
+    `"full"`.  It gets more complicated when the atoms are not ordinary
+    characters.  You don't often have to use it, but it is possible.
+    Example:
+
         /\`<r\%[[eo]ad]\>`
-<    Matches the words `"r"`, `"re"`, `"ro"`, `"rea"`, `"roa"`, `"read"` and `"road"`.
-    There can be no \(\), \%(\) or \z(\) items inside the [] and \%[] does
+        
+    Matches the words `"r"`, `"re"`, `"ro"`, `"rea"`, `"roa"`, `"read"`
+    and `"road"`.  There can be no `\(\)`, `\%(\)` or `\z(\)` items
+    inside the `[]` and `\%[]` does
     not nest.
-    To include a `"["` use `"[[]"` and for `"]"` use []]", e.g.,: >
+    To include a `"["` use `"[[]"` and for `"]"` use `[]]"`, e.g.,:
+
         /index\%[[[]0[]]]
-<    matches `"index"` `"index["`, `"index[0"` and `"index[0]"`.
-    {not available when compiled without the `+syntax` feature}
+        
+    matches `"index"` `"index["`, `"index[0"` and `"index[0]"`.
+    {not available when compiled without the `+syntax` feature}.
 
-                */\%d* */\%x* */\%o* */\%u* */\%U* *E678*
-
-\%d123    Matches the character specified with a decimal number.  Must be
+`\%d123`
+:   Matches the character specified with a decimal number.  Must be
     followed by a non-digit.
-\%o40    Matches the character specified with an octal number up to 0377.
-    Numbers below 040 must be followed by a non-octal digit or a non-digit.
-\%x2a    Matches the character specified with up to two hexadecimal characters.
-\%u20AC    Matches the character specified with up to four hexadecimal
-    characters.
-\%U1234abcd    Matches the character specified with up to eight hexadecimal
+
+`\%o40`
+:   Matches the character specified with an octal number up to 0377.
+    Numbers below 040 must be followed by a non-octal digit or a
+    non-digit.
+
+`\%x2a`
+:   Matches the character specified with up to two hexadecimal
     characters.
 
-==============================================================================
-7. Ignoring case in a pattern                    */ignorecase*
+`\%u20AC`
+:   Matches the character specified with up to four hexadecimal
+    characters.
+    
+`\%U1234abcd
+:   Matches the character specified with up to eight hexadecimal
+    characters.
+
+
+### Ignoring case in a pattern
 
 If the 'ignorecase' option is on, the case of normal letters is ignored.
 'smartcase' can be set to ignore case when the pattern contains lowercase
 letters only.
-                            */\c* */\C*
-When `"\c"` appears anywhere in the pattern, the whole pattern is handled like
-'ignorecase' is on.  The actual value of 'ignorecase' and 'smartcase' is
-ignored.  `"\C"` does the opposite: Force matching case for the whole pattern.
-{only Vim supports \c and \C}
-Note that 'ignorecase', `"\c"` and `"\C"` are not used for the character classes.
+
+When `"\c"` appears anywhere in the pattern, the whole pattern is
+handled like 'ignorecase' is on.  The actual value of 'ignorecase' and
+'smartcase' is ignored.  `"\C"` does the opposite: Force matching case
+for the whole pattern.  {only Vim supports `\c` and `\C`}.  Note that
+'ignorecase', `"\c"` and `"\C"` are not used for the character classes.
 
 Examples:
-      pattern    'ignorecase'  'smartcase'    matches ~
-    foo      off        -        foo
-    foo      on        -        foo Foo FOO
-    Foo      on        off        foo Foo FOO
-    Foo      on        on            Foo
-    \cfoo      -        -        foo Foo FOO
-    foo\C      -        -        foo
 
-Technical detail:                *NL-used-for-Nul*
-<Nul> characters in the file are stored as <NL> in memory.  In the display
-they are shown as `"^@"`.  The translation is done when reading and writing
-files.  To match a <Nul> with a search pattern you can just enter CTRL-@ or
-`"CTRL-V 000"`.  This is probably just what you expect.  Internally the
-character is replaced with a <NL> in the search pattern.  What is unusual is
-that typing CTRL-V CTRL-J also inserts a <NL>, thus also searches for a <Nul>
-in the file.  {Vi cannot handle <Nul> characters in the file at all}
+pattern     'ignorecase'    'smartcase'     matches
+-------     -----------     -----------     ---------
+`foo`         off             -               foo
+`foo`         on              -               foo Foo FOO
+`Foo`         on              off             foo Foo FOO
+`Foo`         on              on              Foo
+`\cfoo`       -               -               foo Foo FOO
+`foo\C`       -               -               foo
+-------------------------------------------------------
 
-                        *CR-used-for-NL*
-When 'fileformat' is `"mac"`, <NL> characters in the file are stored as <CR>
-characters internally.  In the text they are shown as `"^J"`.  Otherwise this
-works similar to the usage of <NL> for a <Nul>.
 
-When working with expression evaluation, a <NL> character in the pattern
-matches a <NL> in the string.  The use of `"\n"` (backslash n) to match a <NL>
-doesn't work there, it only works to match text in the buffer.
+#### Technical detail
 
-                        *pattern-multi-byte*
+`<Nul>` characters in the file are stored as `<NL>` in memory.  In the
+display they are shown as `"^@"`.  The translation is done when reading
+and writing files.  To match a `<Nul>` with a search pattern you can
+just enter `CTRL-@` or `"CTRL-V 000"`.  This is probably just what you
+expect.  Internally the character is replaced with a `<NL>` in the
+search pattern.  What is unusual is that typing CTRL-V CTRL-J also
+inserts a `<NL>`, thus also searches for a `<Nul>` in the file.  {Vi
+cannot handle `<Nul>` characters in the file at all}
+
+When 'fileformat' is `"mac"`, `<NL>` characters in the file are stored
+as `<CR>` characters internally.  In the text they are shown as `"^J"`.
+Otherwise this works similar to the usage of `<NL>` for a `<Nul>`.
+
+When working with expression evaluation, a `<NL>` character in the
+pattern matches a `<NL>` in the string.  The use of `"\n"` (backslash n)
+to match a `<NL>` doesn't work there, it only works to match text in the
+buffer.
+
 Patterns will also work with multi-byte characters, mostly as you would
-expect.  But invalid bytes may cause trouble, a pattern with an invalid byte
-will probably never match.
+expect.  But invalid bytes may cause trouble, a pattern with an invalid
+byte will probably never match.
 
-==============================================================================
-8. Composing characters                    *patterns-composing*
+### Composing characters
 
-                            */\Z*
-When "\Z" appears anywhere in the pattern, composing characters are ignored.
-Thus only the base characters need to match, the composing characters may be
-different and the number of composing characters may differ.  Only relevant
-when 'encoding' is "utf-8".
-Exception: If the pattern starts with one or more composing characters, these
-must match.
+When `"\Z"` appears anywhere in the pattern, composing characters are
+ignored.  Thus only the base characters need to match, the composing
+characters may be different and the number of composing characters may
+differ.  Only relevant when 'encoding' is `"utf-8"`.  Exception: If the
+pattern starts with one or more composing characters, these must match.
 
-When a composing character appears at the start of the pattern of after an
-item that doesn't include the composing character, a match is found at any
-character that includes this composing character.
+When a composing character appears at the start of the pattern of after
+an item that doesn't include the composing character, a match is found
+at any character that includes this composing character.
 
 When using a dot and a composing character, this works the same as the
-composing character by itself, except that it doesn't matter what comes before
-this.
+composing character by itself, except that it doesn't matter what comes
+before this.
 
-The order of composing characters does not matter.  Also, the text may have
-more composing characters than the pattern, it still matches.  But all
-composing characters in the pattern must be found in the text.
+The order of composing characters does not matter.  Also, the text may
+have more composing characters than the pattern, it still matches.  But
+all composing characters in the pattern must be found in the text.
 
 Suppose B is a base character and x and y are composing characters:
-    pattern        text        match ~
-    Bxy        Bxy        yes (perfect match)
-    Bxy        Byx        yes (order ignored)
-    Bxy        By        no (x missing)
-    Bxy        Bx        no (y missing)
-    Bx        Bx        yes (perfect match)
-    Bx        By        no (x missing)
-    Bx        Bxy        yes (extra y ignored)
-    Bx        Byx        yes (extra y ignored)
 
-==============================================================================
-9. Compare with Perl patterns                *perl-patterns*
+pattern     text    match
+-------     ----    ------
+Bxy         Bxy     yes (perfect match)
+Bxy         Byx     yes (order ignored)
+Bxy         By      no (x missing)
+Bxy         Bx      no (y missing)
+Bx          Bx      yes (perfect match)
+Bx          By      no (x missing)
+Bx          Bxy     yes (extra y ignored)
+Bx          Byx     yes (extra y ignored)
+-----------------------------------------
 
-Vim's regexes are most similar to Perl's, in terms of what you can do.  The
-difference between them is mostly just notation;  here's a summary of where
-they differ:
 
-Capability            in Vimspeak    in Perlspeak ~
+### Compare with Perl patterns
+
+Vim's regexes are most similar to Perl's, in terms of what you can do.
+The difference between them is mostly just notation;  here's a summary
+of where they differ:
+
+Capability                      in Vimspeak     in Perlspeak
+----------------------------   ---------------  -----------------
+force case insensitivity       `\c`             (?i)
+force case sensitivity         `\C`             (?-i)
+backref-less grouping          `\%(atom\)`      (?:atom)
+conservative quantifiers       `\{-n,m}`        *?, +?, ??, {}?
+0-width match                  `atom\@=`        (?=atom)
+0-width non-match              `atom\@!`        (?!atom)
+0-width preceding match        `atom\@<=`       (?<=atom)
+0-width preceding non-match    `atom\@<!`       (?<!atom)
+match without retry            `atom\@>`        (?>atom)
 ----------------------------------------------------------------
-force case insensitivity    \c        (?i)
-force case sensitivity        \C        (?-i)
-backref-less grouping        \%(atom\)    (?:atom)
-conservative quantifiers    \{-n,m}        *?, +?, ??, {}?
-0-width match            atom\@=        (?=atom)
-0-width non-match        atom\@!        (?!atom)
-0-width preceding match        atom\@<=    (?<=atom)
-0-width preceding non-match    atom\@<!    (?<!atom)
-match without retry        atom\@>        (?>atom)
 
-Vim and Perl handle newline characters inside a string a bit differently:
+Vim and Perl handle newline characters inside a string a bit
+differently:
 
-In Perl, ^ and $ only match at the very beginning and end of the text,
-by default, but you can set the 'm' flag, which lets them match at
+In Perl, `^` and `$` only match at the very beginning and end of the
+text, by default, but you can set the 'm' flag, which lets them match at
 embedded newlines as well.  You can also set the 's' flag, which causes
 a . to match newlines as well.  (Both these flags can be changed inside
 a pattern using the same syntax used for the i flag above, BTW.)
 
-On the other hand, Vim's ^ and $ always match at embedded newlines, and
-you get two separate atoms, \%^ and \%$, which only match at the very
-start and end of the text, respectively.  Vim solves the second problem
-by giving you the \_ "modifier":  put it in front of a . or a character
-class, and they will match newlines as well.
+On the other hand, Vim's `^` and `$` always match at embedded newlines,
+and you get two separate atoms, `\%^` and `\%$`, which only match at the
+very start and end of the text, respectively.  Vim solves the second
+problem by giving you the `\_ "modifier"`:  put it in front of a . or a
+character class, and they will match newlines as well.
 
 Finally, these constructs are unique to Perl:
-- execution of arbitrary code in the regex:  (?{perl code})
-- conditional expressions:  (?(condition)true-expr|false-expr)
+- execution of arbitrary code in the regex:  `(?{perl code})`
+- conditional expressions:  `(?(condition)true-expr|false-expr)`
 
 ...and these are unique to Vim:
-- changing the magic-ness of a pattern:  \v \V \m \M
-   (very useful for avoiding backslashitis)
-- sequence of optionally matching atoms:  \%[atoms]
-- \& (which is to \| what "and" is to "or";  it forces several branches
-   to match at one spot)
-- matching lines/columns by number:  \%5l \%5c \%5v
-- setting the start and end of the match:  \zs \ze
-
-==============================================================================
-10. Highlighting matches                *match-highlight*
-
-                            *:mat* *:match*
-:mat[ch] {group} /{pattern}/
-        Define a pattern to highlight in the current window.  It will
-        be highlighted with {group}.  Example: >
-            :highlight MyGroup ctermbg=green guibg=green
-            :match MyGroup /TODO/
-<        Instead of // any character can be used to mark the start and
-        end of the {pattern}.  Watch out for using special characters,
-        such as '"' and '|'.
-
-        {group} must exist at the moment this command is executed.
-
-        The {group} highlighting still applies when a character is
-        to be highlighted for 'hlsearch', as the highlighting for
-        matches is given higher priority than that of 'hlsearch'.
-        Syntax highlighting (see 'syntax') is also overruled by
-        matches.
-
-        Note that highlighting the last used search pattern with
-        'hlsearch' is used in all windows, while the pattern defined
-        with ":match" only exists in the current window.  It is kept
-        when switching to another buffer.
-
-        'ignorecase' does not apply, use `/\c` in the pattern to
-        ignore case.  Otherwise case is not ignored.
-
-        'redrawtime' defines the maximum time searched for pattern
-        matches.
-
-        When matching end-of-line and Vim redraws only part of the
-        display you may get unexpected results.  That is because Vim
-        looks for a match in the line where redrawing starts.
-
-        Also see `matcharg()` and `getmatches()`. The former returns
-        the highlight group and pattern of a previous `:match`
-        command.  The latter returns a list with highlight groups and
-        patterns defined by both `matchadd()` and `:match`.
-
-        Highlighting matches using `:match` are limited to three
-        matches (aside from `:match`, `:2match` and `:3match`are
-        available). `matchadd()` does not have this limitation and in
-        addition makes it possible to prioritize matches.
-
-        Another example, which highlights all characters in virtual
-        column 72 and more: >
-            :highlight rightMargin term=bold ctermfg=blue guifg=blue
-            :match rightMargin /.\%>72v/
-<        To highlight all character that are in virtual column 7: >
-            :highlight col8 ctermbg=grey guibg=grey
-            :match col8 /\%<8v.\%>7v/
-<        Note the use of two items to also match a character that
-        occupies more than one virtual column, such as a TAB.
-
-:mat[ch]
-:mat[ch] none
-        Clear a previously defined match pattern.
+- changing the magic-ness of a pattern:  `\v \V \m \M`
+  (very useful for avoiding backslashitis)
+- sequence of optionally matching atoms:  `\%[atoms]`
+- `\&` (which is to `\|` what `"and"` is to `"or"`;  it forces several
+  branches to match at one spot)
+- matching lines/columns by number:  `\%5l \%5c \%5v`
+- setting the start and end of the match:  `\zs \ze`
 
 
-:2mat[ch] {group} /{pattern}/                    *:2match*
-:2mat[ch]
-:2mat[ch] none
-:3mat[ch] {group} /{pattern}/                    *:3match*
-:3mat[ch]
-:3mat[ch] none
-        Just like `:match` above, but set a separate match.  Thus
-        there can be three matches active at the same time.  The match
-        with the lowest number has priority if several match at the
-        same position.
-        The ":3match" command is used by the `matchparen` plugin.  You
-        are suggested to use ":match" for manual matching and
-        ":2match" for another plugin.
+### Highlighting matches
 
+`:mat[ch] {group} /{pattern}/`
+:   Define a pattern to highlight in the current window.  It will
+    be highlighted with {group}.  Example
+    
+        :highlight MyGroup ctermbg=green guibg=green
+        :match MyGroup /TODO/
+        
+    Instead of `//` any character can be used to mark the start and
+    end of the {pattern}.  Watch out for using special characters,
+    such as `'"'` and `'|'`.
 
- vim:tw=78:ts=8:ft=help:norl:
- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+    {group} must exist at the moment this command is executed.
+
+    The {group} highlighting still applies when a character is
+    to be highlighted for 'hlsearch', as the highlighting for
+    matches is given higher priority than that of 'hlsearch'.
+    Syntax highlighting (see 'syntax') is also overruled by
+    matches.
+
+    Note that highlighting the last used search pattern with
+    'hlsearch' is used in all windows, while the pattern defined
+    with `":match"` only exists in the current window.  It is kept
+    when switching to another buffer.
+
+    'ignorecase' does not apply, use `/\c` in the pattern to
+    ignore case.  Otherwise case is not ignored.
+
+    'redrawtime' defines the maximum time searched for pattern
+    matches.
+
+    When matching end-of-line and Vim redraws only part of the
+    display you may get unexpected results.  That is because Vim
+    looks for a match in the line where redrawing starts.
+
+    Also see `matcharg()` and `getmatches()`. The former returns
+    the highlight group and pattern of a previous `:match`
+    command.  The latter returns a list with highlight groups and
+    patterns defined by both `matchadd()` and `:match`.
+
+    Highlighting matches using `:match` are limited to three
+    matches (aside from `:match`, `:2match` and `:3match`are
+    available). `matchadd()` does not have this limitation and in
+    addition makes it possible to prioritize matches.
+
+    Another example, which highlights all characters in virtual
+    column 72 and more:
+
+        :highlight rightMargin term=bold ctermfg=blue guifg=blue
+        :match rightMargin /.\%>72v/
+
+    To highlight all character that are in virtual column 7:
+
+        :highlight col8 ctermbg=grey guibg=grey
+        :match col8 /\%<8v.\%>7v/
+        
+    Note the use of two items to also match a character that
+    occupies more than one virtual column, such as a TAB.
+
+`:mat[ch]`
+`:mat[ch] none`
+:   Clear a previously defined match pattern.
+
+`:2mat[ch] {group} /{pattern}/`
+`:2mat[ch]`
+`:2mat[ch] none`
+`:3mat[ch] {group} /{pattern}/`
+`:3mat[ch]`
+`:3mat[ch] none`
+:   Just like `:match` above, but set a separate match.  Thus
+    there can be three matches active at the same time.  The match
+    with the lowest number has priority if several match at the
+    same position.
+    The `":3match"` command is used by the `matchparen` plugin.  You
+    are suggested to use `":match"` for manual matching and
+    `":2match"` for another plugin.
