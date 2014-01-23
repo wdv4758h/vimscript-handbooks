@@ -1,0 +1,323 @@
+Variables
+=========
+
+Up to this point we've covered single commands.  For the next third of
+the book we're going to look at Vimscript as a *programming language*.
+This won't be as instantly gratifying as the rest of what you've
+learned, but it will lay the groundwork for the last part of the book,
+which walks through creating a full-fledged Vim plugin from scratch.
+
+Let's get started.  The first thing we need to talk about are variables.
+Run the following commands:
+
+    :let foo = "bar"
+    :echo foo
+
+Vim will display `bar`.  `foo` is now a variable, and we've assigned it
+a string: `"bar"`.  Now run these commands:
+
+    :let foo = 42
+    :echo foo
+
+Vim will display `42`, because we've reassigned `foo` to the integer
+`42`.
+
+From these short examples it may seem like Vimscript is dynamically
+typed.  That's not the case, but we'll talk more about that later.
+
+Options as Variables
+--------------------
+
+You can read and set *options* as variables by using a special syntax.
+Run the following commands:
+
+    :set textwidth=80
+    :echo &textwidth
+
+Vim will display `80`.  Using an ampersand in front of a name tells Vim
+that you're referring to the option, not a variable that happens to have
+the same name.
+
+Let's see how Vim works with boolean options.  Run the following
+commands:
+
+    :set nowrap
+    :echo &wrap
+
+Vim displays `0`.  Now try these commands:
+
+    :set wrap
+    :echo &wrap
+
+This time Vim displays `1`.  This is a very strong hint that Vim treats
+the integer `0` as "false" and the integer `1` as "true".  It would be
+reasonable to assume that Vim treats *any* non-zero integer as "truthy",
+and this is indeed the case.
+
+We can also *set* options as variables using the `let` command.  Run the
+following commands:
+
+    :let &textwidth = 100
+    :set textwidth?
+
+Vim will display `textwidth=100`.
+
+Why would we want to do this when we could just use `set`? Run the
+following commands:
+
+    :let &textwidth = &textwidth + 10
+    :set textwidth?
+
+This time Vim displays `textwidth=110`.  When you set an option using
+`set` you can only set it to a single literal value.  When you use `let`
+and set it as a variable you can use the full power of Vimscript to
+determine the value.
+
+Local Options
+-------------
+
+If you want to set the *local* value of an option as a variable, instead
+of the *global* value, you need to prefix the variable name.
+
+Open two files in separate splits.  Run the following command:
+
+    :let &l:number = 1
+
+Now switch to the other file and run this command:
+
+    :let &l:number = 0
+
+Notice that the first window has line numbers and the second does not.
+
+Registers as Variables
+----------------------
+
+You can also read and set *registers* as variables.  Run the following
+command:
+
+    :let @a = "hello!"
+
+Now put your cursor somewhere in your text and type `"ap`.  This command
+tells Vim to "paste the contents of register `a` here".  We just set the
+contents of that register, so Vim pastes `hello!` into your text.
+
+Registers can also be read.  Run the following command:
+
+    :echo @a
+
+Vim will echo `hello!`.
+
+Select a word in your file and yank it with `y`, then run this command:
+
+    :echo @"
+
+Vim will echo the word you just yanked.  The `"` register is the
+"unnamed" register, which is where text you yank without specifying a
+destination will go.
+
+Perform a search in your file with `/someword`, then run the following
+command:
+
+    :echo @/
+
+Vim will echo the search pattern you just used.  This lets you
+programmatically read *and modify* the current search pattern, which can
+be very useful at times.
+
+From the help system
+--------------------
+
+### :help registers
+
+There are nine types of registers:
+
+1. The unnamed register `""`
+2. 10 numbered registers `"0` to `"9`
+3. The small delete register `"-`
+4. 26 named registers `"a` to `"z` or `"A` to `"Z`
+5. four read-only registers `":`, `".`, `"%` and `"#`
+6. the expression register `"=`
+7. The selection and drop registers `"*`, `"+` and `"~`
+8. The black hole register `"_`
+9. Last search pattern register `"/`
+
+#### Unnamed register `""`
+
+Vim fills this register with text deleted with the `"d"`, `"c"`, `"s"`,
+`"x"` commands or copied with the yank `"y"` command, regardless of
+whether or not a specific register was used (e.g.  `"xdd`).  This is
+like the unnamed register is pointing to the last used register.  Thus
+when appending using an uppercase register name, the unnamed register
+contains the same text as the named register.  An exception is the `'_'`
+register: `"_dd` does not store the deleted text in any register.  Vim
+uses the contents of the unnamed register for any put command (`p` or
+`P`) which does not specify a register.  Additionally you can access it
+with the name `'"'`. This means you have to type two double quotes.
+Writing to the `""` register writes to register `"0`.  {Vi: register
+contents are lost when changing files, no `'"'`}
+
+#### Numbered registers `"0` to `"9`
+
+Vim fills these registers with text from yank and delete commands.
+
+Numbered register `0` contains the text from the most recent yank
+command, unless the command specified another register with [`"x`].
+
+Numbered register `1` contains the text deleted by the most recent
+delete or change command, unless the command specified another register
+or the text is less than one line (the small delete register is used
+then).  An exception is made for the delete operator with these movement
+commands: `%`, `(`, `)`, ```, `/`, `?`, `n`, `N`, `{` and `}`.  Register
+`"1` is always used then (this is Vi compatible).  The `"-` register is
+used as well if the delete is within a line.
+
+With each successive deletion or change, Vim shifts the previous
+contents of register `1` into register `2`, `2` into `3`, and so forth,
+losing the previous contents of register `9`.
+
+{Vi: numbered register contents are lost when changing files; register
+`0` does not exist}
+
+#### Small delete register `"-`
+
+This register contains text from commands that delete less than one
+line, except when the command specifies a register with [`"x`].
+
+#### Named registers `"a` to `"z` or `"A` to `"Z`
+
+Vim fills these registers only when you say so.  Specify them as
+lowercase letters to replace their previous contents or as uppercase
+letters to append to their previous contents.  When the `'>'` flag is
+present in `'cpoptions'` then a line break is inserted before the
+appended text.
+
+#### Read-only registers `":`, `".`, `"%` and `"#`
+
+These are `'%'`, `'#'`, `':'` and `'.'`. You can use them only with the
+`"p"`, `"P"`, and `":put"` commands and with `CTRL-R`.
+
+`".`
+:   Contains the last inserted text (the same as what is inserted with
+    the insert mode commands `CTRL-A` and `CTRL-@`). Note: this doesn't
+    work with `CTRL-R` on the command-line.  It works a bit differently,
+    like inserting the text instead of putting it ('textwidth' and other
+    options affect what is inserted).
+
+`"%`
+:   Contains the name of the current file.
+
+`"#`
+:   Contains the name of the alternate file.
+
+`":`
+:   Contains the most recent executed command-line.  Example: Use `"@:"`
+    to repeat the previous command-line command.  The command-line is
+    only stored in this register when at least one character of it was
+    typed.  Thus it remains unchanged if the command was completely from
+    a mapping.
+
+#### Expression register `"=`
+
+This is not really a register that stores text, but is a way to use an
+expression in commands which use a register.  The expression register is
+read-only; you cannot put text into it.  After the `'='`, the cursor
+moves to the command-line, where you can enter any expression (see
+`expression`).  All normal command-line editing commands are available,
+including a special history for expressions.  When you end the
+command-line by typing `<CR>`, Vim computes the result of the
+expression.  If you end it with `<Esc>`, Vim abandons the expression.
+If you do not enter an expression, Vim uses the previous expression
+(like with the `"/"` command).
+
+The expression must evaluate to a String.  A Number is always
+automatically converted to a String.  For the `"p"` and `":put"`
+command, if the result is a Float it's converted into a String.  If the
+result is a List each element is turned into a String and used as a
+line.  A Dictionary or FuncRef results in an error message (use
+`string()` to convert).
+
+If the `"=` register is used for the `"p"` command, the String is split
+up at `<NL>` characters.  If the String ends in a `<NL>`, it is regarded
+as a linewise register.
+
+#### Selection and drop registers `"*`, `"+` and `"~`
+
+Use these registers for storing and retrieving the selected text for the
+GUI.  See `quotestar` and `quoteplus`.  When the clipboard is not
+available or not working, the unnamed register is used instead.  For
+Unix systems the clipboard is only available when the `+xterm_clipboard`
+feature is present.
+
+Note that there is only a distinction between `"*` and `"+` for X11
+systems.  For an explanation of the difference, see `x11-selection`.
+Under MS-Windows, use of `"*` and `"+` is actually synonymous and refers
+to the `gui-clipboard`.
+
+The read-only `"~` register stores the dropped text from the last
+drag'n'drop operation.  When something has been dropped onto Vim, the
+`"~` register is filled in and the `<Drop>` pseudo key is sent for
+notification.  You can remap this key if you want; the default action
+(for all modes) is to insert the contents of the `"~` register at the
+cursor position.
+
+> Note:
+>
+> The `"~` register is only used when dropping plain text onto Vim.
+> Drag'n'drop of URI lists is handled internally.
+
+#### Black hole register `"_`
+
+When writing to this register, nothing happens.  This can be used to
+delete text without affecting the normal registers.  When reading from
+this register, nothing is returned.
+
+#### Last search pattern register `"/`
+
+Contains the most recent search-pattern.  This is used for `"n"` and
+`'hlsearch'`.  It is writable with `:let`, you can change it to have
+`'hlsearch'` highlight other matches without actually searching.  You
+can't yank or delete into this register.  The search direction is
+available in `v:searchforward`.
+
+Note that the valued is restored when returning from a function
+`function-search-undo`.
+
+You can write to a register with a `:let` command `:let-@`. Example:
+
+    :let @/ = "the"
+
+If you use a put command without specifying a register, Vim uses the
+register that was last filled (this is also the contents of the unnamed
+register).  If you are confused, use the `:dis` command to find out what
+Vim will put (this command displays all named and numbered registers;
+the unnamed register is labelled `'"'`).
+
+The next three commands always work on whole lines.
+
+`:[range]co[py] {address}`
+:   Copy the lines given by [range] to below the line given by
+    {address}.
+
+`:t`
+:   Synonym for copy.
+
+`:[range]m[ove] {address}`
+:   Move the lines given by `[range]` to below the line given by
+    {address}.
+
+Exercises
+---------
+
+Go through your `~/.vimrc` file and change some of the `set` and
+`setlocal` commands to their `let` forms.  Remember that boolean options
+still need to be set to something.
+
+Try setting a boolean option like `wrap` to something other than zero or
+one.  What happens when you set it to a different number?  What happens
+if you set it to a string?
+
+Go back through your `~/.vimrc` file and undo the changes.  You should
+never use `let` if `set` will suffice -- it's harder to read.
+
+Read `:help registers` and look over the list of registers you can read
+and write.
