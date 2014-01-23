@@ -96,9 +96,13 @@ echo "Adding 20.markdown"
 cat 20.markdown >> $DOC
 echo "" >> $DOC
 
-#
-# complete 20.markdown
-#
+echo "Adding 21.markdown"
+cat 21.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 22.markdown"
+cat 22.markdown >> $DOC
+echo "" >> $DOC
 
 echo "Converting" $DOC "..."
 pandoc $DOC --standalone --smart \

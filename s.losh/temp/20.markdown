@@ -72,57 +72,55 @@ or deleted with `:bdelete`.
 
 One local buffer variable is predefined:
 
-<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+`b:changedtick`
+:   The total number of changes to the current buffer. It is
+    incremented for each change.  An undo command is also a change in
+    this case.  This can be used to perform an action only when the
+    buffer has changed.  Example:
 
-b:changedtick    The total number of changes to the current buffer.  It is
-        incremented for each change.  An undo command is also a change
-        in this case.  This can be used to perform an action only when
-        the buffer has changed.  Example: >
-            :if my_changedtick != b:changedtick
-            :    let my_changedtick = b:changedtick
-            :    call My_Update()
-            :endif
-<
-                        *window-variable* *w:var* *w:*
-A variable name that is preceded with "w:" is local to the current window.  It
-is deleted when the window is closed.
+        :if my_changedtick != b:changedtick
+        :    let my_changedtick = b:changedtick
+        :    call My_Update()
+        :endif
 
-                        *tabpage-variable* *t:var* *t:*
-A variable name that is preceded with "t:" is local to the current tab page,
-It is deleted when the tab page is closed. {not available when compiled
-without the |+windows| feature}
+A variable name that is preceded with `"w:"` is local to the current
+window.  It is deleted when the window is closed.
 
-                        *global-variable* *g:var* *g:*
-Inside functions global variables are accessed with "g:".  Omitting this will
-access a variable local to a function.    But "g:" can also be used in any other
-place if you like.
+A variable name that is preceded with `"t:"` is local to the current tab
+page, It is deleted when the tab page is closed. {not available when
+compiled without the `+windows` feature}
 
-                        *local-variable* *l:var* *l:*
-Inside functions local variables are accessed without prepending anything.
-But you can also prepend "l:" if you like.  However, without prepending "l:"
-you may run into reserved variable names.  For example "count".  By itself it
-refers to "v:count".  Using "l:count" you can have a local variable with the
-same name.
+Inside functions global variables are accessed with `"g:"`.  Omitting
+this will access a variable local to a function.    But `"g:"` can also
+be used in any other place if you like.
 
-                        *script-variable* *s:var*
-In a Vim script variables starting with "s:" can be used.  They cannot be
-accessed from outside of the scripts, thus are local to the script.
+Inside functions local variables are accessed without prepending
+anything.  But you can also prepend `"l:"` if you like.  However,
+without prepending `"l:"` you may run into reserved variable names.  For
+example `"count"`.  By itself it refers to `"v:count"`.  Using
+`"l:count"` you can have a local variable with the same name.
+
+In a Vim script variables starting with `"s:"` can be used.  They cannot
+be accessed from outside of the scripts, thus are local to the script.
 
 They can be used in:
+
 - commands executed while the script is sourced
 - functions defined in the script
 - autocommands defined in the script
-- functions and autocommands defined in functions and autocommands which were
-  defined in the script (recursively)
+- functions and autocommands defined in functions and autocommands which
+  were defined in the script (recursively)
 - user defined commands defined in the script
+
 Thus not in:
+
 - other scripts sourced from this one
 - mappings
 - menus
 - etc.
 
-Script variables can be used to avoid conflicts with global variable names.
-Take this example: >
+Script variables can be used to avoid conflicts with global variable
+names.  Take this example:
 
     let s:counter = 0
     function MyCounter()
@@ -131,21 +129,21 @@ Take this example: >
     endfunction
     command Tick call MyCounter()
 
-You can now invoke "Tick" from any script, and the "s:counter" variable in
-that script will not be changed, only the "s:counter" in the script where
-"Tick" was defined is used.
+You can now invoke `"Tick"` from any script, and the `"s:counter"`
+variable in that script will not be changed, only the `"s:counter"` in
+the script where `"Tick"` was defined is used.
 
-Another example that does the same: >
+Another example that does the same:
 
     let s:counter = 0
     command Tick let s:counter = s:counter + 1 | echo s:counter
 
-When calling a function and invoking a user-defined command, the context for
-script variables is set to the script where the function or command was
-defined.
+When calling a function and invoking a user-defined command, the context
+for script variables is set to the script where the function or command
+was defined.
 
-The script variables are also available when a function is defined inside a
-function that is defined in a script.  Example: >
+The script variables are also available when a function is defined
+inside a function that is defined in a script.  Example:
 
     let s:counter = 0
     function StartCounting(incr)
@@ -160,13 +158,14 @@ function that is defined in a script.  Example: >
       endif
     endfunction
 
-This defines the MyCounter() function either for counting up or counting down
-when calling StartCounting().  It doesn't matter from where StartCounting() is
-called, the s:counter variable will be accessible in MyCounter().
+This defines the i`MyCounter()` function either for counting up or
+counting down when calling `StartCounting()`. It doesn't matter from
+where `StartCounting()` is called, the s:counter variable will be
+accessible in `MyCounter()`.
 
-When the same script is sourced again it will use the same script variables.
-They will remain valid as long as Vim is running.  This can be used to
-maintain a counter: >
+When the same script is sourced again it will use the same script
+variables.  They will remain valid as long as Vim is running.  This can
+be used to maintain a counter:
 
     if !exists("s:counter")
       let s:counter = 1
@@ -176,424 +175,452 @@ maintain a counter: >
       echo "script executed " . s:counter . " times now"
     endif
 
-Note that this means that filetype plugins don't get a different set of script
-variables for each buffer.  Use local buffer variables instead |b:var|.
+Note that this means that filetype plugins don't get a different set of
+script variables for each buffer.  Use local buffer variables instead
+`b:var`.
 
+Predefined Vim variables:
 
-Predefined Vim variables:            *vim-variable* *v:var* *v:*
+`v:beval_col`
+:   The number of the column, over which the mouse pointer is.
+    This is the byte index in the `v:beval_lnum` line.  Only valid while
+    evaluating the 'balloonexpr' option.
 
-                    *v:beval_col* *beval_col-variable*
-v:beval_col    The number of the column, over which the mouse pointer is.
-        This is the byte index in the |v:beval_lnum| line.
-        Only valid while evaluating the 'balloonexpr' option.
+`v:beval_bufnr`
+:   The number of the buffer, over which the mouse pointer is. Only
+    valid while evaluating the 'balloonexpr' option.
 
-                    *v:beval_bufnr* *beval_bufnr-variable*
-v:beval_bufnr    The number of the buffer, over which the mouse pointer is. Only
-        valid while evaluating the 'balloonexpr' option.
+`v:beval_lnum`
+:   The number of the line, over which the mouse pointer is. Only
+    valid while evaluating the 'balloonexpr' option.
 
-                    *v:beval_lnum* *beval_lnum-variable*
-v:beval_lnum    The number of the line, over which the mouse pointer is. Only
-        valid while evaluating the 'balloonexpr' option.
+`v:beval_text`
+:   The text under or after the mouse pointer.  Usually a word as
+    it is useful for debugging a C program.  `'iskeyword'` applies, but
+    a dot and `"->"` before the position is included.  When on a `']'`
+    the text before it is used, including the matching `'['` and word
+    before it.  When on a Visual area within one line the highlighted
+    text is used.  Only valid while evaluating the `'balloonexpr'`
+    option.
 
-                    *v:beval_text* *beval_text-variable*
-v:beval_text    The text under or after the mouse pointer.  Usually a word as
-        it is useful for debugging a C program.  'iskeyword' applies,
-        but a dot and "->" before the position is included.  When on a
-        ']' the text before it is used, including the matching '[' and
-        word before it.  When on a Visual area within one line the
-        highlighted text is used.
-        Only valid while evaluating the 'balloonexpr' option.
+`v:beval_winnr`
+:   The number of the window, over which the mouse pointer is. Only
+    valid while evaluating the `'balloonexpr'` option.  The first window
+    has number zero (unlike most other places where a window gets a
+    number).
 
-                    *v:beval_winnr* *beval_winnr-variable*
-v:beval_winnr    The number of the window, over which the mouse pointer is. Only
-        valid while evaluating the 'balloonexpr' option.  The first
-        window has number zero (unlike most other places where a
-        window gets a number).
+`v:char`
+:   `Argument for evaluating `'formatexpr'` and used for the typed`
+    `character when using <expr> in an abbreviation `:map-<expr`>`.  `It
+    is also used by the `InsertCharPre` and `InsertEnter` events`.
 
-                    *v:char* *char-variable*
-v:char        Argument for evaluating 'formatexpr' and used for the typed
-        character when using <expr> in an abbreviation |:map-<expr>|.
-        It is also used by the |InsertCharPre| and |InsertEnter| events.
+`v:charconvert_from`
+:   The name of the character encoding of a file to be converted.
+    Only valid while evaluating the 'charconvert' option.
 
-            *v:charconvert_from* *charconvert_from-variable*
-v:charconvert_from
-        The name of the character encoding of a file to be converted.
-        Only valid while evaluating the 'charconvert' option.
+`v:charconvert_to`
+:   The name of the character encoding of a file after conversion.
+    Only valid while evaluating the 'charconvert' option.
 
-            *v:charconvert_to* *charconvert_to-variable*
-v:charconvert_to
-        The name of the character encoding of a file after conversion.
-        Only valid while evaluating the 'charconvert' option.
+`v:cmdarg`
+:   This variable is used for two purposes:
+    
+    1. The extra arguments given to a file read/write command.
+       Currently these are `"++enc="` and `"++ff="`.  This variable is
+       set before an autocommand event for a file read/write command is
+       triggered.  There is a leading space to make it possible to
+       append this variable directly after the read/write command.
+       Note: The `"+cmd"` argument isn't included here, because it will
+       be executed anyway.
+    2. When printing a PostScript file with `":hardcopy"` this is the
+       argument for the `":hardcopy"` command.  This can be used in
+       `'printexpr'`.
 
-                    *v:cmdarg* *cmdarg-variable*
-v:cmdarg    This variable is used for two purposes:
-        1. The extra arguments given to a file read/write command.
-           Currently these are "++enc=" and "++ff=".  This variable is
-           set before an autocommand event for a file read/write
-           command is triggered.  There is a leading space to make it
-           possible to append this variable directly after the
-           read/write command.    Note: The "+cmd" argument isn't
-           included here, because it will be executed anyway.
-        2. When printing a PostScript file with ":hardcopy" this is
-           the argument for the ":hardcopy" command.  This can be used
-           in 'printexpr'.
+`v:cmdbang`
+:   Set like `v:cmdarg` for a file read/write command.  When a `"!"`
+    was used the value is 1, otherwise it is 0.  Note that this can only
+    be used in autocommands.  For user commands `<bang>` can be used.
 
-                    *v:cmdbang* *cmdbang-variable*
-v:cmdbang    Set like v:cmdarg for a file read/write command.  When a "!"
-        was used the value is 1, otherwise it is 0.  Note that this
-        can only be used in autocommands.  For user commands |<bang>|
-        can be used.
-
-                    *v:count* *count-variable*
-v:count        The count given for the last Normal mode command.  Can be used
-        to get the count before a mapping.  Read-only.    Example: >
-    :map _x :<C-U>echo "the count is " . v:count<CR>
-<        Note: The <C-U> is required to remove the line range that you
-        get when typing ':' after a count.
-        When there are two counts, as in "3d2w", they are multiplied,
-        just like what happens in the command, "d6w" for the example.
-        Also used for evaluating the 'formatexpr' option.
-        "count" also works, for backwards compatibility.
-
-                    *v:count1* *count1-variable*
-v:count1    Just like "v:count", but defaults to one when no count is
-        used.
-
-                        *v:ctype* *ctype-variable*
-v:ctype        The current locale setting for characters of the runtime
-        environment.  This allows Vim scripts to be aware of the
-        current locale encoding.  Technical: it's the value of
-        LC_CTYPE.  When not using a locale the value is "C".
-        This variable can not be set directly, use the |:language|
-        command.
-        See |multi-lang|.
-
-                    *v:dying* *dying-variable*
-v:dying        Normally zero.    When a deadly signal is caught it's set to
-        one.  When multiple signals are caught the number increases.
-        Can be used in an autocommand to check if Vim didn't
-        terminate normally. {only works on Unix}
-        Example: >
-    :au VimLeave * if v:dying | echo "\nAAAAaaaarrrggghhhh!!!\n" | endif
-<        Note: if another deadly signal is caught when v:dying is one,
-        VimLeave autocommands will not be executed.
-
-                    *v:errmsg* *errmsg-variable*
-v:errmsg    Last given error message.  It's allowed to set this variable.
-        Example: >
-    :let v:errmsg = ""
-    :silent! next
-    :if v:errmsg != ""
-    :  ... handle error
-<        "errmsg" also works, for backwards compatibility.
-
-                    *v:exception* *exception-variable*
-v:exception    The value of the exception most recently caught and not
-        finished.  See also |v:throwpoint| and |throw-variables|.
-        Example: >
-    :try
-    :  throw "oops"
-    :catch /.*/
-    :  echo "caught" v:exception
-    :endtry
-<        Output: "caught oops".
-
-                    *v:fcs_reason* *fcs_reason-variable*
-v:fcs_reason    The reason why the |FileChangedShell| event was triggered.
-        Can be used in an autocommand to decide what to do and/or what
-        to set v:fcs_choice to.  Possible values:
-            deleted        file no longer exists
-            conflict    file contents, mode or timestamp was
-                    changed and buffer is modified
-            changed        file contents has changed
-            mode        mode of file changed
-            time        only file timestamp changed
-
-                    *v:fcs_choice* *fcs_choice-variable*
-v:fcs_choice    What should happen after a |FileChangedShell| event was
-        triggered.  Can be used in an autocommand to tell Vim what to
-        do with the affected buffer:
-            reload        Reload the buffer (does not work if
-                    the file was deleted).
-            ask        Ask the user what to do, as if there
-                    was no autocommand.  Except that when
-                    only the timestamp changed nothing
-                    will happen.
-            <empty>        Nothing, the autocommand should do
-                    everything that needs to be done.
-        The default is empty.  If another (invalid) value is used then
-        Vim behaves like it is empty, there is no warning message.
-
-                    *v:fname_in* *fname_in-variable*
-v:fname_in    The name of the input file.  Valid while evaluating:
-            option        used for ~
-            'charconvert'    file to be converted
-            'diffexpr'    original file
-            'patchexpr'    original file
-            'printexpr'    file to be printed
-        And set to the swap file name for |SwapExists|.
-
-                    *v:fname_out* *fname_out-variable*
-v:fname_out    The name of the output file.  Only valid while
-        evaluating:
-            option        used for ~
-            'charconvert'    resulting converted file (*)
-            'diffexpr'    output of diff
-            'patchexpr'    resulting patched file
-        (*) When doing conversion for a write command (e.g., ":w
-        file") it will be equal to v:fname_in.    When doing conversion
-        for a read command (e.g., ":e file") it will be a temporary
-        file and different from v:fname_in.
-
-                    *v:fname_new* *fname_new-variable*
-v:fname_new    The name of the new version of the file.  Only valid while
-        evaluating 'diffexpr'.
-
-                    *v:fname_diff* *fname_diff-variable*
-v:fname_diff    The name of the diff (patch) file.  Only valid while
-        evaluating 'patchexpr'.
-
-                    *v:folddashes* *folddashes-variable*
-v:folddashes    Used for 'foldtext': dashes representing foldlevel of a closed
-        fold.
-        Read-only in the |sandbox|. |fold-foldtext|
-
-                    *v:foldlevel* *foldlevel-variable*
-v:foldlevel    Used for 'foldtext': foldlevel of closed fold.
-        Read-only in the |sandbox|. |fold-foldtext|
-
-                    *v:foldend* *foldend-variable*
-v:foldend    Used for 'foldtext': last line of closed fold.
-        Read-only in the |sandbox|. |fold-foldtext|
-
-                    *v:foldstart* *foldstart-variable*
-v:foldstart    Used for 'foldtext': first line of closed fold.
-        Read-only in the |sandbox|. |fold-foldtext|
-
-                    *v:insertmode* *insertmode-variable*
-v:insertmode    Used for the |InsertEnter| and |InsertChange| autocommand
-        events.  Values:
-            i    Insert mode
-            r    Replace mode
-            v    Virtual Replace mode
-
-                        *v:key* *key-variable*
-v:key        Key of the current item of a |Dictionary|.  Only valid while
-        evaluating the expression used with |map()| and |filter()|.
-        Read-only.
-
-                        *v:lang* *lang-variable*
-v:lang        The current locale setting for messages of the runtime
-        environment.  This allows Vim scripts to be aware of the
-        current language.  Technical: it's the value of LC_MESSAGES.
-        The value is system dependent.
-        This variable can not be set directly, use the |:language|
-        command.
-        It can be different from |v:ctype| when messages are desired
-        in a different language than what is used for character
-        encoding.  See |multi-lang|.
-
-                        *v:lc_time* *lc_time-variable*
-v:lc_time    The current locale setting for time messages of the runtime
-        environment.  This allows Vim scripts to be aware of the
-        current language.  Technical: it's the value of LC_TIME.
-        This variable can not be set directly, use the |:language|
-        command.  See |multi-lang|.
-
-                        *v:lnum* *lnum-variable*
-v:lnum        Line number for the 'foldexpr' |fold-expr|, 'formatexpr' and
-        'indentexpr' expressions, tab page number for 'guitablabel'
-        and 'guitabtooltip'.  Only valid while one of these
-        expressions is being evaluated.  Read-only when in the
-        |sandbox|.
-
-                    *v:mouse_win* *mouse_win-variable*
-v:mouse_win    Window number for a mouse click obtained with |getchar()|.
-        First window has number 1, like with |winnr()|.  The value is
-        zero when there was no mouse button click.
-
-                    *v:mouse_lnum* *mouse_lnum-variable*
-v:mouse_lnum    Line number for a mouse click obtained with |getchar()|.
-        This is the text line number, not the screen line number.  The
-        value is zero when there was no mouse button click.
-
-                    *v:mouse_col* *mouse_col-variable*
-v:mouse_col    Column number for a mouse click obtained with |getchar()|.
-        This is the screen column number, like with |virtcol()|.  The
-        value is zero when there was no mouse button click.
-
-                    *v:oldfiles* *oldfiles-variable*
-v:oldfiles    List of file names that is loaded from the |viminfo| file on
-        startup.  These are the files that Vim remembers marks for.
-        The length of the List is limited by the ' argument of the
-        'viminfo' option (default is 100).
-        Also see |:oldfiles| and |c_#<|.
-        The List can be modified, but this has no effect on what is
-        stored in the |viminfo| file later.  If you use values other
-        than String this will cause trouble.
-        {only when compiled with the |+viminfo| feature}
-
-                    *v:operator* *operator-variable*
-v:operator    The last operator given in Normal mode.  This is a single
-        character except for commands starting with <g> or <z>,
-        in which case it is two characters.  Best used alongside
-        |v:prevcount| and |v:register|.  Useful if you want to cancel
-        Operator-pending mode and then use the operator, e.g.: >
-            :omap O <Esc>:call MyMotion(v:operator)<CR>
-<        The value remains set until another operator is entered, thus
-        don't expect it to be empty.
-        v:operator is not set for |:delete|, |:yank| or other Ex
-        commands.
-        Read-only.
-
-                    *v:prevcount* *prevcount-variable*
-v:prevcount    The count given for the last but one Normal mode command.
-        This is the v:count value of the previous command.  Useful if
-        you want to cancel Visual or Operator-pending mode and then
-        use the count, e.g.: >
-            :vmap % <Esc>:call MyFilter(v:prevcount)<CR>
-<        Read-only.
-
-                    *v:profiling* *profiling-variable*
-v:profiling    Normally zero.    Set to one after using ":profile start".
-        See |profiling|.
-
-                    *v:progname* *progname-variable*
-v:progname    Contains the name (with path removed) with which Vim was
-        invoked.  Allows you to do special initialisations for |view|,
-        |evim| etc., or any other name you might symlink to Vim.
-        Read-only.
-
-                    *v:register* *register-variable*
-v:register    The name of the register in effect for the current normal mode
-        command (regardless of whether that command actually used a
-        register).  Or for the currently executing normal mode mapping
-        (use this in custom commands that take a register).
-        If none is supplied it is the default register '"', unless
-        'clipboard' contains "unnamed" or "unnamedplus", then it is
-        '*' or '+'.
-        Also see |getreg()| and |setreg()|
-
-                    *v:scrollstart* *scrollstart-variable*
-v:scrollstart    String describing the script or function that caused the
-        screen to scroll up.  It's only set when it is empty, thus the
-        first reason is remembered.  It is set to "Unknown" for a
-        typed command.
-        This can be used to find out why your script causes the
-        hit-enter prompt.
-
-                    *v:servername* *servername-variable*
-v:servername    The resulting registered |x11-clientserver| name if any.
-        Read-only.
-
+`v:count`
+:   The count given for the last Normal mode command.  Can be used
+    to get the count before a mapping.  Read-only.    Example:
         
-v:searchforward            *v:searchforward* *searchforward-variable*
-        Search direction:  1 after a forward search, 0 after a
-        backward search.  It is reset to forward when directly setting
-        the last search pattern, see |quote/|.
-        Note that the value is restored when returning from a
-        function. |function-search-undo|.
-        Read-write.
+        :map _x :<C-U>echo "the count is " . v:count<CR>
 
-                    *v:shell_error* *shell_error-variable*
-v:shell_error    Result of the last shell command.  When non-zero, the last
-        shell command had an error.  When zero, there was no problem.
-        This only works when the shell returns the error code to Vim.
-        The value -1 is often used when the command could not be
-        executed.  Read-only.
-        Example: >
-    :!mv foo bar
-    :if v:shell_error
-    :  echo 'could not rename "foo" to "bar"!'
-    :endif
-<        "shell_error" also works, for backwards compatibility.
+    > Note:
+    >
+    > The `<C-U>` is required to remove the line range that you
+    > get when typing `':'` after a count.  When there are two counts,
+    > as in `"3d2w"`, they are multiplied, just like what happens in
+    > the command, `"d6w"` for the example.  Also used for evaluating
+    > the `'formatexpr'` option.  `"count"` also works, for backwards
+    > compatibility.
 
-                    *v:statusmsg* *statusmsg-variable*
-v:statusmsg    Last given status message.  It's allowed to set this variable.
+`v:count1`
+:   Just like "v:count", but defaults to one when no count is used.
 
-                    *v:swapname* *swapname-variable*
-v:swapname    Only valid when executing |SwapExists| autocommands: Name of
-        the swap file found.  Read-only.
+`v:ctype`
+:   The current locale setting for characters of the runtime
+    environment.  This allows Vim scripts to be aware of the current
+    locale encoding.  Technical: it's the value of LC_CTYPE.  When not
+    using a locale the value is `"C"`.  This variable can not be set
+    directly, use the `:language` command.  See `multi-lang`.
 
-                    *v:swapchoice* *swapchoice-variable*
-v:swapchoice    |SwapExists| autocommands can set this to the selected choice
-        for handling an existing swap file:
-            'o'    Open read-only
-            'e'    Edit anyway
-            'r'    Recover
-            'd'    Delete swapfile
-            'q'    Quit
-            'a'    Abort
-        The value should be a single-character string.    An empty value
-        results in the user being asked, as would happen when there is
-        no SwapExists autocommand.  The default is empty.
+`v:dying`
+:   Normally zero. When a deadly signal is caught it's set to
+    one.  When multiple signals are caught the number increases.  Can be
+    used in an autocommand to check if Vim didn't terminate normally.
+    {only works on Unix} Example:
 
-                    *v:swapcommand* *swapcommand-variable*
-v:swapcommand    Normal mode command to be executed after a file has been
-        opened.  Can be used for a |SwapExists| autocommand to have
-        another Vim open the file and jump to the right place.    For
-        example, when jumping to a tag the value is ":tag tagname\r".
-        For ":edit +cmd file" the value is ":cmd\r".
+        :au VimLeave * if v:dying | echo "\nAAAAaaaarrrggghhhh!!!\n" | endif
 
-                *v:termresponse* *termresponse-variable*
-v:termresponse    The escape sequence returned by the terminal for the |t_RV|
-        termcap entry.    It is set when Vim receives an escape sequence
-        that starts with ESC [ or CSI and ends in a 'c', with only
-        digits, ';' and '.' in between.
-        When this option is set, the TermResponse autocommand event is
-        fired, so that you can react to the response from the
-        terminal.
-        The response from a new xterm is: "<Esc>[ Pp ; Pv ; Pc c".  Pp
-        is the terminal type: 0 for vt100 and 1 for vt220.  Pv is the
-        patch level (since this was introduced in patch 95, it's
-        always 95 or bigger).  Pc is always zero.
-        {only when compiled with |+termresponse| feature}
+    Note: if another deadly signal is caught when `v:dying` is one,
+    VimLeave autocommands will not be executed.
 
-                *v:this_session* *this_session-variable*
-v:this_session    Full filename of the last loaded or saved session file.  See
-        |:mksession|.  It is allowed to set this variable.  When no
-        session file has been saved, this variable is empty.
-        "this_session" also works, for backwards compatibility.
+`v:errmsg`
+:   Last given error message.  It's allowed to set this variable.
+    Example:
 
-                    *v:throwpoint* *throwpoint-variable*
-v:throwpoint    The point where the exception most recently caught and not
-        finished was thrown.  Not set when commands are typed.    See
-        also |v:exception| and |throw-variables|.
-        Example: >
-    :try
-    :  throw "oops"
-    :catch /.*/
-    :  echo "Exception from" v:throwpoint
-    :endtry
-<        Output: "Exception from test.vim, line 2"
+        :let v:errmsg = ""
+        :silent! next
+        :if v:errmsg != ""
+        :  ... handle error
+    
+    "errmsg" also works, for backwards compatibility.
 
-                        *v:val* *val-variable*
-v:val        Value of the current item of a |List| or |Dictionary|.    Only
-        valid while evaluating the expression used with |map()| and
-        |filter()|.  Read-only.
+`v:exception`
+:   The value of the exception most recently caught and not
+    finished.  See also `v:throwpoint` and `throw-variables`.
 
-                    *v:version* *version-variable*
-v:version    Version number of Vim: Major version number times 100 plus
-        minor version number.  Version 5.0 is 500.  Version 5.1 (5.01)
-        is 501.  Read-only.  "version" also works, for backwards
-        compatibility.
-        Use |has()| to check if a certain patch was included, e.g.: >
-            if has("patch123")
-<        Note that patch numbers are specific to the version, thus both
-        version 5.0 and 5.1 may have a patch 123, but these are
-        completely different.
+    Example:
 
-                    *v:warningmsg* *warningmsg-variable*
-v:warningmsg    Last given warning message.  It's allowed to set this variable.
+        :try
+        :  throw "oops"
+        :catch /.*/
+        :  echo "caught" v:exception
+        :endtry
+   
+   Output: "caught oops".
 
-                    *v:windowid* *windowid-variable*
-v:windowid    When any X11 based GUI is running or when running in a
-        terminal and Vim connects to the X server (|-X|) this will be
-        set to the window ID.
-        When an MS-Windows GUI is running this will be set to the
-        window handle.
-        Otherwise the value is zero.
-        Note: for windows inside Vim use |winnr()|.
+`v:fcs_reason`
+:   The reason why the `FileChangedShell` event was triggered.
+    Can be used in an autocommand to decide what to do and/or what
+    to set `v:fcs_choice` to.  Possible values:
+
+    ----------  --------------------------------------
+    deleted     file no longer exists
+
+    conflict    file contents, mode or timestamp was
+                changed and buffer is modified
+
+    changed     file contents has changed
+
+    mode        mode of file changed
+
+    time        only file timestamp changed
+    ----------  --------------------------------------
+
+`v:fcs_choice`
+:   What should happen after a `FileChangedShell` event was
+    triggered.  Can be used in an autocommand to tell Vim what to
+    do with the affected buffer:
+
+    ---------   ---------------------------------------
+    reload      Reload the buffer (does not work if
+                the file was deleted).
+    
+    ask         Ask the user what to do, as if there
+                was no autocommand.  Except that when
+                only the timestamp changed nothing
+                will happen.
+    
+    `<empty>`   Nothing, the autocommand should do
+                everything that needs to be done.
+    ---------   ---------------------------------------
+
+    The default is empty.  If another (invalid) value is used then
+    Vim behaves like it is empty, there is no warning message.
+
+`v:fname_in`
+:   The name of the input file.  Valid while evaluating:
+
+    -------------------------------------------
+    option              used for
+    -----------------   -----------------------
+    `'charconvert'`     file to be converted
+    
+    `'diffexpr'`        original file
+    
+    `'patchexpr'`       original file
+    
+    `'printexpr'`       file to be printed
+    -------------------------------------------
+
+    And set to the swap file name for `SwapExists`.
+
+`v:fname_out`
+:   The name of the output file.  Only valid while evaluating:
+            
+    option          used for
+    --------------- -------------------------------
+    `'charconvert'`   resulting converted file `(*)`
+    `'diffexpr'`      output of diff
+    `'patchexpr'`     resulting patched file
+    -----------------------------------------------
+
+    `(*)` When doing conversion for a write command (e.g., `":w file"`)
+    it will be equal to v:fname_in.    When doing conversion for a read
+    command (e.g., `":e file"`) it will be a temporary file and
+    different from `v:fname_in`.
+
+`v:fname_new`
+:   The name of the new version of the file.  Only valid while
+    evaluating `'diffexpr'`.
+
+`v:fname_diff`
+:   The name of the diff (patch) file.  Only valid while evaluating
+    `'patchexpr'`.
+
+`v:folddashes`
+:   Used for `'foldtext'`: dashes representing foldlevel of a closed
+    fold.
+    Read-only in the `sandbox`.
+
+`v:foldlevel`
+:   Used for `'foldtext'`: foldlevel of closed fold.
+    Read-only in the `sandbox`.
+
+`v:foldend`
+:   Used for `'foldtext'`: last line of closed fold.
+    Read-only in the `sandbox`.
+
+`v:foldstart`
+:   Used for `'foldtext'`: first line of closed fold.
+    Read-only in the `sandbox`
+
+`v:insertmode`
+:   Used for the `InsertEnter` and `InsertChange` autocommand
+    events.  Values:
+
+    ---  ---------------------
+    i    Insert mode
+    r    Replace mode
+    v    Virtual Replace mode
+    ---  ---------------------
+
+`v:key`
+:   Key of the current item of a `Dictionary`.  Only valid while
+    evaluating the expression used with `map()` and `filter()`.
+    Read-only.
+
+`v:lang`
+:   The current locale setting for messages of the runtime
+    environment.  This allows Vim scripts to be aware of the current
+    language.  Technical: it's the value of `LC_MESSAGES`.  The value is
+    system dependent.  This variable can not be set directly, use the
+    `:language` command.  It can be different from `v:ctype` when
+    messages are desired in a different language than what is used for
+    character encoding.  See `multi-lang`.
+
+`v:lc_time`
+:   The current locale setting for time messages of the runtime
+    environment.  This allows Vim scripts to be aware of the current
+    language.  Technical: it's the value of `LC_TIME`.  This variable
+    can not be set directly, use the `:language` command.  See
+    `multi-lang`.
+
+`v:lnum`
+:   Line number for the `'foldexpr'` `fold-expr`, `'formatexpr'` and
+    `'indentexpr'` expressions, tab page number for `'guitablabel'` and
+    `'guitabtooltip'`.  Only valid while one of these expressions is
+    being evaluated.  Read-only when in the `sandbox`.
+
+`v:mouse_win`
+:   Window number for a mouse click obtained with `getchar()`.
+    First window has number 1, like with `winnr()`.  The value is
+    zero when there was no mouse button click.
+
+`v:mouse_lnum`
+:   Line number for a mouse click obtained with `getchar()`.
+    This is the text line number, not the screen line number.  The
+    value is zero when there was no mouse button click.
+
+`v:mouse_col`
+:   Column number for a mouse click obtained with `getchar()`.
+    This is the screen column number, like with `virtcol()`.  The
+    value is zero when there was no mouse button click.
+
+`v:oldfiles`
+:   List of file names that is loaded from the `viminfo` file on
+    startup.  These are the files that Vim remembers marks for.  The
+    length of the List is limited by the ' argument of the 'viminfo'
+    option (default is 100).  Also see `:oldfiles` and `c_#<`.  The List
+    can be modified, but this has no effect on what is stored in the
+    `viminfo` file later.  If you use values other than String this will
+    cause trouble.  {only when compiled with the `+viminfo` feature}
+
+`v:operator`
+:   The last operator given in Normal mode.  This is a single
+    character except for commands starting with <g> or <z>, in which
+    case it is two characters.  Best used alongside `v:prevcount` and
+    `v:register`.  Useful if you want to cancel Operator-pending mode
+    and then use the operator, e.g.:
+
+        :omap O <Esc>:call MyMotion(v:operator)<CR>
+
+    The value remains set until another operator is entered, thus don't
+    expect it to be empty.
+    
+    `v:operator` is not set for `:delete`, `:yank` or other Ex commands.
+    Read-only.
+
+`v:prevcount`
+:   The count given for the last but one Normal mode command.
+    This is the `v:count` value of the previous command.  Useful if you
+    want to cancel Visual or Operator-pending mode and then use the
+    count, e.g.:
+
+        :vmap % <Esc>:call MyFilter(v:prevcount)<CR>
+
+    Read-only.
+
+`v:profiling`
+:   Normally zero. Set to one after using `":profile start"`.
+    See `profiling`.
+
+`v:progname`
+:   Contains the name (with path removed) with which Vim was
+    invoked.  Allows you to do special initialisations for `view`,
+    `evim` etc., or any other name you might symlink to Vim.  Read-only.
+
+`v:register`
+:   The name of the register in effect for the current normal mode
+    command (regardless of whether that command actually used a
+    register).  Or for the currently executing normal mode mapping (use
+    this in custom commands that take a register).  If none is supplied
+    it is the default register `'"'`, unless `'clipboard'` contains
+    `"unnamed"` or `"unnamedplus"`, then it is `'*'` or `'+'`.  Also see
+    `getreg()` and `setreg()`
+
+`v:scrollstart`
+:   String describing the script or function that caused the
+    screen to scroll up.  It's only set when it is empty, thus the first
+    reason is remembered.  It is set to `"Unknown"` for a typed command.
+    This can be used to find out why your script causes the hit-enter
+    prompt.
+
+`v:servername`
+:   The resulting registered `x11-clientserver` name if any.
+    Read-only.
+
+`v:searchforward`
+:   Search direction:  1 after a forward search, 0 after a
+    backward search.  It is reset to forward when directly setting the
+    last search pattern, see `quote/`.  Note that the value is restored
+    when returning from a function. Read-write.
+
+`v:shell_error`
+:   Result of the last shell command.  When non-zero, the last
+    shell command had an error.  When zero, there was no problem.  This
+    only works when the shell returns the error code to Vim.  The value
+    -1 is often used when the command could not be executed.  Read-only.
+    Example:
+
+        :!mv foo bar
+        :if v:shell_error
+        :  echo 'could not rename "foo" to "bar"!'
+        :endif
+
+    `"shell_error"` also works, for backwards compatibility.
+
+`v:statusmsg`
+:   Last given status message.  It's allowed to set this variable.
+
+`v:swapname`
+:   Only valid when executing `SwapExists` autocommands: Name of
+    the swap file found.  Read-only.
+
+`v:swapchoice`
+:   'SwapExists` autocommands can set this to the selected choice
+    for handling an existing swap file:
+
+    -------  ------------------------
+    `'o'`    Open read-only
+    `'e'`    Edit anyway
+    `'r'`    Recover
+    `'d'`    Delete swapfile
+    `'q'`    Quit
+    `'a'`    Abort
+    -------  ------------------------
+    
+    The value should be a single-character string.    An empty value
+    results in the user being asked, as would happen when there is no
+    SwapExists autocommand.  The default is empty.
+
+`v:swapcommand`
+:   Normal mode command to be executed after a file has been
+    opened.  Can be used for a `SwapExists` autocommand to have another
+    Vim open the file and jump to the right place.    For example, when
+    jumping to a tag the value is `":tag tagname\r"`.  For `":edit +cmd
+    file"` the value is `":cmd\r"`.
+
+`v:termresponse`
+:   The escape sequence returned by the terminal for the `t_RV`
+    termcap entry.    It is set when Vim receives an escape sequence
+    that starts with ESC [ or CSI and ends in a `'c'`, with only digits,
+    `';'` and `'.'` in between.  When this option is set, the
+    TermResponse autocommand event is fired, so that you can react to
+    the response from the terminal.  The response from a new xterm is:
+    `"<Esc>[ Pp ; Pv ; Pc c"`.  Pp is the terminal type: 0 for vt100 and
+    1 for vt220.  Pv is the patch level (since this was introduced in
+    patch 95, it's always 95 or bigger).  Pc is always zero.  {only when
+    compiled with `+termresponse` feature}
+
+`v:this_session`
+:   Full filename of the last loaded or saved session file.  See
+    `:mksession`.  It is allowed to set this variable.  When no session
+    file has been saved, this variable is empty.  `"this_session"` also
+    works, for backwards compatibility.
+
+`v:throwpoint`
+:   The point where the exception most recently caught and not
+    finished was thrown.  Not set when commands are typed.    See also
+    `v:exception` and `throw-variables`.  Example:
+
+        :try
+        :  throw "oops"
+        :catch /.*/
+        :  echo "Exception from" v:throwpoint
+        :endtry
+
+    Output: `"Exception from test.vim, line 2"`
+
+`v:val`
+:   Value of the current item of a `List` or `Dictionary`.    Only
+    valid while evaluating the expression used with `map()` and
+    `filter()`.  Read-only.
+
+`v:version`
+:   Version number of Vim: Major version number times 100 plus
+    minor version number.  Version 5.0 is 500.  Version 5.1 (5.01) is
+    501.  Read-only.  "version" also works, for backwards compatibility.
+    Use `has()` to check if a certain patch was included, e.g.:
+
+        if has("patch123")
+
+    Note that patch numbers are specific to the version, thus both
+    version 5.0 and 5.1 may have a patch 123, but these are completely
+    different.
+
+`v:warningmsg`
+:   Last given warning message.  It's allowed to set this variable.
+
+`v:windowid`
+:   When any X11 based GUI is running or when running in a
+    terminal and Vim connects to the X server (`-X`) this will be set to
+    the window ID.  When an MS-Windows GUI is running this will be set
+    to the window handle.  Otherwise the value is zero.  Note: for
+    windows inside Vim use `winnr()`.
 
 Exercises
 ---------
@@ -601,4 +628,3 @@ Exercises
 Skim over the list of scopes in `:help internal-variables`.  Don't worry
 if you don't know what some of them mean, just take a look and keep them
 in the back of your mind.
-

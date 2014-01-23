@@ -1,0 +1,266 @@
+Comparisons
+===========
+
+We've gone over conditionals, but `if` statements aren't very useful if
+we can't compare things.  Of course Vim lets us compare values, but it's
+not as straightforward as it may seem.
+
+Run the following commands:
+
+    :if 10 > 1
+    :    echom "foo"
+    :endif
+
+Vim will, of course, display `foo`.  Now run these commands:
+
+    :if 10 > 2001
+    :    echom "bar"
+    :endif
+
+Vim displays nothing, because `10` is not greater than `2001`.  So far
+everything works as expected.  Run these commands:
+
+    :if 10 == 11
+    :    echom "first"
+    :elseif 10 == 10
+    :    echom "second"
+    :endif
+
+Vim displays `second`.  Nothing surprising here.  Let's try comparing
+strings.  Run these commands:
+
+    :if "foo" == "bar"
+    :    echom "one"
+    :elseif "foo" == "foo"
+    :    echom "two"
+    :endif
+
+Vim echoes `two`.  There's still nothing surprising, so what was I going
+on about at the beginning of the chapter?
+
+Case Sensitivity
+----------------
+
+Run the following commands:
+
+    :set noignorecase
+    :if "foo" == "FOO"
+    :    echom "vim is case insensitive"
+    :elseif "foo" == "foo"
+    :    echom "vim is case sensitive"
+    :endif
+
+Vim evaluates the `elseif`, so apparently Vimscript is case sensitive.
+Good to know, but nothing earth-shattering.  Now run these commands:
+
+    :set ignorecase
+    :if "foo" == "FOO"
+    :    echom "no, it couldn't be"
+    :elseif "foo" == "foo"
+    :    echom "this must be the one"
+    :endif
+
+**Whoa**.  Stop right there.  Yes, you saw that right.
+
+**The behavior of `==` depends on a user's settings.**
+
+I promise I'm not messing with you.  Try it again and see.  I'm not
+kidding, I can't make this stuff up.
+
+Code Defensively
+----------------
+
+What does this mean?  It means that you can *never* trust the `==`
+comparison when writing a plugin for other people to use.  A bare `==`
+should *never* appear in your plugins' code.
+
+This idea is the same as the "`nmap` versus `nnoremap`" one.  *Never*
+trust your users' settings.  Vim is old, vast, and complicated.  When
+writing a plugin you *have* to assume that users will have every
+variation of every setting.
+
+So how can you get around this ridiculousness?  It turns out that Vim
+has *two extra sets* of comparison operators to deal with this.
+
+Run the following commands:
+
+    :set noignorecase
+    :if "foo" ==? "FOO"
+    :    echom "first"
+    :elseif "foo" ==? "foo"
+    :    echom "second"
+    :endif
+
+Vim displays `first` because `==?` is the "case-insensitive no matter
+what the user has set" comparison operator.  Now run the following
+commands:
+
+    :set ignorecase
+    :if "foo" ==# "FOO"
+    :    echom "one"
+    :elseif "foo" ==# "foo"
+    :    echom "two"
+    :endif
+
+Vim displays `two` because `==#` is the "case-sensitive no matter what
+the user has set" comparison operator.
+
+The moral of this story is that you should *always* use explicit case
+sensitive or insensitive comparisons.  Using the normal forms is *wrong*
+and it *will* break at some point.  Save yourself the trouble and type
+the extra character.
+
+When you're comparing integers this distinction obviously doesn't
+matter.  Still, I feel that it's better to use the case-sensitive
+comparisons everywhere (even where they're not strictly needed), than to
+forget them in a place that they *are* needed.
+
+Using `==#` and `==?` with integers will work just fine, and if you
+change them to strings in the future it will work correctly.  If you'd
+rather use `==` for integers that's fine, just remember that you'll need
+to change the comparison if you change them to strings in the future.
+
+From the help system
+--------------------
+
+### :help ignorecase
+
+If the `'ignorecase'` option is on, the case of normal letters is
+ignored.  `'smartcase'` can be set to ignore case when the pattern
+contains lowercase letters only.
+
+When `"\c"` appears anywhere in the pattern, the whole pattern is
+handled like `'ignorecase'` is on.  The actual value of `'ignorecase'`
+and `'smartcase'` is ignored.  `"\C"` does the opposite: Force matching
+case for the whole pattern.  {only Vim supports `\c` and `\C`} Note that
+`'ignorecase'`, `"\c"` and `"\C"` are not used for the character
+classes.
+
+Examples:
+
+pattern     `'ignorecase'`  `'smartcase'`   matches
+----------  --------------  -------------   -------------
+foo         off             -               foo
+foo         on              -               foo Foo FOO
+Foo         on              off             foo Foo FOO
+Foo         on              on              Foo
+`\cfoo`     -               -               foo Foo FOO
+`foo\C`     -               -               foo
+
+Technical detail:
+
+`<Nul>` characters in the file are stored as `<NL>` in memory.  In the
+display they are shown as `"^@"`.  The translation is done when reading
+and writing files.  To match a `<Nul>` with a search pattern you can
+just enter CTRL-@ or `"CTRL-V 000"`.  This is probably just what you
+expect.  Internally the character is replaced with a `<NL>` in the
+search pattern.  What is unusual is that typing CTRL-V CTRL-J also
+inserts a `<NL>`, thus also searches for a `<Nul>` in the file.  {Vi
+cannot handle `<Nul>` characters in the file at all}
+
+When `'fileformat'` is `"mac"`, `<NL>` characters in the file are stored
+as `<CR>` characters internally.  In the text they are shown as `"^J"`.
+Otherwise this works similar to the usage of `<NL>` for a `<Nul>`.
+
+When working with expression evaluation, a `<NL>` character in the
+pattern matches a `<NL>` in the string.  The use of `"\n"` (backslash n)
+to match a `<NL>` doesn't work there, it only works to match text in the
+buffer.
+
+Patterns will also work with multi-byte characters, mostly as you would
+expect.  But invalid bytes may cause trouble, a pattern with an invalid
+byte will probably never match.
+
+### :help expr4
+
+`expr5 {cmp} expr5`
+
+Compare two expr5 expressions, resulting in a 0 if it evaluates to
+false, or 1 if it evaluates to true.
+
+```
+---------------------------------------------------------------
+use                     `'ignorecase'`  match case  ignore case
+---------------------------------------------------------------
+equal                   ==              ==#         ==?
+not equal               !=              !=#         !=?
+greater than            >               >#          >?
+greater than or equal   >=              >=#         >=?
+smaller than            <               <#          <?
+smaller than or equal   <=              <=#         <=?
+regexp matches          =~              =~#         =~?
+regexp doesn't match    !~              !~#         !~?
+same instance           is              is#         is?
+different instance      isnot           isnot#      isnot?
+---------------------------------------------------------------
+```
+Examples:
+
+    "abc" ==# "Abc"      evaluates to 0
+    "abc" ==? "Abc"      evaluates to 1
+    "abc" == "Abc"       evaluates to 1 if `'ignorecase'` is set, 0 otherwise
+
+A `List` can only be compared with a `List` and only `"equal"`, `"not
+equal"` and `"is"` can be used.  This compares the values of the list,
+recursively. Ignoring case means case is ignored when comparing item
+values.
+
+A `Dictionary` can only be compared with a `Dictionary` and only
+`"equal"`, `"not equal"` and `"is"` can be used.  This compares the
+key/values of the `Dictionary` recursively.  Ignoring case means case is
+ignored when comparing item values.
+
+A `Funcref` can only be compared with a `Funcref` and only `"equal"` and
+`"not equal"` can be used.  Case is never ignored.
+
+When using `"is"` or `"isnot"` with a `List` or a `Dictionary` this
+checks if the expressions are referring to the same `List` or
+`Dictionary` instance.  A copy of a `List` is different from the
+original `List`.  When using `"is"` without a `List` or a `Dictionary`
+it is equivalent to using `"equal"`, using `"isnot"` equivalent to using
+`"not equal"`.  Except that a different type means the values are
+different: `"4 == '4'"` is true, `"4 is '4'"` is false and `"0 is []"`
+is false and not an error. `"is#"`/`"isnot#"` and `"is?"`/`"isnot?"` can
+be used to match and ignore case.
+
+When comparing a String with a Number, the String is converted to a
+Number, and the comparison is done on Numbers.    This means that `"0 ==
+'x'"` is TRUE, because 'x' converted to a Number is zero.
+
+When comparing two Strings, this is done with `strcmp()` or `stricmp()`.
+This results in the mathematical difference (comparing byte values), not
+necessarily the alphabetical difference in the local language.
+
+When using the operators with a trailing '#', or the short version and
+'ignorecase' is off, the comparing is done with `strcmp()`: case
+matters.
+
+When using the operators with a trailing '?', or the short version and
+'ignorecase' is set, the comparing is done with `stricmp()`: case is
+ignored.
+
+'smartcase' is not used.
+
+The `"=~"` and `"!~"` operators match the lefthand argument with the
+righthand argument, which is used as a pattern.  See `pattern` for what
+a pattern is. This matching is always done like 'magic' was set and
+'cpoptions' is empty, no matter what the actual value of 'magic' or
+'cpoptions' is.  This makes scripts portable.  To avoid backslashes in
+the regexp pattern to be doubled, use a single-quote string, see
+`literal-string`. Since a string is considered to be a single line, a
+multi-line pattern (containing `\n`, backslash-n) will not match.
+However, a literal NL character can be matched like an ordinary
+character.  Examples:
+
+    "foo\nbar" =~ "\n"    evaluates to 1
+    "foo\nbar" =~ "\\n"    evaluates to 0
+
+Exercises
+---------
+
+Play around with `:set ignorecase` and `:set noignorecase` and see how
+various comparisons act.
+
+Read `:help ignorecase` to see why someone might set that option.
+
+Read `:help expr4` to see all the available comparison operators.
