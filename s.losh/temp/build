@@ -92,6 +92,14 @@ echo "Adding 19.markdown"
 cat 19.markdown >> $DOC
 echo "" >> $DOC
 
+echo "Adding 20.markdown"
+cat 20.markdown >> $DOC
+echo "" >> $DOC
+
+#
+# complete 20.markdown
+#
+
 echo "Converting" $DOC "..."
 pandoc $DOC --standalone --smart \
     --latex-engine=xelatex --template=ajt.latex \
