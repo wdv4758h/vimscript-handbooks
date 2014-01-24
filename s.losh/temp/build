@@ -122,6 +122,14 @@ echo "Adding 26.markdown"
 cat 26.markdown >> $DOC
 echo "" >> $DOC
 
+echo "Adding 27.markdown"
+cat 27.markdown >> $DOC
+echo "" >> $DOC
+
+#
+# Add help into 27.md
+#
+
 echo "Converting" $DOC "..."
 pandoc $DOC --standalone --smart \
     --latex-engine=xelatex --template=ajt.latex \
