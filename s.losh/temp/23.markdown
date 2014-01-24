@@ -1,0 +1,250 @@
+Functions
+=========
+
+Like most programming languages, Vimscript has functions.  Let's take a
+look at how to create them, and then talk about some of their quirks.
+
+Run the following command:
+
+    :function meow()
+
+You might think this would start defining a function named `meow`.
+Unfortunately this is not the case, and we've already run into one of
+Vimscript's quirks.
+
+**Vimscript functions *must* start with a capital letter if they are
+unscoped!**
+
+Even if you *do* add a scope to a function (we'll talk about that later)
+you may as well capitalize the first letter of function names anyway.
+Most Vimscript coders seem to do it, so don't break the convention.
+
+Okay, let's define a function for real this time.  Run the following
+commands:
+
+    :function Meow()
+    :  echom "Meow!"
+    :endfunction
+
+This time Vim will happily define the function.  Let's try running it:
+
+    :call Meow()
+
+Vim will display `Meow!` as expected.
+
+Let's try returning a value.  Run the following commands:
+
+    :function GetMeow()
+    :  return "Meow String!"
+    :endfunction
+
+Now try it out by running this command:
+
+    :echom GetMeow()
+
+Vim will call the function and give the result to `echom`, which will
+display `Meow String!`.
+
+Calling Functions
+-----------------
+
+We can already see that there are two different ways of calling
+functions in Vimscript.
+
+When you want to call a function directly you use the `call` command.
+Run the following commands:
+
+    :call Meow()
+    :call GetMeow()
+
+The first will display `Meow!` but the second doesn't display anything.
+The return value is thrown away when you use `call`, so this is only
+useful when the function has side effects.
+
+The second way to call functions is in expressions.  You don't need to
+use `call` in this case, you can just name the function.  Run the
+following command:
+
+    :echom GetMeow()
+
+As we saw before, this calls `GetMeow` and passes the return value to
+`echom`.
+
+Implicit Returning
+------------------
+
+Run the following command:
+
+    :echom Meow()
+
+This will display two lines: `Meow!` and `0`.  The first obviously comes
+from the `echom` inside of `Meow`.  The second shows us that if a
+Vimscript function doesn't return a value, it implicitly returns `0`.
+Let's use this to our advantage.  Run the following commands:
+
+    :function TextwidthIsTooWide()
+    :  if &l:textwidth ># 80
+    :    return 1
+    :  endif
+    :endfunction
+
+This function uses a lot of important concepts we've seen before:
+
+* `if` statements
+* Treating options as variables
+* Localizing those option variables
+* Case-sensitive comparisons
+
+If any of those sound unfamiliar you should go back a few chapters and
+read about them.
+
+We've now defined a function that will tell us if the `textwidth`
+setting is "too wide" in the current buffer (because 80 characters is,
+of course, the correct width for anything but HTML).
+
+Let's try using it.  Run the following commands:
+
+    :set textwidth=80
+    :if TextwidthIsTooWide()
+    :  echom "WARNING: Wide text!"
+    :endif
+
+What did we do here?
+
+* First we set the `textwidth` globally to `80`.
+* The we ran an if statement that checked if `TextwidthIsTooWide()` was
+  truthy.
+* This wound up not being the case, so the `if`'s body wasn't executed.
+
+Because we never explicitly returned a value, Vim returned `0` from the
+function, which is falsy.  Let's try changing that.  Run the following
+commands:
+
+    :setlocal textwidth=100
+    :if TextwidthIsTooWide()
+    :  echom "WARNING: Wide text!"
+    :endif
+
+This time the `if` statement in the function executes its body, returns
+`1`, and so the `if` we manually typed in executes *its* body.
+
+From the help system
+--------------------
+
+### :help :call
+
+`:[range]cal[l] {name}([arguments])`
+:   Call a function.  The name of the function and its arguments
+    are as specified with `:function`.  Up to 20 arguments can be used.
+    The returned value is discarded.  Without a range and for functions
+    that accept a range, the function is called once.  When a range is
+    given the cursor is positioned at the start of the first line before
+    executing the function.  When a range is given and the function
+    doesn't handle it itself, the function is executed for each line in
+    the range, with the cursor in the first column of that line.  The
+    cursor is left at the last line (possibly moved by the last function
+    call).    The arguments are re-evaluated for each line.  Thus this
+    works:
+    
+        :function Mynumber(arg)
+        :  echo line(".") . " " . a:arg
+        :endfunction
+        :1,5call Mynumber(getline("."))
+        
+    The `"a:firstline"` and `"a:lastline"` are defined anyway, they
+    can be used to do something different at the start or end of
+    the range.
+
+    Example of a function that handles the range itself:
+
+        :function Cont() range
+        :  execute (a:firstline + 1) . "," . a:lastline . 's/^/\t\\ '
+        :endfunction
+        :4,8call Cont()
+
+    This function inserts the continuation character `"\"` in front
+    of all the lines in the range, except the first one.
+
+    When the function returns a composite value it can be further
+    dereferenced, but the range will not be used then.  Example:
+
+        :4,8call GetDict().method()
+
+    Here `GetDict()` gets the range but method() does not.
+
+    The recursiveness of user functions is restricted with the
+    `'maxfuncdepth'` option.
+
+### :help E124
+
+`:fu[nction][!] {name}([arguments]) [range] [abort] [dict]`
+:   Define a new function by the name {name}.  The name
+    must be made of alphanumeric characters and '_', and must start with
+    a capital or `"s:"` (see above).
+    
+    {name} can also be a `Dictionary` entry that is a `Funcref`:
+    
+        :function dict.init(arg)
+        
+    `"dict"` must be an existing dictionary.
+    
+    The entry `"init"` is added if it didn't exist yet.  Otherwise `[!]`
+    is required to overwrite an existing function.
+    
+    The result is a `Funcref` to a numbered function.  The function can
+    only be used with a `Funcref` and will be deleted if there are no
+    more references to it.
+    
+    When a function by this name already exists and `[!]` is not used an
+    error message is given.  When `[!]` is used, an existing function is
+    silently replaced.  Unless it is currently being executed, that is
+    an error.
+
+    For the {arguments} see `function-argument`.
+
+    When the `[range]` argument is added, the
+    function is expected to take care of a range itself. The range is
+    passed as `"a:firstline"` and `"a:lastline"`.  If `[range]` is excluded,
+    `":{range}call"` will call the function for each line in the range,
+    with the cursor on the start of each line.  See
+    `function-range-example`.  The cursor is still moved to the first
+    line of the range, as is the case with all Ex commands.
+
+    When the `[abort]` argument is added, the function will abort as
+    soon as an error is detected.
+
+    When the `[dict]` argument is added, the function must be invoked
+    through an entry in a `Dictionary`.
+
+    The local variable `"self"` will then be set to the dictionary.  See
+    `Dictionary-function`.
+
+### :help return
+
+`:retu[rn] [expr]`
+:   Return from a function.  When `"[expr]"` is given, it is
+    evaluated and returned as the result of the function.  If `"[expr]"`
+    is not given, the number `0` is returned.  When a function ends
+    without an explicit `":return"`, the number `0` is returned.  Note
+    that there is no check for unreachable lines, thus there is no
+    warning if commands follow `":return"`.
+
+    If the `":return"` is used after a `:try` but before the matching
+    `:finally` (if present), the commands following the `":finally"` up
+    to the matching `:endtry` are executed first.  This process applies
+    to all nested `":try"`s inside the function.  The function returns
+    at the outermost `":endtry"`.
+
+Exercises
+---------
+
+Read `:help :call`.  Ignore anything about "ranges" for now.  How many
+arguments can you pass to a function?  Is this surprising?
+
+Read the first paragraph of `:help E124` and find out what characters
+you're allowed to use in function names.  Are underscores okay?  Dashes?
+Accented characters?  Unicode characters?  If it's not clear from the
+documentation just try them out and see.
+
+Read `:help return`.  What's the "short form" of that command (which I
+told you to never use)?  Is it what you expected?  If not, why not?

@@ -1,0 +1,219 @@
+Function Arguments
+==================
+
+Vimscript functions can, of course, take arguments.  Run the following
+commands:
+
+    :function DisplayName(name)
+    :  echom "Hello!  My name is:"
+    :  echom a:name
+    :endfunction
+
+Run the function:
+
+    :call DisplayName("Your Name")
+
+Vim will display two lines: `Hello!  My name is:` and `Your Name`.
+
+Notice the `a:` in the name of the variable that we passed to the
+`echom` command.  This represents a variable scope, which we talked
+about in an earlier chapter.
+
+Let's remove this scope prefix and see how Vim reacts.  Run the
+following commands:
+
+    :function UnscopedDisplayName(name)
+    :  echom "Hello!  My name is:"
+    :  echom name
+    :endfunction
+    :call UnscopedDisplayName("Your Name")
+
+This time Vim complains that it can't find the variable `name`.
+
+When you write a Vimscript function that takes arguments you *always*
+need to prefix those arguments with `a:` when you use them to tell Vim
+that they're in the argument scope.
+
+Varargs
+-------
+
+Vimscript functions can optionally take variable-length argument lists
+like Javascript and Python.  Run the following commands:
+
+    :function Varg(...)
+    :  echom a:0
+    :  echom a:1
+    :  echo a:000
+    :endfunction
+
+    :call Varg("a", "b")
+
+This function shows us several things, so let's look at each one
+individually.
+
+The `...` in the function definition tells Vim that this function can
+take any number of arguments.  This is like a `*args` argument in a
+Python function.
+
+The first line of the function echoes the message `a:0` and displays
+`2`.  When you define a function that takes a variable number of
+arguments in Vim, `a:0` will be set to the number of extra arguments you
+were given.  In this case we passed two arguments to `Varg` so Vim
+displayed `2`.
+
+The second line echoes `a:1` which displays `a`.  You can use `a:1`,
+`a:2`, etc to refer to each extra argument your function receives.  If
+we had used `a:2` Vim would have displayed "b".
+
+The third line is a bit trickier.  When a function has varargs, `a:000`
+will be set to a list containing all the extra arguments that were
+passed.  We haven't looked at lists quite yet, so don't worry about this
+too much.  You can't use `echom` with a list, which is why we used
+`echo` instead for that line.
+
+You can use varargs together with regular arguments too.  Run the
+following commands:
+
+    :function Varg2(foo, ...)
+    :  echom a:foo
+    :  echom a:0
+    :  echom a:1
+    :  echo a:000
+    :endfunction
+
+    :call Varg2("a", "b", "c")
+
+We can see that Vim puts `"a"` into the named argument `a:foo`, and the
+rest are put into the list of varargs.
+
+Assignment
+----------
+
+Try running the following commands:
+
+    :function Assign(foo)
+    :  let a:foo = "Nope"
+    :  echom a:foo
+    :endfunction
+
+    :call Assign("test")
+
+Vim will throw an error, because you can't reassign argument variables.
+Now run these commands:
+
+    :function AssignGood(foo)
+    :  let foo_tmp = a:foo
+    :  let foo_tmp = "Yep"
+    :  echom foo_tmp
+    :endfunction
+
+    :call AssignGood("test")
+
+This time the function works, and Vim displays `Yep`.
+
+From the help system
+--------------------
+
+### :help function--argument
+
+An argument can be defined by giving its name. In the function this can
+then be used as `"a:name"` (`"a:"` for argument).
+
+Up to 20 arguments can be given, separated by commas.  After the named
+arguments an argument `"..."` can be specified, which means that more
+arguments may optionally be following.  In the function the extra
+arguments can be used as `"a:1"`, `"a:2"`, etc.  `"a:0"` is set to the
+number of extra arguments (which can be `0`).  `"a:000"` is set to a
+`List` that contains these arguments.  Note that `"a:1"` is the same as
+`"a:000[0]"`.
+
+The `a:` scope and the variables in it cannot be changed, they are
+fixed.  However, if a `List` or `Dictionary` is used, you can change
+their contents.  Thus you can pass a `List` to a function and have the
+function add an item to it.  If you want to make sure the function
+cannot change a `List` or `Dictionary` use `:lockvar`.
+
+When not using `"..."`, the number of arguments in a function call must
+be equal to the number of named arguments.  When using `"..."`, the
+number of arguments may be larger.
+
+It is also possible to define a function without any arguments.  You
+must still supply the `()` then.  The body of the function follows in
+the next lines, until the matching `:endfunction`.  It is allowed to
+define another function inside a function body.
+
+Inside a function variables can be used.  These are local variables,
+which will disappear when the function returns.  Global variables need
+to be accessed with `"g:"`.
+
+Example:
+
+    :function Table(title, ...)
+    :  echohl Title
+    :  echo a:title
+    :  echohl None
+    :  echo a:0 . " items:"
+    :  for s in a:000
+    :    echon ' ' . s
+    :  endfor
+    :endfunction
+
+This function can then be called with:
+
+    call Table("Table", "line1", "line2")
+    call Table("Empty Table")
+
+To return more than one value, return a `List`:
+
+    :function Compute(n1, n2)
+    :  if a:n2 == 0
+    :    return ["fail", 0]
+    :  endif
+    :  return ["ok", a:n1 / a:n2]
+    :endfunction
+
+This function can then be called with:
+
+    :let [success, div] = Compute(102, 6)
+    :if success == "ok"
+    :  echo div
+    :endif
+
+### help local--variables
+
+Inside a function variables can be used.  These are local variables,
+which will disappear when the function returns.  Global variables need
+to be accessed with `"g:"`.
+
+Example:
+
+    :function Table(title, ...)
+    :  echohl Title
+    :  echo a:title
+    :  echohl None
+    :  echo a:0 . " items:"
+    :  for s in a:000
+    :    echon ' ' . s
+    :  endfor
+    :endfunction
+
+This function can then be called with:
+
+    call Table("Table", "line1", "line2")
+    call Table("Empty Table")
+
+To return more than one value, return a `List`:
+
+    :function Compute(n1, n2)
+    :  if a:n2 == 0
+    :    return ["fail", 0]
+    :  endif
+    :  return ["ok", a:n1 / a:n2]
+    :endfunction
+
+This function can then be called with:
+
+    :let [success, div] = Compute(102, 6)
+    :if success == "ok"
+    :  echo div
+    :endif

@@ -2,6 +2,8 @@
 
 DOC=lvthw.markdown
 
+rm -f -v $DOC
+
 echo "Adding titles"
 echo "% Learn Vimscript the hard way" >> $DOC
 echo "% Steve Losh (<steve@stevelosh.com>)" >> $DOC
@@ -102,6 +104,22 @@ echo "" >> $DOC
 
 echo "Adding 22.markdown"
 cat 22.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 23.markdown"
+cat 23.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 24.markdown"
+cat 24.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 25.markdown"
+cat 25.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 26.markdown"
+cat 26.markdown >> $DOC
 echo "" >> $DOC
 
 echo "Converting" $DOC "..."
