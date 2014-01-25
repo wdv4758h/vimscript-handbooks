@@ -199,22 +199,21 @@ Use of `"\V"` means that in the pattern after it only the backslash has
 a special meaning.  `"very nomagic"`
 
 Examples:
-------- ------- ---------   ------   -----  ---------------------------
-after:   `\v`     `\m`     `\M`     `\V`    matches
-        `magic` `nomagic`
-          `$`     `$`      `$`      `\$`    matches end-of-line
-          `.`     `.`      `\.`     `\.`    matches any character
-          `*`     `*`      `\*`     `\*`    any number of the previous atom
-          `()`    `\(\)`   `\(\)`   `\(\)`  grouping into an atom
-          `|`     `\|`     `\|`     `\|`    separating alternatives
-          `\a`    `\a`     `\a`     `\a`    alphabetic character
-          `\\`    `\\`     `\\`     `\\`    literal backslash
-          `\.`    `\.`     `.`      `.`     literal dot
-          `\{`    `{`      `{`      `{`     literal '{'
-          `a`     `a`      `a`      `a`     literal 'a'
-------- ------- ---------   ------   -----  ---------------------------
 
-{only Vim supports \m, \M, \v and \V}
+------- ------- ---------  ------   -----  ---------------------------
+after:   `\v`     `\m`     `\M`     `\V`   matches
+        `magic` `nomagic`
+          `$`     `$`      `$`      `\$`   matches end-of-line
+          `.`     `.`      `\.`     `\.`   matches any character
+          `*`     `*`      `\*`     `\*`   any number of the previous atom
+          `()`    `\(\)`   `\(\)`   `\(\)` grouping into an atom
+          `|`     `\|`     `\|`     `\|`   separating alternatives
+          `\a`    `\a`     `\a`     `\a`   alphabetic character
+          `\\`    `\\`     `\\`     `\\`   literal backslash
+          `\.`    `\.`     `.`      `.`    literal dot
+          `\{`    `{`      `{`      `{`    literal '{'
+          `a`     `a`      `a`      `a`    literal 'a'
+------- ------- ---------  ------   -----  ---------------------------
 
 It is recommended to always keep the 'magic' option at the default
 setting, which is 'magic'.  This avoids portability problems.  To make a
@@ -228,7 +227,7 @@ at the start of the pattern.
    matches `"foo"` and matches `"beep"`.  If more than one branch
    matches, the first one is used.
 
-        pattern ::=	branch
+        pattern ::=    branch
                 or  branch \| branch
                 or  branch \| branch \| branch
                 etc.
@@ -236,12 +235,12 @@ at the start of the pattern.
 2. A branch is one or more concats, separated by `"\&"`.  It matches the
    last concat, but only if all the preceding concats also match at the
    same position.  Examples:
-	
+    
         `"foobeep\&..."` matches `"foo"` in `"foobeep"`.
-	    `".*Peter\&.*Bob"` matches in a line containing
+        `".*Peter\&.*Bob"` matches in a line containing
                            both `"Peter"` and `"Bob"`
 
-        branch ::=	concat
+        branch ::=    concat
                 or  concat \& concat
                 or  concat \& concat \& concat
                 etc.
@@ -251,7 +250,7 @@ at the start of the pattern.
    Example: `"f[0-9]b"`, first matches `"f"`, then a digit and then
    `"b"`.
 
-        concat  ::=	piece
+        concat  ::=    piece
                 or  piece piece
                 or  piece piece piece
                 etc.
@@ -260,7 +259,7 @@ at the start of the pattern.
    how many times the atom can be matched.  Example: `"a*"` matches any
    sequence of `"a"` characters: "`", "`a`", "`aa", etc.
 
-        piece   ::=	atom
+        piece   ::=    atom
                 or  atom  multi
 
 5. An atom can be one of a long list of items.  Many atoms match one
@@ -268,7 +267,7 @@ at the start of the pattern.
    character class.  Braces can be used to make a pattern into an atom.
    The `"\z(\)"` construct is only for syntax highlighting.
 
-        atom    ::=	ordinary-atom
+        atom    ::=    ordinary-atom
                 or  \( pattern \)
                 or  \%( pattern \)
                 or  \z( pattern \)
@@ -283,10 +282,10 @@ Vim will automatically select the right engine for you.  However, if you
 run into a problem or want to specifically select one engine or the
 other, you can prepend one of the following to the pattern:
 
-	\%#=0	Force automatic selection.  Only has an effect when
-	        'regexpengine' has been set to a non-zero value.
-	\%#=1	Force using the old engine.
-	\%#=2	Force using the NFA engine.
+    \%#=0    Force automatic selection.  Only has an effect when
+            'regexpengine' has been set to a non-zero value.
+    \%#=1    Force using the old engine.
+    \%#=2    Force using the NFA engine.
 
 You can also use the 'regexpengine' option to change the default.
 
@@ -296,79 +295,89 @@ debugging Vim.
 
 ### :help match
 
-:mat[ch] {group} /{pattern}/
-		Define a pattern to highlight in the current window.  It will
-		be highlighted with {group}.  Example: >
-			:highlight MyGroup ctermbg=green guibg=green
-			:match MyGroup /TODO/
-<		Instead of // any character can be used to mark the start and
-		end of the {pattern}.  Watch out for using special characters,
-		such as '"' and '|'.
+`:mat[ch] {group} /{pattern}/`
+:   Define a pattern to highlight in the current window.  It will be
+    highlighted with {group}.  Example:
 
-		{group} must exist at the moment this command is executed.
+        :highlight MyGroup ctermbg=green guibg=green
+        :match MyGroup /TODO/
 
-		The {group} highlighting still applies when a character is
-		to be highlighted for 'hlsearch', as the highlighting for
-		matches is given higher priority than that of 'hlsearch'.
-		Syntax highlighting (see 'syntax') is also overruled by
-		matches.
+    Instead of `//` any character can be used to mark the start and end
+    of the `{pattern}`.  Watch out for using special characters, such as
+    `'"'` and `'|'`.
 
-		Note that highlighting the last used search pattern with
-		'hlsearch' is used in all windows, while the pattern defined
-		with ":match" only exists in the current window.  It is kept
-		when switching to another buffer.
+    `{group}` must exist at the moment this command is executed.
 
-		'ignorecase' does not apply, use |/\c| in the pattern to
-		ignore case.  Otherwise case is not ignored.
+    The `{group}` highlighting still applies when a character is to be
+    highlighted for `'hlsearch'`, as the highlighting for matches is
+    given higher priority than that of `'hlsearch'`.  Syntax
+    highlighting (see `'syntax'`) is also overruled by matches.
 
-		'redrawtime' defines the maximum time searched for pattern
-		matches.
+    Note that highlighting the last used search pattern with
+    `'hlsearch'` is used in all windows, while the pattern defined with
+    `":match"` only exists in the current window.  It is kept when
+    switching to another buffer.
 
-		When matching end-of-line and Vim redraws only part of the
-		display you may get unexpected results.  That is because Vim
-		looks for a match in the line where redrawing starts.
+    `'ignorecase'` does not apply, use `/\c` in the pattern to ignore
+    case.  Otherwise case is not ignored.
 
-		Also see |matcharg()| and |getmatches()|. The former returns
-		the highlight group and pattern of a previous |:match|
-		command.  The latter returns a list with highlight groups and
-		patterns defined by both |matchadd()| and |:match|.
+    `'redrawtime'` defines the maximum time searched for pattern
+    matches.
 
-		Highlighting matches using |:match| are limited to three
-		matches (aside from |:match|, |:2match| and |:3match|are
-		available). |matchadd()| does not have this limitation and in
-		addition makes it possible to prioritize matches.
+    When matching end-of-line and Vim redraws only part of the display
+    you may get unexpected results.  That is because Vim looks for a
+    match in the line where redrawing starts.
 
-		Another example, which highlights all characters in virtual
-		column 72 and more: >
-			:highlight rightMargin term=bold ctermfg=blue guifg=blue
-			:match rightMargin /.\%>72v/
-<		To highlight all character that are in virtual column 7: >
-			:highlight col8 ctermbg=grey guibg=grey
-			:match col8 /\%<8v.\%>7v/
-<		Note the use of two items to also match a character that
-		occupies more than one virtual column, such as a TAB.
+    Also see `matcharg()` and `getmatches()`. The former returns the
+    highlight group and pattern of a previous `:match` command.  The
+    latter returns a list with highlight groups and patterns defined by
+    both `matchadd()` and `:match`.
 
-:mat[ch]
-:mat[ch] none
-		Clear a previously defined match pattern.
+    Highlighting matches using `:match` are limited to three matches
+    (aside from `:match`, `:2match` and `:3match`are available).
+    `matchadd()` does not have this limitation and in addition makes it
+    possible to prioritize matches.
 
+    Another example, which highlights all characters in virtual
+    column 72 and more:
 
-:2mat[ch] {group} /{pattern}/					*:2match*
-:2mat[ch]
-:2mat[ch] none
-:3mat[ch] {group} /{pattern}/					*:3match*
-:3mat[ch]
-:3mat[ch] none
-		Just like |:match| above, but set a separate match.  Thus
-		there can be three matches active at the same time.  The match
-		with the lowest number has priority if several match at the
-		same position.
-		The ":3match" command is used by the |matchparen| plugin.  You
-		are suggested to use ":match" for manual matching and
-		":2match" for another plugin.
+        :highlight rightMargin term=bold ctermfg=blue guifg=blue
+        :match rightMargin /.\%>72v/
 
+    To highlight all character that are in virtual column 7:
 
- vim:tw=78:ts=8:ft=help:norl:
+        :highlight col8 ctermbg=grey guibg=grey
+        :match col8 /\%<8v.\%>7v/
+
+    Note the use of two items to also match a character that occupies
+    more than one virtual column, such as a TAB.
+
+`:mat[ch]`\
+`:mat[ch] none`
+:   Clear a previously defined match pattern.
+
+`:2mat[ch] `{group}` /`{pattern}`/`\
+`:2mat[ch]`\
+`:2mat[ch] none`\
+`:3mat[ch] `{group}` /`{pattern}`/`\
+`:3mat[ch]`\
+`:3mat[ch] none`
+:   Just like `:match` above, but set a separate match.  Thus there can
+    be three matches active at the same time.  The match with the lowest
+    number has priority if several match at the same position.  The
+    `":3match"` command is used by the `matchparen` plugin.  You are
+    suggested to use `":match"` for manual matching and `":2match"` for
+    another plugin.
+
+### :help nohlsearch
+
+`:noh[lsearch]`
+:   Stop the highlighting for the `'hlsearch'` option.  It is
+    automatically turned back on when using a search command, or setting
+    the `'hlsearch'` option.  This command doesn't work in an
+    autocommand, because the highlighting state is saved and restored
+    when executing autocommands.  Same thing for when invoking a user
+    function.
 
 Exercises
 ---------
