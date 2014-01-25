@@ -1,0 +1,401 @@
+Basic Regular Expressions
+=========================
+
+Vim is a text editor, which means that a great deal of your Vimscript
+code will be dedicated to working with text.  Vim has powerful support
+for regular expressions, but as usual there are some quirks.
+
+Type the following text into a buffer:
+
+    max = 10
+
+    print "Starting"
+
+    for i in range(max):
+        print "Counter:", i
+
+    print "Done"
+
+This is the text we'll use to experiment with Vimscript's regex support.
+It happens to be Python code, but don't worry if you don't know Python.
+It's just an example.
+
+I'm going to assume that you know the basics of regular expressions.  If
+you don't you should stop reading this book and start reading [Learn
+Regex the Hard Way][regex] by Zed Shaw.  Come back when you're done with
+that.
+
+[regex]: http://regex.learncodethehardway.org/
+
+Highlighting
+------------
+
+Before we start we need to turn on search highlighting so we can see
+what we're doing.  Run the following command:
+
+    :set hlsearch incsearch
+
+`hlsearch` tells Vim to highlight all matches in a file when you perform
+a search, and `incsearch` tells Vim to highlight the *next* match while
+you're still typing out your search pattern.
+
+Searching
+---------
+
+Put your cursor at the top of the file and run the following command:
+
+    /print
+
+As you type in each letter, Vim will start highlighting them in the
+first line.  When you press return to execute the search *all* the
+instances of `print` will be highlighted and your cursor will be moved
+to the next match.
+
+Now try running the following command:
+
+    :execute "normal! gg/print\<cr>"
+
+This will go to the top of the file and perform a search for `print`,
+putting us at the first match.  It does this using `:execute "normal!
+..."` which we saw in the previous chapter.
+
+To get to the second match in the file you can just add more commands
+onto the end of the string.  Run this command:
+
+    :execute "normal! gg/print\<cr>n"
+
+Vim will put the cursor on the second `print` in the buffer (and all the
+matches will be highlighted).
+
+Let's try going in the opposite direction.  Run this command:
+
+    :execute "normal! G?print\<cr>"
+
+This time we move to the bottom of the file with `G` and use `?` to
+search backward instead of forward.
+
+All of these searching commands should be familiar -- we're mostly going
+over them to get you used to the `:execute "normal! ..."` idiom, because
+it will let you do anything you know how to do in vanilla Vim in your
+Vimscript code.
+
+Magic
+-----
+
+The `/` and `?` commands actually take regular expressions, not just
+literal characters.  Run the following command:
+
+    :execute "normal! gg/for .+ in .+:\<cr>"
+
+Vim complains that the pattern is not found!  I told you that Vim
+supports regular expressions in searches, so what's going on?  Try the
+following command:
+
+    :execute "normal! gg/for .\\+ in .\\+:\<cr>"
+
+This time Vim highlights the "for" loop as we expected in the first
+place.  Take a minute and try to think about what exactly changed before
+moving on.  Remember that `execute` takes a String.
+
+The answer is that there are two reasons we needed to write the command
+like we did:
+
+* First, `execute` takes a String, so the double backslashes we used
+  turn into single backslashes by the time they get to `normal!`.
+* Vim has *four* different "modes" of parsing regular expressions!  The
+  default mode requires a backslash before the `+` character to make it
+  mean "1 or more of the preceding character" instead of "a literal plus
+  sign".
+
+You can see this a bit easier by just running the search in Vim
+directly.  Type the following command and press return:
+
+    /print .\+
+
+You can see the `\+` working its magic now.  The double backslashes were
+only used because we were passing the pattern as a String to `execute`.
+
+Literal Strings
+---------------
+
+As we mentioned in the chapter on Strings, Vim allows you to use single
+quotes to define a "literal string" that passes through characters
+directly.  For example, the string `'a\nb'` is four characters long.
+
+Can we use literal strings to avoid having to type those double
+backslashes?  Think about this for a minute or two before you move on,
+because the answer is a bit more complicated that you might think.
+
+Try running the following command (note the single quotes and single
+backslashes this time):
+
+    :execute 'normal! gg/for .\+ in .\+:\<cr>'
+
+Vim moves you to the top of the file but doesn't move you to the first
+match.  Is this what you expected?
+
+The command doesn't work because we need the `\<cr>` in the pattern to
+be escaped into a real carriage return character, which tells the search
+command to actually run.  Because we're in a literal string, it's the
+equivalent of typing `/for .\+ in .\+:\<cr>` in vanilla Vim, which
+obviously isn't what we want.
+
+All hope is not lost, though!  Remember that Vim allows you to
+concatenate strings, so for larger commands we can use this to split
+apart the string into easier to read chunks.  Run the following command:
+
+    :execute "normal! gg" . '/for .\+ in .\+:' . "\<cr>"
+
+This concatenates the three smaller strings before sending them to
+`execute`, and lets us use a literal string for the regex while using
+normal strings for everything else.
+
+Very Magic
+----------
+
+You may be wondering about Vimscript's four different modes of regex
+parsing and how they're different from the regular expressions you're
+used to from languages like Python, Perl or Ruby.  You can read their
+documentation if you really want to, but if you want the sane, easy
+solution just read on.
+
+Run the following command:
+
+    :execute "normal! gg" . '/\vfor .+ in .+:' . "\<cr>"
+
+We've split the pattern out from the rest of the command into its own
+literal string again, and this time we started the pattern with `\v`.
+This tells Vim to use its "very magic" regex parsing mode, which is
+pretty much the same as you're used to in any other programming
+language.
+
+If you simply start all of your regular expressions with `\v` you'll
+never need to worry about Vimscript's three other crazy regex modes.
+
+From the help system
+--------------------
+
+### :help magic
+
+Some characters in the pattern are taken literally.  They match with the
+same character in the text.  When preceded with a backslash however,
+these characters get a special meaning.
+
+Other characters have a special meaning without a backslash.  They need
+to be preceded with a backslash to match literally.
+
+If a character is taken literally or not depends on the 'magic' option
+and the items mentioned next.
+
+Use of `"\m"` makes the pattern after it be interpreted as if 'magic' is
+set, ignoring the actual value of the 'magic' option.  Use of `"\M"`
+makes the pattern after it be interpreted as if 'nomagic' is used.
+
+Use of `"\v"` means that in the pattern after it all ASCII characters
+except `'0'`-`'9'`, `'a'`-`'z'`, `'A'`-`'Z'` and `'_'` have a special
+meaning.  `"very magic"`
+
+Use of `"\V"` means that in the pattern after it only the backslash has
+a special meaning.  `"very nomagic"`
+
+Examples:
+------- ------- ---------   ------   -----  ---------------------------
+after:   `\v`     `\m`     `\M`     `\V`    matches
+        `magic` `nomagic`
+          `$`     `$`      `$`      `\$`    matches end-of-line
+          `.`     `.`      `\.`     `\.`    matches any character
+          `*`     `*`      `\*`     `\*`    any number of the previous atom
+          `()`    `\(\)`   `\(\)`   `\(\)`  grouping into an atom
+          `|`     `\|`     `\|`     `\|`    separating alternatives
+          `\a`    `\a`     `\a`     `\a`    alphabetic character
+          `\\`    `\\`     `\\`     `\\`    literal backslash
+          `\.`    `\.`     `.`      `.`     literal dot
+          `\{`    `{`      `{`      `{`     literal '{'
+          `a`     `a`      `a`      `a`     literal 'a'
+------- ------- ---------   ------   -----  ---------------------------
+
+{only Vim supports \m, \M, \v and \V}
+
+It is recommended to always keep the 'magic' option at the default
+setting, which is 'magic'.  This avoids portability problems.  To make a
+pattern immune to the 'magic' option being set or not, put "\m" or "\M"
+at the start of the pattern.
+
+### :help pattern
+
+1. A pattern is one or more branches, separated by `"\|"`.  It matches
+   anything that matches one of the branches.  Example: `"foo\|beep"`
+   matches `"foo"` and matches `"beep"`.  If more than one branch
+   matches, the first one is used.
+
+        pattern ::=	branch
+                or  branch \| branch
+                or  branch \| branch \| branch
+                etc.
+
+2. A branch is one or more concats, separated by `"\&"`.  It matches the
+   last concat, but only if all the preceding concats also match at the
+   same position.  Examples:
+	
+        `"foobeep\&..."` matches `"foo"` in `"foobeep"`.
+	    `".*Peter\&.*Bob"` matches in a line containing
+                           both `"Peter"` and `"Bob"`
+
+        branch ::=	concat
+                or  concat \& concat
+                or  concat \& concat \& concat
+                etc.
+
+3. A concat is one or more pieces, concatenated.  It matches a match
+   for the first piece, followed by a match for the second piece, etc.
+   Example: `"f[0-9]b"`, first matches `"f"`, then a digit and then
+   `"b"`.
+
+        concat  ::=	piece
+                or  piece piece
+                or  piece piece piece
+                etc.
+
+4. A piece is an atom, possibly followed by a multi, an indication of
+   how many times the atom can be matched.  Example: `"a*"` matches any
+   sequence of `"a"` characters: "`", "`a`", "`aa", etc.
+
+        piece   ::=	atom
+                or  atom  multi
+
+5. An atom can be one of a long list of items.  Many atoms match one
+   character in the text.  It is often an ordinary character or a
+   character class.  Braces can be used to make a pattern into an atom.
+   The `"\z(\)"` construct is only for syntax highlighting.
+
+        atom    ::=	ordinary-atom
+                or  \( pattern \)
+                or  \%( pattern \)
+                or  \z( pattern \)
+
+Vim includes two regexp engines:
+
+1. An old, backtracking engine that supports everything.
+2. A new, NFA engine that works much faster on some patterns, but does
+   not support everything.
+
+Vim will automatically select the right engine for you.  However, if you
+run into a problem or want to specifically select one engine or the
+other, you can prepend one of the following to the pattern:
+
+	\%#=0	Force automatic selection.  Only has an effect when
+	        'regexpengine' has been set to a non-zero value.
+	\%#=1	Force using the old engine.
+	\%#=2	Force using the NFA engine.
+
+You can also use the 'regexpengine' option to change the default.
+
+If selecting the NFA engine and it runs into something that is not
+implemented the pattern will not match.  This is only useful when
+debugging Vim.
+
+### :help match
+
+:mat[ch] {group} /{pattern}/
+		Define a pattern to highlight in the current window.  It will
+		be highlighted with {group}.  Example: >
+			:highlight MyGroup ctermbg=green guibg=green
+			:match MyGroup /TODO/
+<		Instead of // any character can be used to mark the start and
+		end of the {pattern}.  Watch out for using special characters,
+		such as '"' and '|'.
+
+		{group} must exist at the moment this command is executed.
+
+		The {group} highlighting still applies when a character is
+		to be highlighted for 'hlsearch', as the highlighting for
+		matches is given higher priority than that of 'hlsearch'.
+		Syntax highlighting (see 'syntax') is also overruled by
+		matches.
+
+		Note that highlighting the last used search pattern with
+		'hlsearch' is used in all windows, while the pattern defined
+		with ":match" only exists in the current window.  It is kept
+		when switching to another buffer.
+
+		'ignorecase' does not apply, use |/\c| in the pattern to
+		ignore case.  Otherwise case is not ignored.
+
+		'redrawtime' defines the maximum time searched for pattern
+		matches.
+
+		When matching end-of-line and Vim redraws only part of the
+		display you may get unexpected results.  That is because Vim
+		looks for a match in the line where redrawing starts.
+
+		Also see |matcharg()| and |getmatches()|. The former returns
+		the highlight group and pattern of a previous |:match|
+		command.  The latter returns a list with highlight groups and
+		patterns defined by both |matchadd()| and |:match|.
+
+		Highlighting matches using |:match| are limited to three
+		matches (aside from |:match|, |:2match| and |:3match|are
+		available). |matchadd()| does not have this limitation and in
+		addition makes it possible to prioritize matches.
+
+		Another example, which highlights all characters in virtual
+		column 72 and more: >
+			:highlight rightMargin term=bold ctermfg=blue guifg=blue
+			:match rightMargin /.\%>72v/
+<		To highlight all character that are in virtual column 7: >
+			:highlight col8 ctermbg=grey guibg=grey
+			:match col8 /\%<8v.\%>7v/
+<		Note the use of two items to also match a character that
+		occupies more than one virtual column, such as a TAB.
+
+:mat[ch]
+:mat[ch] none
+		Clear a previously defined match pattern.
+
+
+:2mat[ch] {group} /{pattern}/					*:2match*
+:2mat[ch]
+:2mat[ch] none
+:3mat[ch] {group} /{pattern}/					*:3match*
+:3mat[ch]
+:3mat[ch] none
+		Just like |:match| above, but set a separate match.  Thus
+		there can be three matches active at the same time.  The match
+		with the lowest number has priority if several match at the
+		same position.
+		The ":3match" command is used by the |matchparen| plugin.  You
+		are suggested to use ":match" for manual matching and
+		":2match" for another plugin.
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+Exercises
+---------
+
+Read `:help magic` carefully.
+
+Read `:help pattern-overview` to see the kinds of things Vim regexes support.
+Stop reading after the character classes.
+
+Read `:help match`.  Try running the `:match Error /\v.../` command a few times
+by hand.
+
+Edit your `~/.vimrc` file to add a mapping that will use `match` to highlight
+trailing whitespace as an error.  A good key to use might be `<leader>w`.
+
+Add another mapping that will clear the match (perhaps `<leader>W`).
+
+Add a normal mode mapping that will automatically insert the `\v` for you
+whenever you begin a search.  If you're stuck remember that Vim's mappings are
+extremely simple and you just need to tell it which keys to press when you use
+the mapped key.
+
+Add the `hlsearch` and `incsearch` options to your `~/.vimrc` file, set however
+you prefer.
+
+Read `:help nohlsearch`.  Note that this is a *command* and *not* the "off mode"
+setting of `hlsearch`!
+
+Add a mapping to "stop highlighting items from the last search" to your
+`~/.vimrc` file.
