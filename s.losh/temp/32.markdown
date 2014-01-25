@@ -225,14 +225,345 @@ it would normally display.
 From the help system
 --------------------
 
+### :help grep
+
+#### Using :vimgrep and :grep
+
+Vim has two ways to find matches for a pattern: Internal and external.
+The advantage of the internal grep is that it works on all systems and
+uses the powerful Vim search patterns.  An external grep program can be
+used when the Vim grep does not do what you want.
+
+The internal method will be slower, because files are read into memory.
+The advantages are:
+- Line separators and encoding are automatically recognized, as if a
+  file is being edited.
+- Uses Vim search patterns.  Multi-line patterns can be used.
+- When plugins are enabled: compressed and remote files can be searched.
+  `gzip` `netrw`
+
+To be able to do this Vim loads each file as if it is being edited.
+When there is no match in the file the associated buffer is wiped out
+again.  The 'hidden' option is ignored here to avoid running out of
+memory or file descriptors when searching many files.  However, when the
+`:hide` command modifier is used the buffers are kept loaded.  This
+makes following searches in the same files a lot faster.
+
+Note that `:copen` (or `:lopen` for `:lgrep`) may be used to open a
+buffer containing the search results in linked form.  The `:silent`
+command may be used to suppress the default full screen grep output.
+The ":grep!" form of the `:grep` command doesn't jump to the first match
+automatically.  These commands can be combined to create a NewGrep
+command:
+
+    command! -nargs=+ NewGrep execute 'silent grep! <args>' | copen 42
+
+#### Using Vim's internal grep
+
+`:vim[grep][!] /{pattern}/[g][j] {file} ...`
+:   Search for `{pattern}` in the files `{file}` ... and set the error
+    list to the matches.  Files matching `'wildignore'` are ignored;
+    files in `'suffixes'` are searched last.  Without the `'g'` flag
+    each line is added only once.  With `'g'` every match is added.
+
+    `{pattern}` is a Vim search pattern.  Instead of enclosing it in /
+    any non-ID character (see `'isident'`) can be used, so long as it
+    does not appear in `{pattern}`.  `'ignorecase'` applies.  To
+    overrule it put `/\c` in the pattern to ignore case or `/\C` to
+    match case.  `'smartcase'` is not used.  If `{pattern}` is empty
+    (e.g. `//` is specified), the last used search pattern is used.
+
+    When a number is put before the command this is used as the maximum
+    number of matches to find.  Use ":1vimgrep pattern file" to find
+    only the first.  Useful if you only want to check if there is a
+    match and quit quickly when it's found.
+
+    Without the `'j'` flag Vim jumps to the first match.  With `'j'`
+    only the quickfix list is updated.  With the [!] any changes in the
+    current buffer are abandoned.
+
+    Every second or so the searched file name is displayed to give you
+    an idea of the progress made.
+    
+    Examples:
+
+        :vimgrep /an error/ *.c
+        :vimgrep /\<FileName\>/ *.h include/*
+        :vimgrep /myfunc/ **/*.c
+
+    For the use of `"**"` see `starstar-wildcard`.
+
+`:vim[grep][!] {pattern} {file} ...`
+:   Like above, but instead of enclosing the pattern in a non-ID
+    character use a white-separated pattern.  The pattern must start
+    with an ID character.
+    
+    Example:
+        
+        :vimgrep Error *.c
+
+`:lv[imgrep][!] /{pattern}/[g][j] {file} ...`\
+`:lv[imgrep][!] {pattern} {file} ...`
+:   Same as `":vimgrep"`, except the location list for the current
+    window is used instead of the quickfix list.
+
+`:vimgrepa[dd][!] /{pattern}/[g][j] {file} ...`\
+`:vimgrepa[dd][!] {pattern} {file} ...`
+:   Just like `":vimgrep"`, but instead of making a new list of
+    errors the matches are appended to the current list.
+
+`:lvimgrepa[dd][!] /{pattern}/[g][j] {file} ...`
+`:lvimgrepa[dd][!] {pattern} {file} ...`
+:   Same as `":vimgrepadd"`, except the location list for the current
+    window is used instead of the quickfix list.
+
+### :help cword
+
+> Note:
+>
+> these are typed literally, they are not special keys!
+
+`<cword>`
+:   is replaced with the word under the cursor (like `star`)
+
+`<cWORD>`
+:   is replaced with the WORD under the cursor (see `WORD`)
+
+`<cfile>`
+:   is replaced with the path name under the cursor (like what `gf`
+    uses)
+
+`<afile>`
+:   When executing autocommands, is replaced with the file name for a
+    file read or write.
+
+`<abuf>`
+:   When executing autocommands, is replaced with the currently
+    effective buffer number (for `":r file"` and `":so file"` it is the
+    current buffer, the file being read/sourced is not in a buffer).
+
+`<amatch>`
+:   When executing autocommands, is replaced with the match for which
+    this autocommand was executed.  It differs from `<afile>` only when
+    the file name isn't used to match with (for FileType, Syntax and
+    SpellFileMissing events).
+
+`<sfile>`
+:   When executing a `":source"` command, is replaced with the file
+    name of the sourced file.
+    
+    When executing a function, is replaced with `"function
+    {function-name}"`; function call nesting is indicated like this:
+    `"function {function-name1}..{function-name2}"`.  Note that
+    filename-modifiers are useless when `<sfile>` is used inside a
+    function.
+
+`<slnum>`:
+:   When executing a `":source"` command, is replaced with the line
+    number.
+    
+    When executing a function it's the line number relative to the start
+    of the function.
+
+### :help cnext / cprevious
+
+`:[count]cn[ext][!]`
+:   Display the [count] next error in the list that includes a file
+    name.  If there are no file names at all, go to the [count] next
+    error.  See `:cc` for [!] and `'switchbuf'`.
+
+`:[count]lne[xt][!]`
+:   Same as `":cnext"`, except the location list for the current
+    window is used instead of the quickfix list.
+
+`:[count]cN[ext][!]`\
+`:[count]cp[revious][!]`
+:   Display the [count] previous error in the list that includes a
+    file name.  If there are no file names at all, go to the [count]
+    previous error.  See `:cc` for [!] and 'switchbuf'.
+
+`:[count]lN[ext][!]`\
+`:[count]lp[revious][!]`
+:   Same as `":cNext"` and `":cprevious"`, except the location list
+    for the current window is used instead of the quickfix list.
+
+### :help expand
+
+`expand({expr} [, {nosuf} [, {list}]])`
+:   Expand wildcards and the following special keywords in `{expr}`.
+    `'wildignorecase'` applies.
+
+    If `{list}` is given and it is non-zero, a List will be returned.
+    Otherwise the result is a String and when there are several matches,
+    they are separated by `<NL>` characters.  [Note: in version 5.0 a
+    space was used, which caused problems when a file name contains a
+    space]
+
+    If the expansion fails, the result is an empty string.    A name for
+    a non-existing file is not included, unless `{expr}` does not start
+    with `'%'`, `'#'` or `'<'`, see below.
+
+    When `{expr}` starts with `'%'`, `'#'` or `'<'`, the expansion is
+    done like for the `cmdline-special` variables with their associated
+    modifiers.  Here is a short overview:
+
+    ------------    ---------------------------------------
+    `%`             current file name
+    
+    `#`             alternate file name
+    
+    `#n`            alternate file name n
+    
+    `<cfile>`       file name under the cursor
+    
+    `<afile>`       autocmd file name
+    
+    `<abuf>`        autocmd buffer number (as a String!)
+    
+    `<amatch>`      autocmd matched name
+    
+    `<sfile>`       sourced script file name
+    
+    `<slnum>`       sourced script file line number
+    
+    `<cword>`       word under the cursor
+    
+    `<cWORD>`       WORD under the cursor
+    
+    `<client>`      the `{clientid}` of the last received
+                    message `server2client()`
+    ------------    ---------------------------------------
+
+    Modifiers:
+
+    -------     ----------------------------------------
+    `:p`        expand to full path
+    `:h`        head (last path component removed)
+    `:t`        tail (last path component only)
+    `:r`        root (one extension removed)
+    `:e`        extension only
+    -------     ----------------------------------------
+
+    Example:
+    
+        :let &tags = expand("%:p:h") . "/tags"
+
+    Note that when expanding a string that starts with `'%'`, `'#'` or
+    `'<'`, any following text is ignored.  This does NOT work:
+
+        :let doesntwork = expand("%:h.bak")
+
+    Use this:
+        
+        :let doeswork = expand("%:h") . ".bak"
+
+    Also note that expanding `"<cfile>"` and others only returns the
+    referenced file name without further expansion.  If `"<cfile>"` is
+    `"~/.cshrc"`, you need to do another expand() to have the `"~/"`
+    expanded into the path of the home directory:
+    
+        :echo expand(expand("<cfile>"))
+        
+    There cannot be white space between the variables and the following
+    modifier.  The `fnamemodify()` function can be used to modify normal
+    file names.
+
+    When using `'%'` or `'#'`, and the current or alternate file name is
+    not defined, an empty string is used.  Using `"%:p"` in a buffer
+    with no name, results in the current directory, with a `'/'` added.
+
+    When `{expr}` does not start with `'%'`, `'#'` or `'<'`, it is
+    expanded like a file name is expanded on the command line.
+    `'suffixes'` and `'wildignore'` are used, unless the optional
+    `{nosuf}` argument is given and it is non-zero.  Names for
+    non-existing files are included.  The `"**"` item can be used to
+    search in a directory tree.  For example, to find all `"README"`
+    files in the current directory and below:
+
+        :echo expand("**/README")
+
+    Expand() can also be used to expand variables and environment
+    variables that are only known in a shell.  But this can be slow,
+    because a shell must be started.    See `expr-env-expand`.  The
+    expanded variable is still handled like a list of file names.
+    When an environment variable cannot be expanded, it is left
+    unchanged.  Thus ":echo expand('$FOOBAR')" results in "$FOOBAR".
+
+    See `glob()` for finding existing files.  See `system()` for getting
+    the raw output of an external command.
+
+### :help copen
+
+`:cope[n] [height]`
+:   Open a window to show the current list of errors.
+    When [height] is given, the window becomes that high (if there is
+    room).  Otherwise the window is made ten lines high.  The window
+    will contain a special buffer, with `'buftype'` equal to `"quickfix"`.
+    Don't change this!  If there already is a quickfix window, it will
+    be made the current window.  It is not possible to open a second
+    quickfix window. The window will have the w:quickfix_title variable
+    set which will indicate the command that produced the quickfix list.
+    This can be used to compose a custom status line if the value of
+    'statusline' is adjusted properly.
+
+`:lop[en] [height]`
+:   Open a window to show the location list for the current window.
+    Works only when the location list for the current window is present.
+    You can have more than one location window opened at a time.
+    Otherwise, it acts the same as `":copen"`.
+
+### :help silent
+
+`:sil[ent][!] {command}`
+:   Execute {command} silently.  Normal messages will not be given or
+    added to the message history.  When [!] is added, error messages
+    will also be skipped, and commands and mappings will not be aborted
+    when an error is detected.  `v:errmsg` is still set.  When [!] is
+    not used, an error message will cause further messages to be
+    displayed normally.  Redirection, started with `:redir`, will
+    continue as usual, although there might be small differences.  This
+    will allow redirecting the output of a command without seeing it on
+    the screen.  Example:
+        
+        :redir >/tmp/foobar
+        :silent g/Aap/p
+        :redir END
+
+    To execute a Normal mode command silently, use the `:normal`
+    command.  For example, to search for a string without messages:
+        
+        :silent exe "normal /path\<CR>"
+
+    `":silent!"` is useful to execute a command that may fail, but the
+    failure is to be ignored.  Example:
+        
+        :let v:errmsg = ""
+        :silent! /^begin
+        :if v:errmsg != ""
+        : ... pattern was not found
+
+    `":silent"` will also avoid the hit-enter prompt.  When using this
+    for an external command, this may cause the screen to be messed up.
+    Use `CTRL-L` to clean it up then.
+    
+    `":silent menu ..."` defines a menu that will not echo a
+    Command-line command.  The command will still produce messages
+    though.  Use `":silent"` in the command itself to avoid that:
+    `":silent menu .... :silent command"`.
+
+`:uns[ilent] {command}`
+:   Execute {command} not silently.  Only makes a difference when
+    `:silent` was used to get to this command.  Use this for giving a
+    message even when `:silent` was used.  In this example `:silent` is
+    used to avoid the message about reading the file and `:unsilent` to
+    be able to list the first line of each file.
+    
+        :silent argdo unsilent echo expand('%') . ": " . getline(1)
+
 Exercises
 ---------
 
 Add the mapping we just created to your `~/.vimrc` file.
-
-Read `:help :grep` if you didn't read it before.
-
-Read `:help cword`.
 
 Read `:help cnext` and `:help cprevious`.  Try them out after using your new
 grep mapping.
@@ -240,12 +571,5 @@ grep mapping.
 Set up mappings for `:cnext` and `:cprevious` to make it easier to quickly run
 through matches.
 
-Read `:help expand`.
-
-Read `:help copen`.
-
 Add a height to the `:copen` command in the mapping we created to make sure the
 quickfix window is opened to whatever height you prefer.
-
-Read `:help silent`.
-
