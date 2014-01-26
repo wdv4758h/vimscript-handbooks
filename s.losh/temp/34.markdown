@@ -1,0 +1,147 @@
+Case Study: Grep Operator, Part Three
+=====================================
+
+Our shiny new "grep operator" is working great, but part of writing
+Vimscript is being considerate and making your users' lives easier.  We
+can do two more things to make our operator play nicely in the Vim
+ecosystem.
+
+Saving Registers
+----------------
+
+By yanking the text into the unnamed register we destroy anything that
+was previously in there.
+
+This isn't very nice to our users, so let's save the contents of that
+register before we yank and restore it after we've done.  Change the
+code to look like this:
+
+    nnoremap <leader>g :set operatorfunc=GrepOperator<cr>g@
+    vnoremap <leader>g :<c-u>call GrepOperator(visualmode())<cr>
+
+    function! GrepOperator(type)
+        let saved_unnamed_register = @@
+
+        if a:type ==# 'v'
+            normal! `<v`>y
+        elseif a:type ==# 'char'
+            normal! `[v`]y
+        else
+            return
+        endif
+
+        silent execute "grep! -R " . shellescape(@@) . " ."
+        copen
+
+        let @@ = saved_unnamed_register
+    endfunction
+
+We've added two `let` statements at the top and bottom of the function.
+The first saves the contents of `@@` into a variable and the second
+restores it.
+
+Write and source the file.  Make sure it works by yanking some text,
+then pressing `<leader>giw` to run our operator, then pressing `p` to
+paste the text you yanked before.
+
+When writing Vim plugins you should *always* strive to save and restore
+any settings or registers your code modifies so you don't surprise and
+confuse your users.
+
+Namespacing
+-----------
+
+Our script created a function named `GrepOperator` in the global
+namespace.  This probably isn't a big deal, but when you're writing
+Vimscript it's far better to be safe than sorry.
+
+We can avoid polluting the global namespace by tweaking a couple of
+lines in our code.  Edit the file to look like this:
+
+    nnoremap <leader>g :set operatorfunc=<SID>GrepOperator<cr>g@
+    vnoremap <leader>g :<c-u>call <SID>GrepOperator(visualmode())<cr>
+
+    function! s:GrepOperator(type)
+        let saved_unnamed_register = @@
+
+        if a:type ==# 'v'
+            normal! `<v`>y
+        elseif a:type ==# 'char'
+            normal! `[v`]y
+        else
+            return
+        endif
+
+        silent execute "grep! -R " . shellescape(@@) . " ."
+        copen
+
+        let @@ = saved_unnamed_register
+    endfunction
+
+The first three lines of the script have changed.  First, we modified
+the function name to start with `s:` which places it in the current
+script's namespace.
+
+We also modified the mappings and prepended the `GrepOperator` function
+name with `<SID>` so they could find the function.  If we hadn't done
+this they would have tried to find the function in the global namespace,
+which wouldn't have worked.
+
+Congratulations, our `grep-operator.vim` script is not only extremely
+useful, but it's also a considerate Vimscript citizen!
+
+From the help system
+--------------------
+
+### :help <SID>
+
+The string `"<SID>"` can be used in a mapping or menu.  This requires
+that the '<' flag is not present in 'cpoptions'.
+
+When executing the map command, Vim will replace `"<SID>"` with the
+special key code `<SNR>`, followed by a number that's unique for the
+script, and an underscore.  Example:
+
+    :map <SID>Add
+
+could define a mapping `"<SNR>23_Add"`.
+
+When defining a function in a script, `"s:"` can be prepended to the
+name to make it local to the script.  But when a mapping is executed
+from outside of the script, it doesn't know in which script the function
+was defined.  To avoid this problem, use `"<SID>"` instead of `"s:"`.
+The same translation is done as for mappings.  This makes it possible to
+define a call to the function in a mapping.
+
+When a local function is executed, it runs in the context of the script
+it was defined in.  This means that new functions and mappings it
+defines can also use `"s:"` or `"<SID>"` and it will use the same unique
+number as when the function itself was defined.  Also, the `"s:var"`
+local script variables can be used.
+
+When executing an autocommand or a user command, it will run in the
+context of the script it was defined in.  This makes it possible that
+the command calls a local function or uses a local mapping.
+
+Otherwise, using `"<SID>"` outside of a script context is an error.
+
+If you need to get the script number to use in a complicated script, you
+can use this function:
+	
+    function s:SID()
+	  return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
+	endfun
+
+The `"<SNR>"` will be shown when listing functions and mappings.  This
+is useful to find out what they are defined to.
+
+The `:scriptnames` command can be used to see which scripts have been
+sourced and what their `<SNR>` number is.
+
+This is all {not in Vi} and {not available when compiled without the
+`+eval` feature}.
+
+Exercises
+---------
+
+Treat yourself to a snack.  You deserve it!

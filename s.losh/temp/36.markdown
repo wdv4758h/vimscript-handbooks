@@ -1,0 +1,140 @@
+Looping
+=======
+
+You might be surprised to realize that we've gone through thirty five
+chapters of a programming language book without even mentioning loops!
+Vimscript offers so many other options for performing actions on text
+(`normal!`, etc) that loops aren't as necessary as they are in most
+other languages.
+
+Even so, you'll definitely need them some day, so now we'll take a look
+at the two main kinds of loops Vim supports.
+
+For Loops
+---------
+
+The first kind of loop is the `for` loop.  This may seem odd if you're
+used to Java, C or Javascript `for` loops, but turns out to be quite
+elegant.  Run the following commands:
+
+    :let c = 0
+
+    :for i in [1, 2, 3, 4]
+    :  let c += i
+    :endfor
+
+    :echom c
+
+Vim displays `10`, which is the result of adding together each element
+in the list.  Vimscript `for` loops iterate over lists (or dictionaries,
+which we'll cover later).
+
+There's no equivalent to the C-style `for (int i = 0; i < foo; i++)`
+loop form in Vimscript.  This might seem bad at first, but in practice
+you'll never miss it.
+
+While Loops
+-----------
+
+Vim also supports the classic `while` loop.  Run the following commands:
+
+    :let c = 1
+    :let total = 0
+
+    :while c <= 4
+    :  let total += c
+    :  let c += 1
+    :endwhile
+
+    :echom total
+
+Once again Vim displays `10`.  This loop should be familiar to just
+about anyone who's programmed before, so we won't spend any time on it.
+You won't use it very often.  Keep it in the back of your mind for the
+rare occasions that you want it.
+
+From the help system
+--------------------
+
+### :help for
+
+| `:for {var} in {list}`
+| `:endfo[r]`
+|
+Repeat the commands between `":for"` and `":endfor"` for each item in
+`{list}`.  Variable `{var}` is set to the value of each item.  When an
+error is detected for a command inside the loop, execution continues
+after the `"endfor"`.  Changing `{list}` inside the loop affects what
+items are used.  Make a copy if this is unwanted:
+    
+    :for item in copy(mylist)
+
+When not making a copy, Vim stores a reference to the next item in the
+list, before executing the commands with the current item.  Thus the
+current item can be removed without effect.  Removing any later item
+means it will not be found.  Thus the following example works (an
+inefficient way to make a list empty):
+    
+    for item in mylist
+       call remove(mylist, 0)
+    endfor
+
+Note that reordering the list (e.g., with `sort()` or `reverse()`) may
+have unexpected effects.  Note that the type of each list item should be
+identical to avoid errors for the type of `{var}` changing.  Unlet the
+variable at the end of the loop to allow multiple item types:
+    
+    for item in ["foo", ["bar"]]
+       echo item
+       unlet item  " E706 without this
+    endfor
+
+| `for [{var1}, {var2}, ...] in {listlist}`
+| `:endfo[r]`
+|
+Like ":for" above, but each item in `{listlist}` must be a list, of
+which each item is assigned to `{var1}`, `{var2}`, etc.  Example:
+                
+    :for [lnum, col] in [[1, 3], [2, 5], [3, 8]]
+        :echo getline(lnum)[col]
+    :endfor
+
+| `:con[tinue]`
+|
+When used inside a `":while"` or `":for"` loop, jumps back to the start
+of the loop.  If it is used after a `:try` inside the loop but before
+the matching `:finally` (if present), the commands following the
+`":finally"` up to the matching `:endtry` are executed first.  This
+process applies to all nested `":try"`s inside the loop.  The outermost
+`":endtry"` then jumps back to the start of the loop.
+
+| `:brea[k]`
+|
+When used inside a `":while"` or `":for"` loop, skips to the command
+after the matching `":endwhile"` or `":endfor"`.  If it is used after a
+`:try` inside the loop but before the matching `:finally` (if present),
+the commands following the `":finally"` up to the matching `:endtry` are
+executed first.  This process applies to all nested `":try"`s inside the
+loop.  The outermost `":endtry"` then jumps to the command after the
+loop.
+
+### :help while
+
+| `:wh[ile] {expr1}`
+| `:endw[hile]`
+|
+Repeat the commands between `":while"` and `":endwhile"`, as long as
+`{expr1}` evaluates to non-zero.  When an error is detected from a
+command inside the loop, execution continues after the `"endwhile"`.
+Example:
+    
+    :let lnum = 1
+    :while lnum <= line("$")
+       :call FixLine(lnum)
+       :let lnum = lnum + 1
+    :endwhile
+
+> NOTE:
+>
+> The `":append"` and `":insert"` commands don't work properly inside
+> a `":while"` and `":for"` loop.

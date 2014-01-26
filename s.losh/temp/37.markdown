@@ -1,0 +1,342 @@
+Dictionaries
+============
+
+The last type of Vimscript variable we'll talk about is the dictionary.
+Vimscript dictionaries are similar to Python's dicts, Ruby's hashes, and
+Javascript's objects.
+
+Dictionaries are created using curly brackets.  Values are
+heterogeneous, but *keys are always coerced to strings*.  You didn't
+think things were going to be *completely* sane, did you?
+
+Run this command:
+
+    :echo {'a': 1, 100: 'foo'}
+
+Vim displays `{'a': 1, '100': 'foo'}`, which shows that Vimscript does
+indeed coerce keys to strings while leaving values alone.
+
+Vimscript avoids the stupidity of the Javascript standard and lets you
+use a comma after the last element in a dictionary.  Run the following
+command:
+
+    :echo {'a': 1, 100: 'foo',}
+
+Once again Vim displays `{'a': 1, '100': 'foo'}`.  You should *always*
+use the trailing comma in your dictionaries, *especially* when they're
+defined on multiple lines, because it will make adding new entries less
+error-prone.
+
+Indexing
+--------
+
+To look up a key in a dictionary you use the same syntax as most
+languages.  Run this command:
+
+    :echo {'a': 1, 100: 'foo',}['a']
+
+Vim displays `1`.  Try it with a non-string index:
+
+    :echo {'a': 1, 100: 'foo',}[100]
+
+Vim coerces the index to a string before performing the lookup, which
+makes sense since keys can only ever be strings.
+
+Vimscript also supports the Javascript-style "dot" lookup when the key
+is a string consisting only of letters, digits and/or underscores.  Try
+the following commands:
+
+    :echo {'a': 1, 100: 'foo',}.a
+    :echo {'a': 1, 100: 'foo',}.100
+
+Vim displays the correct element in both cases.  How you choose to index
+your dictionaries is a matter of taste and style.
+
+Assigning and Adding
+--------------------
+
+Adding entries to dictionaries is done by simply assigning them like
+variables.  Run this command:
+
+    :let foo = {'a': 1}
+    :let foo.a = 100
+    :let foo.b = 200
+    :echo foo
+
+Vim displays `{'a': 100, 'b': 200}`, which shows that assigning and
+adding entries both work the same way.
+
+Removing Entries
+----------------
+
+There are two ways to remove entries from a dictionary.  Run the
+following commands:
+
+    :let test = remove(foo, 'a')
+    :unlet foo.b
+    :echo foo
+    :echo test
+
+Vim displays `{}` and `100`.  The `remove` function will remove the
+entry with the given key from the given dictionary and return the
+removed value.  The `unlet` command also removes dictionary entries, but
+you can't use the value.
+
+You cannot remove nonexistent entries from a dictionary.  Try running
+this command:
+
+    :unlet foo["asdf"]
+
+Vim throws an error.
+
+The choice of `remove` or `unlet` is mostly a matter of personal taste.
+If pressed I'd recommend using `remove` everywhere because it's more
+flexible than `unlet`.  `remove` can do anything `unlet` can do but the
+reverse isn't true, so you can always be consistent if you use `remove`.
+
+Dictionary Functions
+--------------------
+
+Like lists, Vim has a number of built-in functions for working with
+dictionaries.  Run the following command:
+
+    :echom get({'a': 100}, 'a', 'default')
+    :echom get({'a': 100}, 'b', 'default')
+
+Vim displays `100` and `default`, just like the `get` function for
+lists.
+
+You can also check if a given key is present in a given dictionary.  Run
+this commands:
+
+    :echom has_key({'a': 100}, 'a')
+    :echom has_key({'a': 100}, 'b')
+
+Vim displays `1` and `0`.  Remember that Vimscript treats `0` as falsy
+and any other number as truthy.
+
+You can pull the key-value pairs out of a dictionary with `items`.  Run
+this command:
+
+    :echo items({'a': 100, 'b': 200})
+
+Vim will display a nested list that looks something like `[['a', 100],
+['b', 200]]`.  As far as I can tell Vimscript dictionaries are *not*
+guaranteed to be ordered, so don't expect that the items you get out of
+an `items` call will be in a specific order!
+
+You can get just the keys or just the values with the `keys` and
+`values` functions.  They work as expected -- look them up.
+
+From the help system
+--------------------
+
+### :help Dictionary
+
+A Dictionary is an associative array: Each entry has a key and a value.
+The entry can be located with the key.  The entries are stored without a
+specific ordering.
+
+#### Dictionary creation
+
+A Dictionary is created with a comma separated list of entries in curly
+braces.  Each entry has a key and a value, separated by a colon.  Each key can
+only appear once.  Examples:
+
+    :let mydict = {1: 'one', 2: 'two', 3: 'three'}
+    :let emptydict = {}
+
+A key is always a String.  You can use a Number, it will be converted to
+a String automatically.  Thus the String '4' and the number 4 will find
+the same entry.    Note that the String '04' and the Number 04 are
+different, since the Number will be converted to the String '4'.
+
+A value can be any expression.    Using a Dictionary for a value creates a
+nested Dictionary:
+
+    :let nestdict = {1: {11: 'a', 12: 'b'}, 2: {21: 'c'}}
+
+An extra comma after the last entry is ignored.
+
+#### Accessing entries
+
+The normal way to access an entry is by putting the key in square
+brackets:
+
+    :let val = mydict["one"]
+    :let mydict["four"] = 4
+
+You can add new entries to an existing Dictionary this way, unlike
+Lists.
+
+For keys that consist entirely of letters, digits and underscore the following
+form can be used `expr-entry`:
+    
+    :let val = mydict.one
+    :let mydict.four = 4
+
+Since an entry can be any type, also a List and a Dictionary, the
+indexing and key lookup can be repeated:
+    
+    :echo dict.key[idx].key
+
+
+#### Dictionary to List conversion
+
+You may want to loop over the entries in a dictionary.    For this you
+need to turn the Dictionary into a List and pass it to `:for`.
+
+Most often you want to loop over the keys, using the `keys()` function:
+
+    :for key in keys(mydict)
+    :   echo key . ': ' . mydict[key]
+    :endfor
+
+The List of keys is unsorted.  You may want to sort them first:
+    
+    :for key in sort(keys(mydict))
+
+To loop over the values use the `values()` function:
+
+    :for v in values(mydict)
+    :   echo "value: " . v
+    :endfor
+
+If you want both the key and the value use the `items()` function.  It
+returns a List in which each item is a List with two items, the key and
+the value:
+    
+    :for [key, value] in items(mydict)
+    :   echo key . ': ' . value
+    :endfor
+
+#### Dictionary identity
+
+Just like Lists you need to use `copy()` and `deepcopy()` to make a copy
+of a Dictionary.  Otherwise, assignment results in referring to the same
+Dictionary:
+    
+    :let onedict = {'a': 1, 'b': 2}
+    :let adict = onedict
+    :let adict['a'] = 11
+    :echo onedict['a']
+    11
+
+Two Dictionaries compare equal if all the key-value pairs compare equal.
+For more info see `list-identity`.
+
+#### Dictionary modification
+
+To change an already existing entry of a Dictionary, or to add a new
+entry, use `:let` this way:
+
+    :let dict[4] = "four"
+    :let dict['one'] = item
+
+Removing an entry from a Dictionary is done with `remove()` or `:unlet`.
+Three ways to remove the entry with key "aaa" from dict:
+    
+    :let i = remove(dict, 'aaa')
+    :unlet dict.aaa
+    :unlet dict['aaa']
+
+Merging a Dictionary with another is done with `extend()`:
+    
+    :call extend(adict, bdict)
+
+This extends adict with all entries from bdict.  Duplicate keys cause
+entries in adict to be overwritten.  An optional third argument can
+change this.  Note that the order of entries in a Dictionary is
+irrelevant, thus don't expect ":echo adict" to show the items from bdict
+after the older entries in adict.
+
+Weeding out entries from a Dictionary can be done with `filter()`:
+    
+    :call filter(dict, 'v:val =~ "x"')
+
+This removes all entries from "dict" with a value not matching 'x'.
+
+#### Dictionary function
+
+When a function is defined with the "dict" attribute it can be used in a
+special way with a dictionary. Example:
+    
+    :function Mylen() dict
+    :   return len(self.data)
+    :endfunction
+    :let mydict = {'data': [0, 1, 2, 3], 'len': function("Mylen")}
+    :echo mydict.len()
+
+This is like a method in object oriented programming.  The entry in the
+Dictionary is a `Funcref`.  The local variable `"self"` refers to the
+dictionary the function was invoked from.
+
+It is also possible to add a function without the `"dict"` attribute as a
+Funcref to a Dictionary, but the `"self"` variable is not available then.
+
+To avoid the extra name for the function it can be defined and directly
+assigned to a Dictionary in this way:
+    
+    :let mydict = {'data': [0, 1, 2, 3]}
+    :function mydict.len() dict
+    :   return len(self.data)
+    :endfunction
+    :echo mydict.len()
+
+The function will then get a number and the value of dict.len is a
+`Funcref` that references this function. The function can only be used
+through a `Funcref`.  It will automatically be deleted when there is no
+`Funcref` remaining that refers to it.
+
+It is not necessary to use the `"dict"` attribute for a numbered
+function.
+
+If you get an error for a numbered function, you can find out what it is
+with a trick.  Assuming the function is 42, the command is:
+    
+    :function {42}
+
+#### Functions for Dictionaries
+
+Functions that can be used with a Dictionary:
+    
+    :if has_key(dict, 'foo')    " TRUE if dict has entry with key "foo"
+    :if empty(dict)             " TRUE if dict is empty
+    :let l = len(dict)          " number of items in dict
+    :let big = max(dict)        " maximum value in dict
+    :let small = min(dict)      " minimum value in dict
+    :let xs = count(dict, 'x')  " count nr of times 'x' appears in dict
+    :let s = string(dict)       " String representation of dict
+    :call map(dict, '">> " . v:val')  " prepend ">> " to each item
+
+### :help get()
+
+`get({dict}, {key} [, {default}])`
+:   Get item with key `{key}` from `Dictionary` `{dict}`.  When this
+    item is not available return `{default}`.  Return zero when
+    `{default}` is omitted.
+
+### :help `has_key()`
+
+`has_key({dict}, {key})`
+:   The result is a Number, which is 1 if `Dictionary` `{dict}` has an
+    entry with key `{key}`.  Zero otherwise.
+
+### :help items()
+
+`items({dict})`
+:   Return a `List` with all the key-value pairs of `{dict}`.  Each
+    `List` item is a list with two items: the key of a {dict entry and
+    the value of this entry.  The `List` is in arbitrary order.
+
+### :help keys()
+
+`keys({dict})`
+:   Return a `List` with all the keys of `{dict}`. The `List` is in
+    arbitrary order.
+
+### :help values()
+
+`values({dict})`
+:   Return a `List` with all the values of `{dict}`. The `List` is in
+    arbitrary order.
