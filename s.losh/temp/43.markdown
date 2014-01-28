@@ -1,0 +1,206 @@
+A New Hope: Plugin Layout with Pathogen
+=======================================
+
+Vim's vanilla layout for plugin files makes sense if you're just adding
+a file here and there to customize your own Vim experience, but turns
+into a mess when you want to use plugins other people have written.
+
+In the past, when you wanted to use a plugin someone else wrote you
+would download the files and place them, one-by-one, into the
+appropriate directories.  You could also use `zip` or `tar` to do the
+placing for you.
+
+There are a few significant problems with this approach:
+
+* What happens when you want to update a plugin?  You can overwrite the
+  old files, but how do you know if the author deleted a file that you
+  now need to delete by hand?
+* What if two plugins happen to have a file with the same name (like
+  `utils.vim` or something generic like that)?  Sometimes you can simply
+  rename it, but if it's in `autoload/` or another directory where the
+  names matter you've got to edit the plugin yourself.  Not fun.
+
+People came up with several hacks to try to make things easier, like
+Vimballs.  Luckily we don't need to suffer through these ugly hacks any
+more.  [Tim Pope][] created the wonderful [Pathogen][] plugin that makes
+managing multiple plugins a breeze, as long as plugin authors structure
+their plugins in a sane way.
+
+Let's take a quick look at how Pathogen works and what we need to do to
+make our plugin compatible.
+
+[Tim Pope]: http://tpo.pe/ [Pathogen]:
+http://www.vim.org/scripts/script.php?script_id=2332
+
+Runtimepath
+-----------
+
+When Vim looks for files in a specific directory, like `syntax/`, it
+doesn't just look in a single place.  Much like `PATH` on Linux/Unix/BSD
+systems, Vim has the `runtimepath` setting which tells it where to find
+files to load.
+
+Create a `colors` directory on your Desktop.  Create a file in that
+directory called `mycolor.vim` (you can leave it empty for this
+demonstration).  Open Vim and run this command:
+
+    :color mycolor
+
+Vim will display an error, because it doesn't know to look on your
+Desktop for files.  Now run this command:
+
+    :set runtimepath=/Users/sjl/Desktop
+
+You'll need to change the path to match the path of your own Desktop, of
+course.  Now try the color command again:
+
+    :color mycolor
+
+This time Vim doesn't throw an error, because it was able to find the
+`mycolor.vim` file.  Because the file was blank it didn't actually *do*
+anything, but we know it was found because it didn't throw an error.
+
+Pathogen
+--------
+
+The Pathogen plugin automatically adds paths to your `runtimepath` when
+you load Vim.  Any directories inside `~/.vim/bundle/` will each be
+added to the `runtimepath`.
+
+This means that each directory inside `bundle/` should contain some or
+all of the standard Vim plugin directories, like `colors/` and
+`syntax/`.  Vim can now load files from each of those directories, which
+makes it simple to keep each plugin's files in its own directory.
+
+This makes it trivial to update plugins.  You can simply blow away the
+old plugin's directory entirely and replace it with the new version.  If
+you keep your `~/.vim` directory under version control (and you should)
+you can use Mercurial's subrepos or Git's submodules to directly check
+out each plugin's repository into `~/.vim/bundle/` and then update it
+with a simple `hg pull; hg update` or `git pull origin master`.
+
+Being Pathogen-Compatible
+-------------------------
+
+When we write our Potion plugin we want to let our users use it with
+Pathogen.  Doing this is simple: we simply put our files in the
+appropriate directories inside the plugin's repository!
+
+Our plugin's repository will wind up looking like this:
+
+    potion/
+        README
+        LICENSE
+        doc/
+            potion.txt
+        ftdetect/
+            potion.vim
+        ftplugin/
+            potion.vim
+        syntax/
+            potion.vim
+        ... etc ...
+
+We can put this on GitHub or Bitbucket and users can simply clone it
+down into `bundle/` and everything will just work!
+
+From the help system
+--------------------
+
+### :help runtimepath
+
+`'runtimepath' 'rtp' string`
+:   (default:
+
+            Unix: "$HOME/.vim,
+                $VIM/vimfiles,
+                $VIMRUNTIME,
+                $VIM/vimfiles/after,
+                $HOME/.vim/after"
+            Amiga: "home:vimfiles,
+                $VIM/vimfiles,
+                $VIMRUNTIME,
+                $VIM/vimfiles/after,
+                home:vimfiles/after"
+            PC, OS/2: "$HOME/vimfiles,
+                $VIM/vimfiles,
+                $VIMRUNTIME,
+                $VIM/vimfiles/after,
+                $HOME/vimfiles/after"
+            Macintosh: "$VIM:vimfiles,
+                $VIMRUNTIME,
+                $VIM:vimfiles:after"
+            RISC-OS: "Choices:vimfiles,
+                $VIMRUNTIME,
+                Choices:vimfiles/after"
+            VMS: "sys$login:vimfiles,
+                $VIM/vimfiles,
+                $VIMRUNTIME,
+                $VIM/vimfiles/after,
+                sys$login:vimfiles/after")
+    
+    global
+    
+    This is a list of directories which will be searched for runtime
+    files:
+      
+        filetype.vim    filetypes by file name 
+        scripts.vim     filetypes by file contents 
+        autoload/       automatically loaded scripts 
+        colors/         color scheme files 
+        compiler/       compiler files 
+        doc/            documentation 
+        ftplugin/       filetype plugins 
+        indent/         indent scripts 
+        keymap/         key mapping files 
+        lang/           menu translations 
+        menu.vim        GUI menus 
+        plugin/         plugin scripts 
+        print/          files for printing 
+        spell/          spell checking files 
+        syntax/         syntax files 
+        tutor/          files for vimtutor 
+
+    And any other file searched for with the `:runtime` command.
+
+    1. In your home directory, for your personal preferences.
+    2. In a system-wide Vim directory, for preferences from the system
+       administrator.
+    3. In $VIMRUNTIME, for files distributed with Vim.
+    4. In the `"after"` directory in the system-wide Vim directory.
+       This is for the system administrator to overrule or add to the
+       distributed defaults (rarely needed)
+    5. In the `"after"` directory in your home directory.  This is for
+       personal preferences to overrule or add to the distributed
+       defaults or system-wide settings (rarely needed).
+
+    Note that, unlike 'path', no wildcards like `"**"` are allowed.
+    Normal wildcards are allowed, but can significantly slow down
+    searching for runtime files.  For speed, use as few items as
+    possible and avoid wildcards.  Example:
+
+        :set runtimepath=~/vimruntime,/mygroup/vim,$VIMRUNTIME
+    
+    This will use the directory `"~/vimruntime"` first (containing your
+    personal Vim runtime files), then `"/mygroup/vim"` (shared between a
+    group of people) and finally `"$VIMRUNTIME"` (the distributed
+    runtime files).  You probably should always include `$VIMRUNTIME`
+    somewhere, to use the distributed runtime files.  You can put a
+    directory before `$VIMRUNTIME` to find files which replace a
+    distributed runtime files.  You can put a directory after
+    `$VIMRUNTIME` to find files which add to distributed runtime files.
+    This option cannot be set from a `modeline` or in the `sandbox`, for
+    security reasons.
+
+Exercises
+---------
+
+Install [Pathogen][] if you haven't already done so.
+
+Create a Mercurial or Git repository for your plugin, called `potion`.  You can
+put it anywhere you like and symlink it into `~/.vim/bundle/potion/` or just put
+it directly in `~/.vim/bundle/potion/`.
+
+Create `README` and `LICENSE` files in the repository and commit them.
+
+Push the repository up to Bitbucket or GitHub.

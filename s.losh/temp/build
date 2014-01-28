@@ -178,6 +178,30 @@ echo "Adding 40.markdown"
 cat 40.markdown >> $DOC
 echo "" >> $DOC
 
+echo "Adding 41.markdown"
+cat 41.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 42.markdown"
+cat 42.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 43.markdown"
+cat 43.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 44.markdown"
+cat 44.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 45.markdown"
+cat 45.markdown >> $DOC
+echo "" >> $DOC
+
+#
+# ###
+#
+
 echo "Converting" $DOC "..."
 pandoc $DOC --standalone --smart \
     --latex-engine=xelatex --template=ajt.latex \

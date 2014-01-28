@@ -1,0 +1,129 @@
+Detecting Filetypes
+===================
+
+Let's create a Potion file we can use as a sample as we're working on
+our plugin.  Create a `factorial.pn` file somewhere and put the
+following Potion code inside it:
+
+    factorial = (n):
+        total = 1
+        n to 1 (i):
+            total *= i.
+        total.
+
+    10 times (i):
+        i string print
+        '! is: ' print
+        factorial (i) string print
+        "\n" print.
+
+This code creates a simple factorial function and calls it ten times,
+printing the results each time.  Go ahead and run it with `potion
+factorial.pn`.  The output should look like this:
+
+    0! is: 0
+    1! is: 1
+    2! is: 2
+    3! is: 6
+    4! is: 24
+    5! is: 120
+    6! is: 720
+    7! is: 5040
+    8! is: 40320
+    9! is: 362880
+
+If you don't get this output, or you get an error, stop and figure out
+what's gone wrong.  The code should work exactly as-is.
+
+Take some time to understand how the code works.  Refer to the Potion
+docs liberally.  It's not critical to understanding Vimscript but it
+will make you a better programmer.
+
+Detecting Potion Files
+----------------------
+
+Open `factorial.pn` in Vim and run the following command:
+
+    :set filetype?
+
+Vim will display `filetype=` because it doesn't know what a `.pn` file
+is yet.  Let's fix that.
+
+Create `ftdetect/potion.vim` in your plugin's repo.  Put the following
+lines into it:
+
+    au BufNewFile,BufRead *.pn set filetype=potion
+
+This creates a single autocommand: a command to set the filetype of
+`.pn` files to `potion`.  Pretty straightforward.
+
+Notice that we *didn't* use an autocommand group like we usually would.
+Vim automatically wraps the contents of `ftdetect/*.vim` files in
+autocommand groups for you, so you don't need to worry about it.
+
+Close the `factorial.pn` file and reopen it.  Now run the previous
+command again:
+
+    :set filetype?
+
+This time Vim displays `filetype=potion`.  When Vim started up it loaded
+the autocommand group inside `~/.vim/bundle/potion/ftdetect/potion.vim`,
+and when it opened `factorial.pn` the autocommand fired, setting the
+`filetype` to `potion`.
+
+Now that we've taught Vim to recognize Potion files we can move on to
+actually creating some useful behavior in our plugin.
+
+From the help system
+--------------------
+
+### :help ft
+
+`'filetype' 'ft' string (default: ""). local to buffer`
+:   When this option is set, the FileType autocommand event is
+    triggered.  All autocommands that match with the value of this
+    option will be executed.  Thus the value of `'filetype'` is used in
+    place of the file name.
+    
+    Otherwise this option does not always reflect the current file type.
+    This option is normally set when the file type is detected.  To
+    enable this use the `":filetype on"` command.
+    
+    Setting this option to a different value is most useful in a
+    modeline, for a file for which the file type is not automatically
+    recognized.  Example, for in an IDL file:
+        
+        /* vim: set filetype=idl : */ ~
+    
+    When a dot appears in the value then this separates two filetype
+    names.  Example:
+        
+        /* vim: set filetype=c.doxygen : */ ~
+    
+    This will use the `"c"` filetype first, then the `"doxygen"`
+    filetype.  This works both for filetype plugins and for syntax
+    files.  More than one dot may appear.  This option is not copied to
+    another buffer, independent of the `'s'` or `'S'` flag in
+    `'cpoptions'`.  Only normal file name characters can be used,
+    `"/\*?[|<>"` are illegal.
+
+### :help setfiletype
+
+`:setf[iletype] {filetype}`
+:   Set the `'filetype'` option to `{filetype}`, but only if
+    not done yet in a sequence of (nested) autocommands.
+    This is short for:
+        
+        :if !did_filetype()
+        :  setlocal filetype={filetype}
+        :endif
+    
+    This command is used in a filetype.vim file to avoid
+    setting the `'filetype'` option twice, causing different
+    settings and syntax files to be loaded.
+
+Exercises
+---------
+
+Modify the Potion plugin's `ftdetect/potion.vim` script to use `setfiletype`
+instead of `set filetype`.

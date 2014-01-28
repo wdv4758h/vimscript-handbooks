@@ -190,173 +190,242 @@ From the help system
 
 ### :help filename-modifiers
 
+The file name modifiers can be used after `"%"`, `"#"`, `"#n"`,
+`"<cfile>"`, `"<sfile>"`, `"<afile>"` or `"<abuf>"`.  They are also used
+with the `fnamemodify()` function.  These are not available when Vim has
+been compiled without the `+modify_fname` feature.  These modifiers can
+be given, in this order:
 
-                             *filename-modifiers*
-     *:_%:* *::8* *::p* *::.* *::~* *::h* *::t* *::r* *::e* *::s* *::gs*
-            *%:8* *%:p* *%:.* *%:~* *%:h* *%:t* *%:r* *%:e* *%:s* *%:gs*
-The file name modifiers can be used after "%", "#", "#n", "<cfile>", "<sfile>",
-"<afile>" or "<abuf>".  They are also used with the |fnamemodify()| function.
-These are not available when Vim has been compiled without the |+modify_fname|
-feature.
-These modifiers can be given, in this order:
-    :p    Make file name a full path.  Must be the first modifier.  Also
-        changes "~/" (and "~user/" for Unix and VMS) to the path for
-        the home directory.  If the name is a directory a path
-        separator is added at the end.  For a file name that does not
-        exist and does not have an absolute path the result is
-        unpredictable.  On MS-Windows an 8.3 filename is expanded to
-        the long name.
-    :8    Converts the path to 8.3 short format (currently only on
-        MS-Windows).  Will act on as much of a path that is an
-        existing path.
-    :~    Reduce file name to be relative to the home directory, if
-        possible.  File name is unmodified if it is not below the home
-        directory.
-    :.    Reduce file name to be relative to current directory, if
-        possible.  File name is unmodified if it is not below the
-        current directory.
-        For maximum shortness, use ":~:.".
-    :h    Head of the file name (the last component and any separators
-        removed).  Cannot be used with :e, :r or :t.
-        Can be repeated to remove several components at the end.
-        When the file name ends in a path separator, only the path
-        separator is removed.  Thus ":p:h" on a directory name results
-        on the directory name itself (without trailing slash).
-        When the file name is an absolute path (starts with "/" for
-        Unix; "x:\" for MS-DOS, WIN32, OS/2; "drive:" for Amiga), that
-        part is not removed.  When there is no head (path is relative
-        to current directory) the result is empty.
-    :t    Tail of the file name (last component of the name).  Must
-        precede any :r or :e.
-    :r    Root of the file name (the last extension removed).  When
-        there is only an extension (file name that starts with '.',
-        e.g., ".vimrc"), it is not removed.  Can be repeated to remove
-        several extensions (last one first).
-    :e    Extension of the file name.  Only makes sense when used alone.
-        When there is no extension the result is empty.
-        When there is only an extension (file name that starts with
-        '.'), the result is empty.  Can be repeated to include more
-        extensions.  If there are not enough extensions (but at least
-        one) as much as possible are included.
-    :s?pat?sub?
-        Substitute the first occurrence of "pat" with "sub".  This
-        works like the |:s| command.  "pat" is a regular expression.
-        Any character can be used for '?', but it must not occur in
-        "pat" or "sub".
-        After this, the previous modifiers can be used again.  For
-        example ":p", to make a full path after the substitution.
-    :gs?pat?sub?
-        Substitute all occurrences of "pat" with "sub".  Otherwise
-        this works like ":s".
+`:p`
+:   Make file name a full path.  Must be the first modifier.  Also
+    changes `"~/"` (and `"~user/"` for Unix and VMS) to the path for the
+    home directory.  If the name is a directory a path separator is
+    added at the end.  For a file name that does not exist and does not
+    have an absolute path the result is unpredictable.  On MS-Windows an
+    8.3 filename is expanded to the long name.
+
+`:8`
+:   Converts the path to 8.3 short format (currently only on
+    MS-Windows).  Will act on as much of a path that is an existing
+    path.
+
+`:~`
+:   Reduce file name to be relative to the home directory, if
+    possible.  File name is unmodified if it is not below the home
+    directory.
+
+`:.`
+:   Reduce file name to be relative to current directory, if
+    possible.  File name is unmodified if it is not below the current
+    directory.  For maximum shortness, use `":~:."`.
+
+`:h`
+:   Head of the file name (the last component and any separators
+    removed).  Cannot be used with `:e`, `:r` or `:t`.  Can be repeated
+    to remove several components at the end.  When the file name ends in
+    a path separator, only the path separator is removed.  Thus `":p:h"`
+    on a directory name results on the directory name itself (without
+    trailing slash).  When the file name is an absolute path (starts
+    with `"/"` for Unix; `"x:\"` for MS-DOS, WIN32, OS/2; `"drive:"` for
+    Amiga), that part is not removed.  When there is no head (path is
+    relative to current directory) the result is empty.
+
+`:t`
+:   Tail of the file name (last component of the name).  Must precede
+    any `:r` or `:e`.
+
+`:r`
+:   Root of the file name (the last extension removed).  When
+                there is only an extension (file name that starts with
+                `'.'`, e.g., `".vimrc"`), it is not removed.  Can be
+                repeated to remove several extensions (last one first).
+                
+`:e`
+:   Extension of the file name.  Only makes sense when used alone.
+    When there is no extension the result is empty.  When there is only
+    an extension (file name that starts with `'.'`), the result is
+    empty.  Can be repeated to include more extensions.  If there are
+    not enough extensions (but at least one) as much as possible are
+    included.
+    
+`:s?pat?sub?`
+:   Substitute the first occurrence of `"pat"` with `"sub"`.  This
+    works like the `:s` command.  `"pat"` is a regular expression.  Any
+    character can be used for '?', but it must not occur in `"pat"` or
+    `"sub"`.  After this, the previous modifiers can be used again.  For
+    example `":p"`, to make a full path after the substitution.
+    
+`:gs?pat?sub?`
+:   Substitute all occurrences of `"pat"` with `"sub"`.  Otherwise
+    this works like `":s"`.
 
 Examples, when the file name is "src/version.c", current dir
-"/home/mool/vim": >
-  :p            /home/mool/vim/src/version.c
-  :p:.                       src/version.c
-  :p:~                 ~/vim/src/version.c
-  :h                       src
-  :p:h            /home/mool/vim/src
-  :p:h:h        /home/mool/vim
-  :t                       version.c
-  :p:t                       version.c
-  :r                       src/version
-  :p:r            /home/mool/vim/src/version
-  :t:r                       version
-  :e                           c
-  :s?version?main?               src/main.c
-  :s?version?main?:p    /home/mool/vim/src/main.c
-  :p:gs?/?\\?        \home\mool\vim\src\version.c
+"/home/mool/vim":
 
-Examples, when the file name is "src/version.c.gz": >
-  :p            /home/mool/vim/src/version.c.gz
-  :e                             gz
-  :e:e                           c.gz
-  :e:e:e                       c.gz
-  :e:e:r                       c
-  :r                       src/version.c
-  :r:e                           c
-  :r:r                       src/version
-  :r:r:r                   src/version
-<
-                    *extension-removal* *:_%<*
-If a "<" is appended to "%", "#", "#n" or "CTRL-V p" the extension of the file
-name is removed (everything after and including the last '.' in the file
-name).  This is included for backwards compatibility with version 3.0, the
-":r" form is preferred.  Examples: >
+    :p                      /home/mool/vim/src/version.c
+    :p:.                    src/version.c
+    :p:~                    ~/vim/src/version.c
+    :h                      src
+    :p:h                    /home/mool/vim/src
+    :p:h:h                  /home/mool/vim
+    :t                      version.c
+    :p:t                    version.c
+    :r                      src/version
+    :p:r                    /home/mool/vim/src/version
+    :t:r                    version
+    :e                      c
+    :s?version?main?        src/main.c
+    :s?version?main?:p      /home/mool/vim/src/main.c
+    :p:gs?/?\\?             \home\mool\vim\src\version.c
 
-    %        current file name
-    %<        current file name without extension
-    #        alternate file name for current window
-    #<        idem, without extension
-    #31        alternate file number 31
-    #31<        idem, without extension
-    <cword>        word under the cursor
-    <cWORD>        WORD under the cursor (see |WORD|)
-    <cfile>        path name under the cursor
-    <cfile><    idem, without extension
+Examples, when the file name is "src/version.c.gz":
 
-Note: Where a file name is expected wildcards expansion is done.  On Unix the
-shell is used for this, unless it can be done internally (for speed).
-Backticks also work, like in >
+    :p            /home/mool/vim/src/version.c.gz
+    :e            gz
+    :e:e          c.gz
+    :e:e:e        c.gz
+    :e:e:r        c
+    :r            src/version.c
+    :r:e          c
+    :r:r          src/version
+    :r:r:r        src/version
+
+If a `"<"` is appended to `"%"`, `"#"`, `"#n"` or `"CTRL-V p"` the
+extension of the file name is removed (everything after and including
+the last `'.'` in the file name).  This is included for backwards
+compatibility with version 3.0, the `":r"` form is preferred.  Examples:
+
+    %            current file name
+    %<           current file name without extension
+    #            alternate file name for current window
+    #<           idem, without extension
+    #31          alternate file number 31
+    #31<         idem, without extension
+    <cword>      word under the cursor
+    <cWORD>      WORD under the cursor (see |WORD|)
+    <cfile>      path name under the cursor
+    <cfile><     idem, without extension
+
+Note: Where a file name is expected wildcards expansion is done.  On
+Unix the shell is used for this, unless it can be done internally (for
+speed).  Backticks also work, like in
+    
     :n `echo *.c`
-(backtick expansion is not possible in |restricted-mode|)
-But expansion is only done if there are any wildcards before expanding the
-'%', '#', etc..  This avoids expanding wildcards inside a file name.  If you
-want to expand the result of <cfile>, add a wildcard character to it.
-Examples: (alternate file name is "?readme?")
-    command        expands to  ~
-    :e #        :e ?readme?
-    :e `ls #`    :e {files matching "?readme?"}
-    :e #.*        :e {files matching "?readme?.*"}
-    :cd <cfile>    :cd {file name under cursor}
-    :cd <cfile>*    :cd {file name under cursor plus "*" and then expanded}
 
-When the expanded argument contains a "!" and it is used for a shell command
-(":!cmd", ":r !cmd" or ":w !cmd"), the "!" is escaped with a backslash to
-avoid it being expanded into a previously used command.  When the 'shell'
-option contains "sh", this is done twice, to avoid the shell trying to expand
-the "!".
+(backtick expansion is not possible in `restricted-mode`) But expansion
+is only done if there are any wildcards before expanding the `'%'`,
+`'#'`, etc..  This avoids expanding wildcards inside a file name.  If
+you want to expand the result of `<cfile>`, add a wildcard character to
+it.  Examples: (alternate file name is `"?readme?"`)
+    
+    command         expands to
+    :e #            :e ?readme?
+    :e `ls #`       :e {files matching "?readme?"}
+    :e #.*          :e {files matching "?readme?.*"}
+    :cd <cfile>     :cd {file name under cursor}
+    :cd <cfile>*    :cd {file name under cursor plus "*"
+                    and then expanded}
 
-                            *filename-backslash*
-For filesystems that use a backslash as directory separator (MS-DOS, Windows,
-OS/2), it's a bit difficult to recognize a backslash that is used to escape
-the special meaning of the next character.  The general rule is: If the
-backslash is followed by a normal file name character, it does not have a
-special meaning.  Therefore "\file\foo" is a valid file name, you don't have
-to type the backslash twice.
+When the expanded argument contains a `"!"` and it is used for a shell
+command (`":!cmd"`, `":r !cmd"` or `":w !cmd"`), the `"!"` is escaped
+with a backslash to avoid it being expanded into a previously used
+command.  When the `'shell'` option contains `"sh"`, this is done twice,
+to avoid the shell trying to expand the `"!"`.
 
-An exception is the '$' sign.  It is a valid character in a file name.  But
-to avoid a file name like "$home" to be interpreted as an environment variable,
-it needs to be preceded by a backslash.  Therefore you need to use "/\$home"
-for the file "$home" in the root directory.  A few examples:
+For filesystems that use a backslash as directory separator (MS-DOS,
+Windows, OS/2), it's a bit difficult to recognize a backslash that is
+used to escape the special meaning of the next character.  The general
+rule is: If the backslash is followed by a normal file name character,
+it does not have a special meaning.  Therefore `"\file\foo"` is a valid
+file name, you don't have to type the backslash twice.
 
-    FILE NAME    INTERPRETED AS    ~
+An exception is the `'$'` sign.  It is a valid character in a file name.
+But to avoid a file name like `"$home"` to be interpreted as an
+environment variable, it needs to be preceded by a backslash.  Therefore
+you need to use `"/\$home"` for the file `"$home"` in the root
+directory.  A few examples:
+
+    FILE NAME    INTERPRETED AS
     $home        expanded to value of environment var $home
-    \$home        file "$home" in current directory
-    /\$home        file "$home" in root directory
-    \\$home        file "\\", followed by expanded $home
+    \$home       file "$home" in current directory
+    /\$home      file "$home" in root directory
+    \\$home      file "\\", followed by expanded $home
 
 ### :help simplify()
 
+`simplify({filename})`
+:   Simplify the file name as much as possible without changing the
+    meaning.  Shortcuts (on MS-Windows) or symbolic links (on Unix) are
+    not resolved.  If the first path component in `{filename}`
+    designates the current directory, this will be valid for the result
+    as well.  A trailing path separator is not removed either.  Example:
+            
+        simplify("./dir/.././/file/") == "./file/"
+        
+    > Note:
+    >
+    > The combination `"dir/.."` is only removed if `"dir"` is a
+    > searchable directory or does not exist.  On Unix, it is also
+    > removed when `"dir"` is a symbolic link within the same directory.
+    > In order to resolve all the involved symbolic links before
+    > simplifying the path name, use `resolve()`.
+
 ### :help resolve()
+
+`resolve({filename})`
+:   On MS-Windows, when `{filename}` is a shortcut (a .lnk file), returns
+    the path the shortcut points to in a simplified form.  On Unix,
+    repeat resolving symbolic links in all path components of
+    `{filename}` and return the simplified result.  To cope with link
+    cycles, resolving of symbolic links is stopped after 100 iterations.
+    On other systems, return the simplified `{filename}`.  The
+    simplification step is done as by `simplify()`. `resolve() keeps a
+    leading path component specifying the current directory (provided
+    the result is still a relative path name) and also keeps a trailing
+    path separator.
 
 ### :help globpath()
 
+`globpath({path}, {expr} [, {flag}])`
+:   Perform `glob()` on all directories in `{path}` and concatenate the
+    results.  Example:
+            
+        :echo globpath(&rtp, "syntax/c.vim")
+        
+    `{path}` is a comma-separated list of directory names.  Each
+    directory name is prepended to `{expr}` and expanded like with
+    `glob()`.  A path separator is inserted when needed.  To add a comma
+    inside a directory name escape it with a backslash.  Note that on
+    MS-Windows a directory may have a trailing backslash, remove it if
+    you put a comma after it.  If the expansion fails for one of the
+    directories, there is no error message.  Unless the optional
+    `{flag}` argument is given and is non-zero, the `'suffixes'` and
+    `'wildignore'` options apply: Names matching one of the patterns in
+    `'wildignore'` will be skipped and `'suffixes'` affect the ordering
+    of matches.
+
+    The `"**"` item can be used to search in a directory tree.  For
+    example, to find all `"README.txt"` files in the directories in
+    `'runtimepath'` and below:
+        
+        :echo globpath(&rtp, "**/README.txt")
+    
+    Upwards search and limiting the depth of `"**"` is not supported,
+    thus using 'path' will not always work properly.
+
 ### :help wildcards
 
-Exercises
----------
+Wildcards in `{file}` are expanded, but as with file completion,
+`'wildignore'` and `'suffixes'` apply.  Which wildcards are supported
+depends on the system.  These are the common ones:
+	
+    ?       matches one character
+    *       matches anything, including nothing
+    **      matches anything, including nothing,
+            recurses into directories
+    [abc]	match 'a', 'b' or 'c'
 
-Read `:help expand()`.
-
-Read `:help fnamemodify()`.
-
-Read `:help filename-modifiers`.
-
-Read `:help simplify()`.
-
-Read `:help resolve()`.
-
-Read `:help globpath()`.
-
-Read `:help wildcards`.
+To avoid the special meaning of the wildcards prepend a backslash.  However,
+on MS-Windows the backslash is a path separator and `"path\[abc]"` is still seen
+as a wildcard when `"["` is in the 'isfname' option.  A simple way to avoid this
+is to use `"path\[[]abc]"`.  Then the file `"path[abc]"` literally.
