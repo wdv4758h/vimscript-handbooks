@@ -109,6 +109,162 @@ functions are now highlighted.
 This works exactly the same way as keyword highlighting.  We've defined
 a new syntax group and linked it to a different highlighting group.
 
+From the help system
+--------------------
+
+### :help syn--keyword
+
+`:sy[ntax] keyword {group-name} [{options}] {keyword} .. [{options}]`
+
+This defines a number of keywords.
+
+    {group-name}    Is a syntax group name such as "Comment".
+    [{options}]     See |:syn-arguments| below.
+    {keyword} ..    Is a list of keywords which are part of this group.
+
+Example:
+    
+    :syntax keyword   Type   int long char
+
+The `{options}` can be given anywhere in the line.  They will apply to
+all keywords given, also for options that come after a keyword.  These
+examples do exactly the same:
+    
+    :syntax keyword   Type   contained int long char
+    :syntax keyword   Type   int long contained char
+    :syntax keyword   Type   int long char contained
+
+When you have a keyword with an optional tail, like Ex commands in Vim,
+you can put the optional characters inside [], to define all the
+variations at once:
+    
+    :syntax keyword   vimCommand     ab[breviate] n[ext]
+
+Don't forget that a keyword can only be recognized if all the characters
+are included in the `'iskeyword'` option.  If one character isn't, the
+keyword will never be recognized.  Multi-byte characters can also be
+used.  These do not have to be in `'iskeyword'`.
+
+A keyword always has higher priority than a match or region, the keyword
+is used if more than one item matches. Keywords do not nest and a
+keyword can't contain anything else.
+
+Note that when you have a keyword that is the same as an option (even
+one that isn't allowed here), you can not use it.  Use a match instead.
+
+The maximum length of a keyword is 80 characters.
+
+The same keyword can be defined multiple times, when its containment
+differs.  For example, you can define the keyword once not contained and
+use one highlight group, and once contained, and use a different
+highlight group.  Example:
+
+    :syn keyword vimCommand tag
+    :syn keyword vimSetting contained tag
+
+When finding `"tag"` outside of any syntax item, the `"vimCommand"`
+highlight group is used.  When finding `"tag"` in a syntax item that
+contains `"vimSetting"`, the `"vimSetting"` group is used.
+
+### :help iskeyword
+
+`'iskeyword' 'isk'`
+:   string (Vim default for MS-DOS and Win32: local to buffer.
+
+    Keywords are used in searching and recognizing with many commands:
+    `"w"`, `"*"`, `"[i"`, etc.  It is also used for `"\k"` in a
+    `pattern`.  See 'isfname' for a description of the format of this
+    option.  For C programs you could use `"a-z,A-Z,48-57,_,.,-,>"`.
+    For a help file it is set to all non-blank printable characters
+    except '*', '"' and '|' (so that CTRL-] on a command finds the help
+    for that command).  When the 'lisp' option is on the '-' character
+    is always included.
+    
+    > NOTE:
+    >
+    > This option is set to the Vi default value when 'compatible' is
+    > set and to the Vim default value when 'compatible' is reset.
+
+### :help group-name
+
+A syntax group name is to be used for syntax items that match the same
+kind of thing.  These are then linked to a highlight group that
+specifies the color.  A syntax group name doesn't specify any color or
+attributes itself.
+
+The name for a highlight or syntax group must consist of ASCII letters,
+digits and the underscore.  As a regexp: `"[a-zA-Z0-9_]*"`
+
+To be able to allow each user to pick his favorite set of colors, there
+must be preferred names for highlight groups that are common for many
+languages.  These are the suggested group names (if syntax highlighting
+works properly you can see the actual color, except for `"Ignore"`):
+
+------------       --------------------------------------------
+Comment            any comment
+
+Constant           any constant
+String             a string constant: "this is a string"
+Character          a character constant: `'c'`, `'\n'`
+Number             a number constant: 234, 0xff
+Boolean            a boolean constant: TRUE, false
+Float              a floating point constant: 2.3e10
+
+Identifier         any variable name
+Function           function name (also: methods for classes)
+
+Statement          any statement
+Conditional        if, then, else, endif, switch, etc.
+Repeat             for, do, while, etc.
+Label              case, default, etc.
+Operator           `"sizeof"`, `"+"`, `"*"`, etc.
+Keyword            any other keyword
+Exception          try, catch, throw
+
+PreProc            generic Preprocessor
+Include            preprocessor #include
+Define             preprocessor #define
+Macro              same as Define
+PreCondit          preprocessor #if, #else, #endif, etc.
+
+Type               int, long, char, etc.
+StorageClass       static, register, volatile, etc.
+Structure          struct, union, enum, etc.
+Typedef            A typedef
+
+Special            any special symbol
+SpecialChar        special character in a constant
+Tag                you can use CTRL-] on this
+Delimiter          character that needs attention
+SpecialComment     special things inside a comment
+Debug              debugging statements
+
+Underlined         text that stands out, HTML links
+
+Ignore             left blank, hidden  `hl-Ignore`
+
+Error              any erroneous construct
+
+Todo               anything that needs extra attention; mostly the keywords TODO FIXME and XXX
+------------       --------------------------------------------
+
+The names marked with * are the preferred groups; the others are minor
+groups.  For the preferred groups, the `"syntax.vim"` file contains
+default highlighting.  The minor groups are linked to the preferred
+groups, so they get the same highlighting.  You can override these
+defaults by using `":highlight"` commands after sourcing the
+`"syntax.vim"` file.
+
+Note that highlight group names are not case sensitive.  `"String"` and
+`"string"` can be used for the same group.
+
+The following names are reserved and cannot be used as a group name:
+    
+    NONE   ALL   ALLBUT   contains     contained
+
+When using the Ignore group, you may also consider using the conceal
+mechanism.  See `conceal`.
+
 Exercises
 ---------
 
@@ -118,8 +274,6 @@ it.  I had to ask Tim Pope to be sure.
 
 Skim over `:help syn-keyword`.  Pay close attention to the part that
 mentions `iskeyword`.
-
-Read `:help iskeyword`.
 
 Read `:help group-name` to get an idea of some common highlighting groups that
 color scheme authors frequently use.

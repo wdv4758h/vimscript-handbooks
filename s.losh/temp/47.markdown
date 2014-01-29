@@ -1,0 +1,241 @@
+Even More Advanced Syntax Highlighting
+======================================
+
+Syntax highlighting in Vim is a topic that could easily fill a book of
+its own.
+
+We're going to cover one last important part of it here and then move on
+to other things.  If you want to learn more you can read the Vim
+documentation with `:help syntax` and look at syntax files other people
+have made.
+
+Highlighting Strings
+--------------------
+
+Potion, like most programming languages, supports string literals like
+`"Hello, world!"`.  We should highlight these as strings.  To do this
+we'll use the `syntax region` command.  Add the following to your Potion
+syntax file:
+
+    syntax region potionString start=/\v"/ skip=/\v\\./ end=/\v"/
+    highlight link potionString String
+
+Close and reopen your `factorial.pn` file and you'll see that the string
+at the end of the file is highlighted!
+
+The last line here should be familiar.  Reread the previous two chapters
+if you don't understand what it does.
+
+The first line adds to a syntax group using a "region".  Regions have a
+"start" pattern and an "end" pattern that specify where they start and
+end.  In this case, a Potion string starts when we see a double quote
+and ends when we see the next double quote.
+
+The "skip" argument to `syntax region` allows us to handle string
+escapes like `"She said: \"Vimscript is tricky, but useful\"!"`.
+
+If we didn't use the `skip` argument Vim would end the string at the `"`
+before `Vimscript`, which is not what we want!
+
+In a nutshell, the `skip` argument to `syntax region` tells Vim: "once
+you start matching this region, I want you to ignore anything that
+matches `skip`, even if it would normally be considered the end of the
+region".
+
+Take a few minutes and think through this.  What happens with something
+like `"foo \\" bar"`?  Is that the correct behavior?  Will that *always*
+be the correct behavior?  Close this book, take a few minutes and really
+*think* about this!
+
+From the help system
+--------------------
+
+### Help syn--region
+
+```
+:sy[ntax] region {group-name} [{options}]
+        [matchgroup={group-name}]
+        [keepend]
+        [extend]
+        [excludenl]
+        start={start_pattern} ..
+        [skip={skip_pattern}]
+        end={end_pattern} ..
+        [{options}]
+```
+
+This defines one region.  It may span several lines.
+
+    {group-name}                A syntax group name such as "Comment".
+    [{options}]                 See |:syn-arguments| below.
+    [matchgroup={group-name}]   The syntax group to use for the following
+                                start or end pattern matches only.  Not used
+                                for the text in between the matched start and
+                                end patterns.  Use NONE to reset to not using
+                                a different group for the start or end match.
+    keepend                     Don't allow contained matches to go past a
+                                match with the end pattern.
+    extend                      Override a "keepend" for an item this region
+                                is contained in.
+    excludenl                   Don't make a pattern with the end-of-line "$"
+                                extend a containing match or item.  Only
+                                useful for end patterns.  Must be given before
+                                the patterns it applies to.
+    start={start_pattern}       The search pattern that defines the start of
+                                the region.
+    skip={skip_pattern}         The search pattern that defines text inside
+                                the region where not to look for the end
+                                pattern.
+    end={end_pattern}           The search pattern that defines the end of
+                                the region.
+
+Example:
+
+    :syntax region String   start=+"+  skip=+\\"+  end=+"+
+
+The start/skip/end patterns and the options can be given in any order.
+There can be zero or one skip pattern.    There must be one or more
+start and end patterns.  This means that you can omit the skip pattern,
+but you must give at least one start and one end pattern.  It is allowed
+to have white space before and after the equal sign (although it mostly
+looks better without white space).
+
+When more than one start pattern is given, a match with one of these is
+sufficient.    This means there is an OR relation between the start
+patterns.  The last one that matches is used.  The same is true for the
+end patterns.
+
+The search for the end pattern starts right after the start pattern.
+Offsets are not used for this.    This implies that the match for the
+end pattern will never overlap with the start pattern.
+
+The skip and end pattern can match across line breaks, but since the
+search for the pattern can start in any line it often does not do what
+you want.  The skip pattern doesn't avoid a match of an end pattern in
+the next line.    Use single-line patterns to avoid trouble.
+
+Note: The decision to start a region is only based on a matching start
+pattern.  There is no check for a matching end pattern.  This does NOT
+work:
+
+    :syn region First  start="("  end=":"
+    :syn region Second start="("  end=";"
+
+The Second always matches before the First (last defined pattern has
+higher priority).  The Second region then continues until the next
+`';'`, no matter if there is a `':'` before it.  Using a match does
+work: >
+    
+    :syn match First  "(\_.\{-}:"
+    :syn match Second "(\_.\{-};"
+
+This pattern matches any character or line break with `"\_."` and
+repeats that with `"\{-}"` (repeat as few as possible).
+
+By default, a contained match can obscure a match for the end pattern.
+This is useful for nesting.  For example, a region that starts with
+`"{"` and ends with `"}"`, can contain another region.  An encountered
+`"}"` will then end the contained region, but not the outer region:
+    
+    {       starts outer "{}" region
+    {       starts contained "{}" region
+    }       ends contained "{}" region
+    }       ends outer "{} region
+
+If you don't want this, the `"keepend"` argument will make the matching
+of an end pattern of the outer region also end any contained item.  This
+makes it impossible to nest the same region, but allows for contained
+items to highlight parts of the end pattern, without causing that to
+skip the match with the end pattern.  Example:
+    
+    :syn match  vimComment +"[^"]\+$+
+    :syn region vimCommand start="set" end="$" contains=vimComment keepend
+
+The `"keepend"` makes the vimCommand always end at the end of the line,
+even though the contained vimComment includes a match with the `<EOL>`.
+
+When `"keepend"` is not used, a match with an end pattern is retried
+after each contained match.  When `"keepend"` is included, the first
+encountered match with an end pattern is used, truncating any contained
+matches.
+
+The `"keepend"` behavior can be changed by using the `"extend"`
+argument.  When an item with `"extend"` is contained in an item that
+uses `"keepend"`, the `"keepend"` is ignored and the containing region
+will be extended.  This can be used to have some contained items extend
+a region while others don't.  Example:
+
+    :syn region htmlRef start=+<a>+
+    \   end=+</a>+ keepend contains=htmlItem,htmlScript
+    :syn match htmlItem +<[^>]*>+ contained
+    :syn region htmlScript start=+<script+
+    \   end=+</script[^>]*>+ contained extend
+
+Here the htmlItem item does not make the htmlRef item continue further,
+it is only used to highlight the `<>` items.  The htmlScript item does
+extend the htmlRef item.
+
+Another example:
+
+    :syn region xmlFold start="<a>"
+    \   end="</a>" fold transparent keepend extend
+
+This defines a region with `"keepend"`, so that its end cannot be
+changed by contained items, like when the `"</a>"` is matched to
+highlight it differently.  But when the xmlFold region is nested (it
+includes itself), the `"extend"` applies, so that the `"</a>"` of a
+nested region only ends that region, and not the one it is contained in.
+
+When a pattern for a match or end pattern of a region includes a `'$'`
+to match the end-of-line, it will make a region item that it is
+contained in continue on the next line.  For example, a match with
+`"\\$"` (backslash at the end of the line) can make a region continue
+that would normally stop at the end of the line.  This is the default
+behavior.  If this is not wanted, there are two ways to avoid it:
+
+1. Use `"keepend"` for the containing item.  This will keep all
+   contained matches from extending the match or region.  It can be used
+   when all contained items must not extend the containing item.
+2. Use `"excludenl"` in the contained item.  This will keep that match
+   from extending the containing match or region.  It can be used if
+   only some contained items must not extend the containing item.
+   `"excludenl"` must be given before the pattern it applies to.
+
+`"matchgroup"` can be used to highlight the start and/or end pattern
+differently than the body of the region.  Example:
+    
+    :syntax region String matchgroup=Quote
+    \   start=+"+  skip=+\\"+    end=+"+
+
+This will highlight the quotes with the `"Quote"` group, and the text in
+between with the `"String"` group.  The `"matchgroup"` is used for all
+start and end patterns that follow, until the next `"matchgroup"`.  Use
+`"matchgroup=NONE"` to go back to not using a matchgroup.
+
+In a start or end pattern that is highlighted with `"matchgroup"` the
+contained items of the region are not used.  This can be used to avoid
+that a contained item matches in the start or end pattern match.  When
+using `"transparent"`, this does not apply to a start or end pattern
+match that is highlighted with `"matchgroup"`.
+
+Here is an example, which highlights three levels of parentheses in
+different colors:
+
+    :sy region par1 matchgroup=par1 start=/(/ end=/)/ contains=par2
+    :sy region par2 matchgroup=par2 start=/(/ end=/)/ contains=par3 contained
+    :sy region par3 matchgroup=par3 start=/(/ end=/)/ contains=par1 contained
+    :hi par1 ctermfg=red guifg=red
+    :hi par2 ctermfg=blue guifg=blue
+    :hi par3 ctermfg=darkgreen guifg=darkgreen
+
+The maximum number of syntax groups is 19999.
+
+Exercises
+---------
+
+Add syntax highlighting for single quoted strings.
+
+Read `:help syn-region`.
+
+Reading that should take longer than reading this chapter.  Pour yourself
+a drink, you've earned it!

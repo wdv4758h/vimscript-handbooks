@@ -198,6 +198,18 @@ echo "Adding 45.markdown"
 cat 45.markdown >> $DOC
 echo "" >> $DOC
 
+echo "Adding 46.markdown"
+cat 46.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 47.markdown"
+cat 47.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 48.markdown"
+cat 48.markdown >> $DOC
+echo "" >> $DOC
+
 #
 # ###
 #
