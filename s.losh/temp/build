@@ -210,6 +210,10 @@ echo "Adding 48.markdown"
 cat 48.markdown >> $DOC
 echo "" >> $DOC
 
+echo "Adding 49.markdown"
+cat 49.markdown >> $DOC
+echo "" >> $DOC
+
 #
 # ###
 #

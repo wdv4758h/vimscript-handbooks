@@ -134,20 +134,210 @@ this:
 Close and reopen `factorial.pn` and now the inner block will be folded
 properly.
 
-Exercises
----------
+From the help system
+--------------------
 
-Read `:help foldmethod`.
+### :help foldmethod
 
-Read `:help fold-manual`.
+`'foldmethod' 'fdm'    string (default: "manual")`
+:   local to window:
+    
+    The kind of folding used for the current window.  Possible values:
+    
+        fold-manual    manual    Folds are created manually.
+        fold-indent    indent    Lines with equal indent form
+                                 a fold.
+        fold-expr      expr      'foldexpr' gives the fold level
+                                 of a line.
+        fold-marker    marker    Markers are used to specify
+                                 folds.
+        fold-syntax    syntax    Syntax highlighting items
+                                 specify folds.
+        fold-diff      diff      Fold text that is not changed.
 
-Read `:help fold-marker` and `:help foldmarker`.
+### :help fold-manual
 
-Read `:help fold-indent`.
+Use commands to manually define the fold regions.  This can also be used
+by a script that parses text to find folds.
 
-Read `:help fdl` and `:help foldlevelstart`.
+The level of a fold is only defined by its nesting.  To increase the
+fold level of a fold for a range of lines, define a fold inside it that
+has the same lines.
 
-Read `:help foldminlines`.
+The manual folds are lost when you abandon the file.  To save the folds
+use the `:mkview` command.  The view can be restored later with
+`:loadview`.
 
-Read `:help foldignore`.
+### :help fold-marker
 
+Markers in the text tell where folds start and end.  This allows you to
+precisely specify the folds.  This will allow deleting and putting a
+fold, without the risk of including the wrong lines.  The 'foldtext'
+option is normally set such that the text before the marker shows up in
+the folded line.  This makes it possible to give a name to the fold.
+
+Markers can have a level included, or can use matching pairs.  Including
+a level is easier, you don't have to add end markers and avoid problems
+with non-matching marker pairs.  Example:
+
+    /* global variables {{{1 */
+    int varA, varB;
+
+    /* functions {{{1 */
+    /* funcA() {{{2 */
+    void funcA() {}
+
+    /* funcB() {{{2 */
+    void funcB() {}
+
+A fold starts at a `"{{{"` marker.  The following number specifies the
+fold level.  What happens depends on the difference between the current
+fold level and the level given by the marker:
+1. If a marker with the same fold level is encountered, the previous
+   fold ends and another fold with the same level starts.
+2. If a marker with a higher fold level is found, a nested fold is
+   started.
+3. if a marker with a lower fold level is found, all folds up to and
+   including this level end and a fold with the specified level starts.
+
+The number indicates the fold level.  A zero cannot be used (a marker
+with level zero is ignored).  You can use `"}}}"` with a digit to
+indicate the level of the fold that ends.  The fold level of the
+following line will be one less than the indicated level.  Note that Vim
+doesn't look back to the level of the matching marker (that would take
+too much time).  Example:
+
+    {{{1
+    fold level here is 1
+    {{{3
+    fold level here is 3
+    }}}3
+    fold level here is 2
+
+You can also use matching pairs of `"{{{"` and `"}}}"` markers to define
+folds.  Each `"{{{"` increases the fold level by one, each `"}}}"`
+decreases the fold level by one.  Be careful to keep the markers
+matching!  Example:
+
+    {{{
+    fold level here is 1
+    {{{
+    fold level here is 2
+    }}}
+    fold level here is 1
+
+You can mix using markers with a number and without a number.  A useful
+way of doing this is to use numbered markers for large folds, and
+unnumbered markers locally in a function.  For example use level one
+folds for the sections of your file like `"structure definitions"`,
+`"local variables"` and `"functions"`.  Use level 2 markers for each
+definition and function,  Use unnumbered markers inside functions.  When
+you make changes in a function to split up folds, you don't have to
+renumber the markers.
+
+The markers can be set with the 'foldmarker' option.  It is recommended
+to keep this at the default value of `"{{{,}}}"`, so that files can be
+exchanged between Vim users.  Only change it when it is required for the
+file (e.g., it contains markers from another folding editor, or the
+default markers cause trouble for the language of the file).
+
+`"zf"` can be used to create a fold defined by markers.  Vim will insert
+the markers for you.  Vim will append the start and end marker, as
+specified with 'foldmarker'.  The markers are appended to the end of the
+line.  'commentstring' is used if it isn't empty.  This does not work
+properly when:
+- The line already contains a marker with a level number.  Vim then
+  doesn't know what to do.
+- Folds nearby use a level number in their marker which gets in the way.
+- The line is inside a comment, 'commentstring' isn't empty and nested
+  comments don't work.  For example with C: adding `/* {{{ */` inside a
+  comment will truncate the existing comment.  Either put the marker
+  before or after the comment, or add the marker manually.  Generally
+  it's not a good idea to let Vim create markers when you already have
+  markers with a level number.
+
+`"zd"` can be used to delete a fold defined by markers.  Vim will delete
+the markers for you.  Vim will search for the start and end markers, as
+specified with 'foldmarker', at the start and end of the fold.  When the
+text around the marker matches with 'commentstring', that text is
+deleted as well.  This does not work properly when:
+- A line contains more than one marker and one of them specifies a
+  level.  Only the first one is removed, without checking if this will
+  have the desired effect of deleting the fold.
+- The marker contains a level number and is used to start or end several
+  folds at the same time.
+
+### :help foldmarker
+
+`'foldmarker' 'fmr'    string (default: "{{{,}}}")`
+:   local to window.
+    The start and end marker used when `'foldmethod'` is `"marker"`.
+    There must be one comma, which separates the start and end marker.
+    The marker is a literal string (a regular expression would be too
+    slow).
+
+### :help fold-indent
+
+The folds are automatically defined by the indent of the lines.
+
+The foldlevel is computed from the indent of the line, divided by the
+`'shiftwidth'` (rounded down).  A sequence of lines with the same or
+higher fold level form a fold, with the lines with a higher level
+forming a nested fold.
+
+The nesting of folds is limited with `'foldnestmax'`.
+
+Some lines are ignored and get the fold level of the line above or below
+it, whichever is lower.  These are empty or white lines and lines
+starting with a character in `'foldignore'`.  White space is skipped
+before checking for characters in `'foldignore'`.  For C use `"#"` to
+ignore preprocessor lines.
+
+When you want to ignore lines in another way, use the `'expr'` method.
+The `indent()` function can be used in `'foldexpr'` to get the indent of
+a line.
+
+### :help fdl
+
+`'foldlevel' 'fdl'    number (default: 0)`
+:   local to window.
+    Sets the fold level: Folds with a higher level will be closed.
+    Setting this option to zero will close all folds.  Higher numbers
+    will close fewer folds.  This option is set by commands like `zm`,
+    `zM` and `zR`.
+
+### :help foldlevelstart
+
+`'foldlevelstart' 'fdls'    number (default: -1)`
+:   global.
+    Sets `'foldlevel'` when starting to edit another buffer in a window.
+    Useful to always start editing with all folds closed (value zero),
+    some folds closed (one) or no folds closed (99).  This is done
+    before reading any modeline, thus a setting in a modeline overrules
+    this option.  Starting to edit a file for `diff-mode` also ignores
+    this option and closes all folds.  It is also done before BufReadPre
+    autocommands, to allow an autocmd to overrule the `'foldlevel'`
+    value for specific files.  When the value is negative, it is not
+    used.
+
+### :help foldminlines
+
+`'foldminlines' 'fml'    number (default: 1)`
+:   local to window.
+    Sets the number of screen lines above which a fold can be displayed
+    closed.  Also for manually closed folds.  With the default value of
+    one a fold can only be closed if it takes up two or more screen
+    lines.  Set to zero to be able to close folds of just one screen
+    line.  Note that this only has an effect on what is displayed.
+    After using `"zc"` to close a fold, which is displayed open because
+    it's smaller than `'foldminlines'`, a following `"zc"` may close a
+    containing fold.
+
+### :help foldignore
+
+`'foldignore' 'fdi'    string (default: "#")`
+:   local to window.
+    Used only when `'foldmethod'` is `"indent"`.  Lines starting with
+    characters in `'foldignore'` will get their fold level from
+    surrounding lines.  White space is skipped before checking for this
+    character.  The default `"#"` works well for C programs.
