@@ -1,31 +1,253 @@
 #!/bin/bash
 
-# MAKEPDF
-#
-# Convert from markdown to pdf using pandoc
+DOC=lvthw.markdown
 
-DOC="lvthw"
+rm -f -v $DOC
 
-#--standalone
-#:  Produce output with an appropriate header and footer (e.g. a
-#   standalone  HTML,  LaTeX,  or  RTF  file, not a fragment).
-#
-#--smart
-#:  Produce typographically correct output.
-#
-#--latex-engine=xelatex
-#:  Use the specified LaTeX engine when producing PDF output.
-#
-#--template=FILE
-#:  Use FILE as a custom template for the generated document.
-#
-#-V KEY[:VALUE]
-#:  Set the template variable KEY to the value VAL when
-#   rendering the document in standalone mode.
+echo "Adding titles"
+echo "% Learn Vimscript the hard way" >> $DOC
+echo "% Steve Losh (<steve@stevelosh.com>)" >> $DOC
+echo "% April 4, 2013" >> $DOC
+echo "" >> $DOC
 
-pandoc $DOC.markdown --standalone --smart \
+echo "Adding preface"
+cat preface.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 00.markdown"
+cat 00.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 01.markdown"
+cat 01.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 02.markdown"
+cat 02.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 03.markdown"
+cat 03.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 04.markdown"
+cat 04.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 05.markdown"
+cat 05.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 06.markdown"
+cat 06.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 07.markdown"
+cat 07.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 08.markdown"
+cat 08.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 09.markdown"
+cat 09.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 10.markdown"
+cat 10.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 11.markdown"
+cat 11.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 12.markdown"
+cat 12.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 13.markdown"
+cat 13.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 14.markdown"
+cat 14.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 15.markdown"
+cat 15.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 16.markdown"
+cat 16.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 17.markdown"
+cat 17.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 18.markdown"
+cat 18.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 19.markdown"
+cat 19.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 20.markdown"
+cat 20.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 21.markdown"
+cat 21.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 22.markdown"
+cat 22.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 23.markdown"
+cat 23.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 24.markdown"
+cat 24.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 25.markdown"
+cat 25.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 26.markdown"
+cat 26.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 27.markdown"
+cat 27.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 28.markdown"
+cat 28.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 29.markdown"
+cat 29.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 30.markdown"
+cat 30.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 31.markdown"
+cat 31.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 32.markdown"
+cat 32.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 33.markdown"
+cat 33.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 34.markdown"
+cat 34.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 35.markdown"
+cat 35.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 36.markdown"
+cat 36.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 37.markdown"
+cat 37.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 38.markdown"
+cat 38.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 39.markdown"
+cat 39.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 40.markdown"
+cat 40.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 41.markdown"
+cat 41.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 42.markdown"
+cat 42.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 43.markdown"
+cat 43.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 44.markdown"
+cat 44.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 45.markdown"
+cat 45.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 46.markdown"
+cat 46.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 47.markdown"
+cat 47.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 48.markdown"
+cat 48.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 49.markdown"
+cat 49.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 50.markdown"
+cat 50.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 51.markdown"
+cat 51.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 52.markdown"
+cat 52.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 53.markdown"
+cat 53.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 54.markdown"
+cat 54.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 55.markdown"
+cat 55.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding 56.markdown"
+cat 56.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Converting" $DOC "..."
+pandoc $DOC --standalone --smart \
     --latex-engine=xelatex --template=../ajt.latex \
     -V papersize:a4paper -V openside:openany \
     -V documentclass:book -V tables -V urlcolor:black \
-    -V linkcolor:black -V numbersections -V lowertoc \
+    -V linkcolor:black -V numbersections -V toc \
     --output=$DOC.pdf
+
+echo "Done."

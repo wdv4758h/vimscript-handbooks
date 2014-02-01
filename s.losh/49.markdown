@@ -713,19 +713,170 @@ how to fold each line in the file, which looks like this:
 That's it, we're done!  Reload the folding code and play around with the
 fancy new folding in `factorial.pn`.
 
+From the help system
+--------------------
+
+### :help foldexpr
+
+`'foldexpr' 'fde'    string (default: "0")`
+:   local to window.
+    The expression used for when `'foldmethod'` is `"expr"`.  It is
+    evaluated for each line to obtain its fold level.
+
+    The expression will be evaluated in the `sandbox` if set from a
+    modeline.  This option can`'t be set from a `modeline` when the
+    '`diff' option is on.
+
+    It is not allowed to change text or jump to another window while
+    evaluating `'foldexpr'` `textlock`.
+
+### :help fold-expr
+
+The folds are automatically defined by their foldlevel, like with the
+`"indent"` method.  The value of the 'foldexpr' option is evaluated to
+get the foldlevel of a line.  Examples:
+
+This will create a fold for all consecutive lines that start with a tab:
+
+    :set foldexpr=getline(v:lnum)[0]==\"\\t\"
+
+This will call a function to compute the fold level:
+    
+    :set foldexpr=MyFoldLevel(v:lnum)
+
+This will make a fold out of paragraphs separated by blank lines:
+    
+    :set foldexpr=getline(v:lnum)=~'^\\s*$'&&getline(v:lnum+1)=~'\\S'?'<1':1
+
+this does the same:
+    
+    :set foldexpr=getline(v:lnum-1)=~'^\\s*$'&&getline(v:lnum)=~'\\S'?'>1':1
+
+Note that backslashes must be used to escape characters that `":set"`
+handles differently (space, backslash, double quote, etc., see
+`option-backslash`).
+
+These are the conditions with which the expression is evaluated:
+
+- The current buffer and window are set for the line.
+- The variable `"v:lnum"` is set to the line number.
+- The result is used for the fold level in this way:
+
+        value             meaning
+        0                 the line is not in a fold
+        1, 2, ..          the line is in a fold with this level
+        -1                the fold level is undefined, use the
+                          fold level of a line before or after
+                          this line, whichever is the lowest.
+        "="               use fold level from the previous line
+        "a1", "a2", ..    add one, two, .. to the fold level of
+                          the previous line
+        "s1", "s2", ..    subtract one, two, .. from the fold
+                          level of the previous line
+        "<1", "<2", ..    a fold with this level ends at this line
+        ">1", ">2", ..    a fold with this level starts at this line
+
+It is not required to mark the start (end) of a fold with `">1"`
+(`"<1"`), a fold will also start (end) when the fold level is higher
+(lower) than the fold level of the previous line.
+
+There must be no side effects from the expression.  The text in the
+buffer, cursor position, the search patterns, options etc. must not be
+changed.  You can change and restore them if you are careful.
+
+If there is some error in the expression, or the resulting value isn't
+recognized, there is no error message and the fold level will be zero.
+For debugging the 'debug' option can be set to `"msg"`, the error
+messages will be visible then.
+
+Note: Since the expression has to be evaluated for every line, this fold
+method can be very slow!
+
+Try to avoid the `"="`, `"a"` and `"s"` return values, since Vim often
+has to search backwards for a line for which the fold level is defined.
+This can be slow.
+
+`foldlevel()` can be useful to compute a fold level relative to a
+previous fold level.  But note that foldlevel() may return -1 if the
+level is not known yet.  And it returns the level at the start of the
+line, while a fold might end in that line.
+
+It may happened that folds are not updated properly.  You can use `zx`
+or `zX` to force updating folds.
+
+### :help getline
+
+`getline({lnum} [, {end}])`
+:   Without `{end}` the result is a String, which is line `{lnum}`
+    from the current buffer.  Example:
+
+        getline(1)
+    
+    When `{lnum}` is a String that doesn't start with a digit, line() is
+    called to translate the String into a Number.  To get the line under
+    the cursor:
+        
+        getline(".")
+    
+    When `{lnum}` is smaller than 1 or bigger than the number of lines
+    in the buffer, an empty string is returned.
+
+    When `{end}` is given the result is a `List` where each item is a
+    line from the current buffer in the range `{lnum}` to `{end}`,
+    including line `{end}`.  `{end}` is used in the same way as
+    `{lnum}`.  Non-existing lines are silently omitted.  When `{end}` is
+    before `{lnum}` an empty `List` is returned.  Example:
+        
+        :let start = line('.')
+        :let end = search("^$") - 1
+        :let lines = getline(start, end)
+
+    To get lines from another buffer see `getbufline()`
+
+### :help indent()
+
+`indent({lnum})`
+:   The result is a Number, which is indent of line {lnum} in the
+    current buffer.  The indent is counted in spaces, the value of
+    `'tabstop'` is relevant.  `{lnum}` is used just like in `getline()`.
+    When `{lnum}` is invalid -1 is returned.
+
+### :help line()
+
+`line({expr})`
+:   The result is a Number, which is the line number of the file
+    position given with `{expr}`.  The accepted positions are:
+
+        .        the cursor position
+        $        the last line in the current buffer
+        'x       position of mark x (if the mark is not set, 0 is
+                 returned)
+        w0       first line visible in current window
+        w$       last line visible in current window
+        v        In Visual mode: the start of the Visual area (the
+                 cursor is the end).  When not in Visual mode
+                 returns the cursor position.  Differs from |'<| in
+                 that it's updated right away.
+
+    Note that a mark in another file can be used.  The line number
+    then applies to another buffer.
+    To get the column number use `col()`.  To get both use
+    `getpos()`.
+    Examples:
+
+        line(".")           line number of the cursor
+        line("'t")          line number of mark t
+        line("'" . marker)  line number of mark marker
+        
+    This autocommand jumps to the last known position in a file
+    just after opening it, if the '" mark is set:
+
+    :au BufReadPost *
+    \ if line("'\"") > 1 && line("'\"") <= line("$") |
+    \ exe "normal! g`\"" | endif
+
 Exercises
 ---------
-
-Read `:help foldexpr`.
-
-Read `:help fold-expr`.  Pay particular attention to all the "special" strings
-your expression can return.
-
-Read `:help getline`.
-
-Read `:help indent()`.
-
-Read `:help line()`.
 
 Figure out why it's important that we use `.` to combine the `>` character with
 the number in our folding function.  What would happen if you used `+` instead?

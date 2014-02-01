@@ -1,0 +1,143 @@
+Section Movement Theory
+=======================
+
+If you've never used Vim's section movement commands (`[[`, `]]`, `[]`
+and `][`) take a second and read the help for them now.  Go ahead and
+read `:help section` as well.
+
+Confused yet?  That's okay, so was I the first time I read that stuff.
+We're going to take a quick detour from writing code to learn about how
+these movements work, and then in the next chapter we'll make our Potion
+plugin support them.
+
+Nroff Files
+-----------
+
+The four "section movement" commands are conceptually meant to move
+around between "sections" of a file.
+
+All of these commands are designed to work with [nroff files][] by
+default.  Nroff is a language like LaTeX or Markdown -- it's used to
+write text that will be reformatted later (it's actually the format used
+by UNIX man pages).
+
+Nroff files use a certain set of "macros" to define "section headings".
+For example, here's an excerpt from the `awk` man page:
+
+    .SH NAME                                                     ***
+    awk \- pattern-directed scanning and processing language
+    .SH SYNOPSIS                                                 ***
+    .B awk
+    [
+    .BI \-F
+    .I fs
+    ]
+    [
+    .BI \-v
+    .I var=value
+    ]
+    [
+    .I 'prog'
+    |
+    .BI \-f
+    .I progfile
+    ]
+    [
+    .I file ...
+    ]
+    .SH DESCRIPTION                                              ***
+    .I Awk
+    scans each input
+    .I file
+    for lines that match ...
+
+The lines starting with `.SH` are section headings.  I've marked them
+with `***`.  The four section movement commands will move your cursor
+between these section heading lines.
+
+Vim considers any line starting with `.` and one of the nroff heading
+macros to be a section header, *even when you're not editing an nroff
+file*!
+
+You can change the macros by changing the `sections` setting, but Vim
+still requires a period at the beginning of the line, and the macros
+must be pairs of characters, so that setting doesn't add enough
+flexibility for Potion files.
+
+Braces
+------
+
+Section movement commands *also* look for one more thing: an opening or
+closing curly brace (`{` or `}`) as the first character on a line.
+
+`[[` and `]]` look for opening braces, while `[]` and `][` look for
+closing braces.
+
+This extra "hack" allows you to move between sections of C-like
+languages easily.  However, these rules are always the same no matter
+what type of file you're in!
+
+Put the following into a buffer:
+
+    Test           A B
+    Test
+
+    .SH Hello      A B
+
+    Test
+
+    {              A
+    Test
+    }                B
+
+    Test
+
+    .H World       A B
+
+    Test
+    Test           A B
+
+Now run `:set filetype=basic` to tell Vim that this is a BASIC file, and
+try the section movement comments.
+
+The `[[` and `]]` commands will move between the lines marked `A`, while
+`[]` and `][` move between the lines marked `B`.
+
+This shows us that Vim always uses these same two rules for section
+movement, even for languages where neither one makes sense (like BASIC)!
+
+[nroff files]: http://en.wikipedia.org/wiki/Nroff
+
+From the help system
+--------------------
+
+### :help section
+
+A section begins after a form-feed (`<C-L>`) in the first column and at
+each of a set of section macros, specified by the pairs of characters in
+the `'sections'` option.  The default is `"SHNHH HUnhsh"`, which defines
+a section to start at the nroff macros `".SH"`, `".NH"`, `".H"`,
+`".HU"`, `".nh"` and `".sh"`.
+
+The `"]"` and `"["` commands stop at the `'{'` or `'}'` in the first
+column.  This is useful to find the start or end of a function in a C
+program.  Note that the first character of the command determines the
+search direction and the second character the type of brace found.
+
+If your `'{'` or `'}'` are not in the first column, and you would like
+to use `"[["` and `"]]"` anyway, try these mappings:
+
+   :map [[ ?{<CR>w99[{
+   :map ][ /}<CR>b99]}
+   :map ]] j0[[%/{<CR>
+   :map [] k$][%?}<CR>
+
+[type these literally, see `<>`]
+
+### :help sections
+
+`'sections' 'sect'    string    (default "SHNHH HUnhsh")` -- global
+:   Specifies the nroff macros that separate sections.  These are pairs
+    of two letters (See |object-motions|).  The default makes a section
+    start at the nroff macros `".SH"`, `".NH"`, `".H"`, `".HU"`, `".nh"`
+    and `".sh"`.
