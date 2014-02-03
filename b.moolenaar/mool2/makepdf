@@ -1,0 +1,30 @@
+#!/bin/bash
+
+DOC=vum.markdown
+
+rm -f -v $DOC
+rm -f -v $DOC.pdf
+
+echo "Adding titles"
+echo "% Vim user manual" >> $DOC
+echo "% Bram Moolenaar (www.moolenaar.net)" >> $DOC
+echo "% 2013 Feb 20" >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_01.markdown"
+cat usr_01.markdown >> $DOC
+echo "" >> $DOC
+
+#
+# ###
+#
+
+echo "Converting" $DOC "..."
+pandoc $DOC --standalone --smart \
+    --latex-engine=xelatex --template=../ajt.latex \
+    -V papersize:a4paper -V openside:openany \
+    -V documentclass:book -V tables -V urlcolor:black \
+    -V linkcolor:black -V numbersections -V toc \
+    --output=$DOC.pdf
+
+echo "Done."
