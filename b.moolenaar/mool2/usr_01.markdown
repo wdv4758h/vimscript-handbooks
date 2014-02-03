@@ -20,8 +20,7 @@ The Vim documentation consists of two parts:
 2. The Reference manual: precise description of how everything in Vim
    works.
 
-JUMPING AROUND
---------------
+### JUMPING AROUND
 
 The text contains hyperlinks between the two parts, allowing you to
 quickly jump between the description of an editing task and a precise

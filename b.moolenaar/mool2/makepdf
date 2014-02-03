@@ -15,6 +15,10 @@ echo "Adding usr_01.markdown"
 cat usr_01.markdown >> $DOC
 echo "" >> $DOC
 
+echo "Adding usr_02.markdown"
+cat usr_02.markdown >> $DOC
+echo "" >> $DOC
+
 echo "Converting" $DOC "..."
 pandoc $DOC --standalone --smart \
     --latex-engine=xelatex --template=ajt.latex \
