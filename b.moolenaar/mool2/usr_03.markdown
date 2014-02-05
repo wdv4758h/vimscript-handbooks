@@ -6,16 +6,16 @@ right place.  Vim has a large number of commands to position the cursor.
 This chapter shows you how to use the most important ones.  You can find
 a list of these commands below `|Q_lr|`.
 
-[Word-movement](#Word-movement)
-[Moving-to-the-start-or-end-of-a-line](#Moving-to-the-start-or-end-of-a-line)
-[Moving-to-a-character](#Moving-to-a-character)
-[Matching-a-parenthesis](#Matching-a-parenthesis)
-[Moving-to-a-specific-line](#Moving-to-a-specific-line)
-[Telling-where-you-are](#Telling-where-you-are)
-[Scrolling-around](#Scrolling-around)
-[Simple-searches](#Simple-searches)
-[Simple-search-patterns](#Simple-search-patterns)
-[Using-marks](#Using-marks)
+[Word movement](#word-movement) \
+[Moving to the start or end of a line](#moving-to-the-start-or-end-of-a-line) \
+[Moving to a character](#moving-to-a-character) \
+[Matching a parenthesis](#matching-a-parenthesis) \
+[Moving to a specific line](#moving-to-a-specific-line) \
+[Telling where you are](#telling-where-you-are) \
+[Scrolling around](#scrolling-around) \
+[Simple searches](#simple-searches) \
+[Simple search patterns](#simple-search-patterns) \
+[Using marks](#using-marks)
 
 Word movement
 -------------

@@ -5,14 +5,14 @@ This chapter provides just enough information to edit a file with Vim.
 Not well or fast, but you can edit.  Take some time to practice with
 these commands, they form the base for what follows.
 
-[Running-Vim-for-the-First-Time](#Running-Vim-for-the-First-Time)
-[Inserting-text](#Inserting-text)
-[Moving-around](#Moving-around)
-[Deleting-characters](#Deleting-characters)
-[Undo-and-Redo](#Undo-and-Redo)
-[Other-editing-commands](#Other-editing-commands)
-[Getting-out](#Getting-out)
-[Finding-help](#Finding-help)
+[Running Vim for the First Time](#running-vim-for-the-first-time) \
+[Inserting text](#inserting-text) \
+[Moving around](#moving-around) \
+[Deleting characters](#deleting-characters) \
+[Undo and Redo](#undo-and-redo) \
+[Other editing commands](#other-editing-commands) \
+[Getting out](#getting-out) \
+[Finding help](#finding-help)
 
 Running Vim for the First Time
 ------------------------------

@@ -4,10 +4,10 @@ About the manuals
 This chapter introduces the manuals available with Vim.  Read this to know the
 conditions under which the commands are explained.
 
-[Two manuals](#Two-manuals)
-[Vim installed](#Vim-installed)
-[Using the Vim tutor](#Using-the-Vim-tutor)
-[Copyright](#Copyright)
+[Two manuals](#two-manuals) \
+[Vim installed](#vim-installed) \
+[Using the Vim tutor](#using-the-vim-tutor) \
+[Copyright](#copyright)
 
 Two manuals
 -----------
