@@ -1,6 +1,6 @@
 "
 " Rende la toc in usr_xx.txt un elenco di link interni
-nnoremap <leader>ww Ypk0i[€@7]jV:s/^.*$/\L&/gV:s/ /-/g0i(#€@7) \kJxj
+nnoremap <leader>wl Ypk0i[<Esc>A]<Esc>jV:s/^.*$/\L&/g<CR>V:s/ /-/g<CR>0i(#<Esc>A)<Esc>kJxj
 "
 " Rende una riga di testo un header
 nnoremap <leader>1 Ypv$r=j
