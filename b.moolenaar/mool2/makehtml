@@ -3,7 +3,7 @@
 DOC=vum.markdown
 
 rm -f -v $DOC
-rm -f -v $DOC.pdf
+rm -f -v $DOC.html
 
 echo "Adding titles"
 echo "% Vim user manual" >> $DOC
@@ -21,6 +21,18 @@ echo "" >> $DOC
 
 echo "Adding usr_03.markdown"
 cat usr_03.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_04.markdown"
+cat usr_04.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_05.markdown"
+cat usr_05.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_06.markdown"
+cat usr_06.markdown >> $DOC
 echo "" >> $DOC
 
 echo "Converting" $DOC "..."
