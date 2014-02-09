@@ -1,4 +1,4 @@
-Using syntax highlighting
+Using syntax highlighting^[For Vim version 7.4.  Last change: 2009 Oct 28]
 =========================
 
 Black and white text is boring.  With colors your file comes to life.

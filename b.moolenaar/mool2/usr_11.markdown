@@ -1,4 +1,4 @@
-Recovering from a crash
+Recovering from a crash^[For Vim version 7.4.  Last change: 2010 Jul 20]
 =======================
 
 Did your computer crash?  And you just spent hours editing?  Don't

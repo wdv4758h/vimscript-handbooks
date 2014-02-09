@@ -1,4 +1,4 @@
-Moving around
+Moving around^[For Vim version 7.4.  Last change: 2006 Jun 21]
 =============
 
 Before you can insert or delete text the cursor has to be moved to the

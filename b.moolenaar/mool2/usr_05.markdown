@@ -1,4 +1,4 @@
-Set your settings
+Set your settings^[For Vim version 7.4.  Last change: 2012 Nov 20]
 =================
 
 Vim can be tuned to work like you want it to.  This chapter shows you

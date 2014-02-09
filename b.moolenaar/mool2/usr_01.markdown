@@ -1,4 +1,4 @@
-About the manuals
+About the manuals^[For Vim version 7.4.  Last change: 2010 Nov 03]
 =================
 
 This chapter introduces the manuals available with Vim.  Read this to know the

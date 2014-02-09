@@ -1,4 +1,4 @@
-Splitting windows
+Splitting windows^[For Vim version 7.4.  Last change: 2006 Jul 18]
 =================
 
 Display two different files above each other.  Or view two locations in

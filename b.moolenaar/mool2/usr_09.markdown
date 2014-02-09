@@ -1,4 +1,4 @@
-Using the GUI
+Using the GUI^[For Vim version 7.4.  Last change: 2006 Apr 24]
 =============
 
 Vim works in an ordinary terminal.  GVim can do the same things and a

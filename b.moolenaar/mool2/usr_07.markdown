@@ -1,4 +1,4 @@
-Editing more than one file
+Editing more than one file^[For Vim version 7.4.  Last change: 2006 Apr 24]
 ==========================
 
 No matter how many files you have, you can edit them without leaving

@@ -1,4 +1,4 @@
-The first steps in Vim
+The first steps in Vim^[For Vim version 7.4.  Last change: 2010 Jul 20]
 ======================
 
 This chapter provides just enough information to edit a file with Vim.

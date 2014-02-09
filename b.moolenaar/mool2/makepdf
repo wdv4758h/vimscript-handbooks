@@ -55,6 +55,18 @@ echo "Adding usr_11.markdown"
 cat usr_11.markdown >> $DOC
 echo "" >> $DOC
 
+echo "Adding usr_12.markdown"
+cat usr_12.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_20.markdown"
+cat usr_20.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_21.markdown"
+cat usr_21.markdown >> $DOC
+echo "" >> $DOC
+
 echo "Converting" $DOC "..."
 pandoc $DOC --standalone --smart \
     --latex-engine=pdflatex --template=ajt.latex \

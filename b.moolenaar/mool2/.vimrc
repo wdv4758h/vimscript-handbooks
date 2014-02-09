@@ -9,4 +9,6 @@ nnoremap <leader>3 0i###<Space><Esc>
 nnoremap <leader>4 0i####<Space><Esc>
 nnoremap <leader>5 0i#####<Space><Esc>
 nnoremap <leader>6 0i######<Space><Esc>
-
+"
+" Racchiude tra backticks ciò che è tra due spazi
+nnoremap <leader>' F<Space>li`<Esc>f<Space>i`<Esc> 

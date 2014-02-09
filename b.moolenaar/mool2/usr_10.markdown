@@ -1,4 +1,4 @@
-Making big changes
+Making big changes^[For Vim version 7.4.  Last change: 2006 Nov 05]
 ==================
 
 In chapter 4 several ways to make small changes were explained.  This

@@ -1,4 +1,4 @@
-Making small changes
+Making small changes^[For Vim version 7.4.  Last change: 2008 Sep 06]
 ====================
 
 This chapter shows you several ways of making corrections and moving
