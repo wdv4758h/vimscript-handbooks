@@ -7,7 +7,8 @@ conditions under which the commands are explained.
 [Two manuals](#two-manuals) \
 [Vim installed](#vim-installed) \
 [Using the Vim tutor](#using-the-vim-tutor) \
-[Copyright](#copyright)
+[Copyright](#copyright) \
+[Info about the markdown version](#info-about-the-markdown-version)
 
 Two manuals
 -----------
@@ -186,3 +187,14 @@ the tone and style.
 
 If you make money through selling the manuals, you are strongly
 encouraged to donate part of the profit to help AIDS victims in Uganda.
+
+Info about the markdown version
+-------------------------------
+
+The markdown version of the Vim user manual was done by Ajabu Tex
+(<ajabutex@gmail.com>). Was released for the first time in 2014. The
+updated version can be obtained on <http://ajabutex.bitbucket.org/> (see
+the "Vimscript handbooks" section).
+
+The original version was taken from the Vim 7.4 distribution for
+Gnu-Linux.
