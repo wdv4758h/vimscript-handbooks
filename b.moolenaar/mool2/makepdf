@@ -95,6 +95,10 @@ echo "Adding usr_28.markdown"
 cat usr_28.markdown >> $DOC
 echo "" >> $DOC
 
+echo "Adding usr_29.markdown"
+cat usr_29.markdown >> $DOC
+echo "" >> $DOC
+
 echo "Converting" $DOC "..."
 pandoc $DOC --standalone --smart \
     --latex-engine=pdflatex --template=ajt.latex \
