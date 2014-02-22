@@ -11,8 +11,8 @@ echo "% Bram Moolenaar (www.moolenaar.net)" >> $DOC
 echo "% 2013 Feb 20" >> $DOC
 echo "" >> $DOC
 
-echo "Adding usr_01.markdown"
-cat usr_01.markdown >> $DOC
+echo "Adding usr_30.markdown"
+cat usr_30.markdown >> $DOC
 echo "" >> $DOC
 
 echo "Adding usr_02.markdown"
