@@ -23,7 +23,7 @@ s.losh
 
 b.moolenaar
 :   Bram Moolenaar  
-    _usr_41_  
+    _Vim user guide_  
     20 February 2013  
 
 swaroop
