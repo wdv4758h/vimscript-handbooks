@@ -1,31 +1,150 @@
 #!/bin/bash
 
-# MAKEPDF
-#
-# Convert from markdown to pdf using pandoc
+DOC=vum.markdown
 
-DOC="usr_41"
+rm -f -v $DOC
+rm -f -v $DOC.pdf
 
-#--standalone
-#:  Produce output with an appropriate header and footer (e.g. a
-#   standalone  HTML,  LaTeX,  or  RTF  file, not a fragment).
-#
-#--smart
-#:  Produce typographically correct output.
-#
-#--latex-engine=xelatex
-#:  Use the specified LaTeX engine when producing PDF output.
-#
-#--template=FILE
-#:  Use FILE as a custom template for the generated document.
-#
-#-V KEY[:VALUE]
-#:  Set the template variable KEY to the value VAL when
-#   rendering the document in standalone mode.
+echo "Adding titles"
+echo "% Vim user manual" >> $DOC
+echo "% Bram Moolenaar (www.moolenaar.net)" >> $DOC
+echo "% 2013 Feb 20" >> $DOC
+echo "" >> $DOC
 
-pandoc $DOC.markdown --standalone --smart \
-    --latex-engine=xelatex --template=../ajt.latex \
-    -V papersize:a4paper -V openside:openany \
+echo "Adding usr_01.markdown"
+cat usr_01.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_02.markdown"
+cat usr_02.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_03.markdown"
+cat usr_03.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_04.markdown"
+cat usr_04.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_05.markdown"
+cat usr_05.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_06.markdown"
+cat usr_06.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_07.markdown"
+cat usr_07.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_08.markdown"
+cat usr_08.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_09.markdown"
+cat usr_09.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_10.markdown"
+cat usr_10.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_11.markdown"
+cat usr_11.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_12.markdown"
+cat usr_12.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_20.markdown"
+cat usr_20.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_21.markdown"
+cat usr_21.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_22.markdown"
+cat usr_22.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_23.markdown"
+cat usr_23.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_24.markdown"
+cat usr_24.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_25.markdown"
+cat usr_25.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_26.markdown"
+cat usr_26.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_27.markdown"
+cat usr_27.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_28.markdown"
+cat usr_28.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_29.markdown"
+cat usr_29.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_30.markdown"
+cat usr_30.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_31.markdown"
+cat usr_31.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_32.markdown"
+cat usr_32.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_40.markdown"
+cat usr_40.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_41.markdown"
+cat usr_41.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_42.markdown"
+cat usr_42.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_43.markdown"
+cat usr_43.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_44.markdown"
+cat usr_44.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_45.markdown"
+cat usr_45.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Adding usr_90.markdown"
+cat usr_90.markdown >> $DOC
+echo "" >> $DOC
+
+echo "Converting" $DOC "..."
+pandoc $DOC --standalone --smart \
+    --latex-engine=pdflatex --template=ajt.latex \
+    -V papersize:a4paper -V fontsize:10pt -V openside:openany \
     -V documentclass:book -V tables -V urlcolor:black \
-    -V linkcolor:black -V numbersections -V lowertoc \
+    -V linkcolor:black -V numbersections -V toc \
     --output=$DOC.pdf
+
+echo "Done."
