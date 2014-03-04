@@ -1,0 +1,17 @@
+"
+" markdown internal link
+" Some text -> ,wl -> [Some text](#some-text) \
+nnoremap <leader>wl Ypk0i[<Esc>A]<Esc>jV:s/^.*$/\L&/g<CR>V:s/ /-/ge<CR>0i(#<Esc>A)<Esc>kJxA<Space>\<Esc>j
+"
+" markdown header
+" Some text -> ,2 -> ## Some text
+nnoremap <leader>1 0i#<Space><Esc>
+nnoremap <leader>2 0i##<Space><Esc>
+nnoremap <leader>3 0i###<Space><Esc>
+nnoremap <leader>4 0i####<Space><Esc>
+nnoremap <leader>5 0i#####<Space><Esc>
+nnoremap <leader>6 0i######<Space><Esc>
+"
+" markdown inline code
+" Some text -> ,' -> `Some text`
+nnoremap <leader>' F<Space>li`<Esc>f<Space>i`<Esc> 
