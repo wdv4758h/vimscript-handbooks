@@ -147,4 +147,4 @@ pandoc $DOC --standalone --smart \
     -V linkcolor:black -V numbersections -V toc \
     --output=$DOC.pdf
 
-echo "Done."
+echo "Done PDF"
